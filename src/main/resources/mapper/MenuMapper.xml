@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.MenuMapper">
+
+    <resultMap id="BaseResultMap" type="sc.system.model.WebScMenu">
+        <id column="menu_id" jdbcType="INTEGER" property="menuId"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="menu_name" jdbcType="VARCHAR" property="menuName"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="perms" jdbcType="VARCHAR" property="perms"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+    </resultMap>
+
+    <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScMenu">
+        <id column="menu_id" jdbcType="INTEGER" property="menuId"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="menu_name" jdbcType="VARCHAR" property="menuName"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="perms" jdbcType="VARCHAR" property="perms"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <collection property="children" ofType="aisino.system.model.Menu" select="selectAllTree" column="{parent_id = menu_id}"/>
+    </resultMap>
+
+    <resultMap id="TreeBaseResultMap2" type="sc.system.model.WebScMenu">
+        <id column="menu_id" jdbcType="INTEGER" property="menuId"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="menu_name" jdbcType="VARCHAR" property="menuName"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="perms" jdbcType="VARCHAR" property="perms"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <collection property="children" ofType="aisino.system.model.Menu" select="selectAllMenuAndCountOperator" column="{parent_id = menu_id}"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        menu_id, parent_id, menu_name, url, perms, order_num, create_time, modify_time, icon
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_MENU
+        where menu_id = #{menuId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from WSC_MENU
+        where menu_id = #{menuId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" keyColumn="menu_id" keyProperty="menuId" parameterType="sc.system.model.WebScMenu"
+            useGeneratedKeys="true">
+        insert into WSC_MENU (parent_id, menu_name, url, perms, order_num, icon)
+        values (#{parentId,jdbcType=INTEGER}, #{menuName,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+        		#{perms,jdbcType=VARCHAR}, #{orderNum}, #{icon})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScMenu">
+        update WSC_MENU
+        set parent_id = #{parentId,jdbcType=INTEGER},
+        	menu_name = #{menuName,jdbcType=VARCHAR},
+        	url = #{url,jdbcType=VARCHAR},
+        	perms = #{perms,jdbcType=VARCHAR},
+        	order_num = #{orderNum,jdbcType=INTEGER},
+        	icon = #{icon,jdbcType=VARCHAR}
+        where menu_id = #{menuId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_MENU
+        order by order_num
+    </select>
+
+    <select id="selectByParentId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_MENU
+        <if test="_parameter != null">
+            where parent_id = #{parentId}
+        </if>
+        order by order_num
+    </select>
+
+    <select id="selectAllMenuAndCountOperator" resultMap="TreeBaseResultMap2">
+        select menu_id,
+               parent_id,
+               concat(menu_name, (select if(count(*) = 0, '', concat('(', count(*), ')'))
+                                  from S_OPERATOR
+                                  where S_OPERATOR.menu_id = WSC_MENU.menu_id)) as menu_name,
+               url,
+               perms,
+               order_num,
+               create_time,
+               modify_time,
+               icon
+        from WSC_MENU
+        <where>
+            <choose>
+                <when test="parent_id != null">
+                    and parent_id = #{parent_id}
+                </when>
+                <otherwise>
+                    and parent_id = 0
+                </otherwise>
+            </choose>
+        </where>
+        order by order_num
+    </select>
+
+    <delete id="deleteByParentId" parameterType="java.lang.Integer">
+        delete
+        from WSC_MENU
+        where parent_id = #{parentId,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectChildrenIDByPrimaryKey" parameterType="java.lang.Integer" resultType="int">
+        select menu_id
+        from WSC_MENU
+        where parent_id = #{menuId, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectMenuByLoginName" resultMap="BaseResultMap">
+        select distinct WSC_MENU.menu_id,
+                        WSC_MENU.parent_id,
+                        WSC_MENU.menu_name,
+                        WSC_MENU.url,
+                        WSC_MENU.perms,
+                        WSC_MENU.order_num,
+                        WSC_MENU.icon
+        from WSC_USER,
+             WSC_ROLE,
+             WSC_USER_ROLE,
+             WSC_MENU,
+             WSC_ROLE_MENU
+        where WSC_USER.user_id = WSC_USER_ROLE.user_id
+          and WSC_ROLE.role_id = WSC_USER_ROLE.role_id
+          and WSC_ROLE.role_id = WSC_ROLE_MENU.role_id
+          and WSC_MENU.menu_id = WSC_ROLE_MENU.menu_id
+          and WSC_USER.login_name = #{loginname}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*)
+        from WSC_MENU
+    </select>
+
+    <update id="swapSort">
+        UPDATE
+            WSC_MENU AS per
+                JOIN
+                WSC_MENU AS next
+                ON
+                        (per.`menu_id` = #{currentId} AND next.`menu_id` = #{swapId})
+                        OR
+                        (per.`menu_id` = #{swapId} AND next.`menu_id` = #{currentId})
+        SET per.`order_num`  = next.`order_num`,
+            next.`order_num` = per.`order_num`
+    </update>
+
+    <select id="selectMaxOrderNum" resultType="java.lang.Integer">
+        select ifnull(max(order_num), 0)
+        from WSC_MENU
+    </select>
+
+
+    <select id="selectAllTree" resultMap="TreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_MENU
+        <where>
+            <choose>
+                <when test="parent_id != null">
+                    and parent_id = #{parent_id}
+                </when>
+                <otherwise>
+                    and parent_id = 0
+                </otherwise>
+            </choose>
+        </where>
+        order by order_num
+    </select>
+
+</mapper>

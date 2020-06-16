@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.OrganizationMapper">
+
+	<resultMap id="BaseResultMap" type="sc.system.model.WebScOrganization">
+	<id column="org_id" jdbcType="VARCHAR" property="orgId"/>
+        <result column="org_pid" jdbcType="VARCHAR" property="orgPid"/>
+        <result column="org_name" jdbcType="INTEGER" property="orgName"/>
+        <result column="org_address" jdbcType="INTEGER" property="orgAddress"/>
+        <result column="org_tel" jdbcType="TIMESTAMP" property="orgTel"/>
+        <result column="leader_name" jdbcType="TIMESTAMP" property="leaderName"/>
+        <result column="leader_tel" jdbcType="TIMESTAMP" property="leaderTel"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        org_id,
+		org_pid,
+		org_name,
+		org_address,
+		org_tel,
+		leader_name,
+		leader_tel,
+		province,
+		city,
+		area
+    </sql>
+    
+    <select id="selectByPrimaryKey" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_ORGANIZATION
+        where 1 = 1
+        
+    </select>
+    
+    <insert id="insert" parameterType="sc.system.model.WebScOrganization" >
+        insert into WSC_ORGANIZATION (org_id, org_pid, org_name, org_address, org_tel, leader_name, leader_tel, province, city, area)
+        values (#{orgId,jdbcType=VARCHAR}, #{orgPid,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, #{orgAddress,jdbcType=VARCHAR}, #{orgTel,jdbcType=VARCHAR},
+        		#{leaderName,jdbcType=VARCHAR},#{leaderTel,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{area,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScMenu">
+        update WSC_ORGANIZATION
+        set org_pid = #{orgPid,jdbcType=VARCHAR},
+        	org_name = #{orgName,jdbcType=VARCHAR},
+        	org_address = #{orgAddress,jdbcType=VARCHAR},
+        	org_tel = #{orgTel,jdbcType=VARCHAR},
+        	leader_name = #{leaderName,jdbcType=VARCHAR},
+        	leader_tel = #{leaderTel,jdbcType=VARCHAR},
+        	province = #{province,jdbcType=VARCHAR},
+        	city = #{city,jdbcType=VARCHAR},
+        	area = #{area,jdbcType=VARCHAR}
+        where org_id = #{orgId,jdbcType=VARCHAR}
+    </update>
+    
+</mapper>

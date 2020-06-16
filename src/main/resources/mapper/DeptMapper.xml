@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.DeptMapper">
+
+    <resultMap id="BaseResultMap" type="sc.system.model.WebScDept">
+        <id column="dept_id" jdbcType="INTEGER" property="deptId"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+    </resultMap>
+
+
+    <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScDept">
+        <id column="dept_id" jdbcType="INTEGER" property="deptId"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+        <collection property="children" ofType="aisino.system.model.Dept" select="selectAllTree" column="{parent_id = dept_id}"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        dept_id,
+		dept_name,
+		parent_id,
+		order_num,
+		create_time,
+		modify_time,
+		province,
+		city,
+		area
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_DEPT
+        where dept_id = #{deptId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from WSC_DEPT
+        where dept_id = #{deptId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" keyColumn="dept_id" keyProperty="deptId" parameterType="sc.system.model.WebScDept"
+            useGeneratedKeys="true">
+        insert into WSC_DEPT (dept_name, parent_id, order_num, create_time, modify_time)
+        values (#{deptName,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, #{orderNum,jdbcType=INTEGER},
+        		#{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScDept">
+        update WSC_DEPT
+        set dept_name = #{deptName,jdbcType=VARCHAR},
+        	parent_id = #{parentId,jdbcType=INTEGER},
+        	order_num = #{orderNum,jdbcType=INTEGER}
+        where dept_id = #{deptId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByParentId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_DEPT
+        where parent_id = #{parentId}
+        order by order_num
+    </select>
+
+    <select id="selectChildrenIDByPrimaryKey" resultType="java.lang.Integer">
+        select dept_id
+        from WSC_DEPT
+        where parent_id = #{deptId, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectMaxOrderNum" resultType="int">
+        select ifnull(max(order_num), 0)
+        from WSC_DEPT
+    </select>
+
+    <update id="swapSort">
+        UPDATE
+            WSC_DEPT AS per
+                JOIN
+                WSC_DEPT AS next
+                ON
+                        (per.`dept_id` = #{currentId} AND next.`dept_id` = #{swapId})
+                        OR
+                        (per.`dept_id` = #{swapId} AND next.`dept_id` = #{currentId})
+        SET per.`order_num`  = next.`order_num`,
+            next.`order_num` = per.`order_num`
+    </update>
+
+    <select id="selectAllTree" resultMap="TreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_DEPT
+        <where>
+            <choose>
+                <when test="parent_id!=null">
+                    and parent_id = #{parent_id}
+                </when>
+                <otherwise>
+                    and parent_id = 0
+                </otherwise>
+            </choose>
+        </where>
+        order by order_num
+    </select>
+
+</mapper>

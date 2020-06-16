@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.UserTokenMapper">
+
+    <resultMap id="BaseResultMap" type="sc.system.model.UserToken">
+        <id column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="token" jdbcType="VARCHAR" property="token"/>
+        <result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+        <result column="second" jdbcType="INTEGER" property="second"/>
+    </resultMap>
+    
+    <insert id="insertUserToken" parameterType="sc.system.model.UserToken">
+    	insert into S_USER_TOKEN(user_id, token) 
+    	values(#{userId,jdbcType=INTEGER}, #{token,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateUserToken" parameterType="sc.system.model.UserToken">
+    	update S_USER_TOKEN 
+    	set token = #{token,jdbcType=VARCHAR} 
+    	where 1=1 
+    	and user_id = #{userId,jdbcType=INTEGER}
+    </update>
+    
+    <select id="selectUserTokenByUserId" resultMap="BaseResultMap">
+        select user_id,
+        		token,
+        		DATE_FORMAT(create_date, '%Y-%m-%d %H:%i:%s') as create_date,
+        		TIMESTAMPDIFF(SECOND, create_date, NOW()) as second 
+        from S_USER_TOKEN
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+    
+    <select id="selectUserTokenByToken" resultMap="BaseResultMap">
+        select user_id,
+        		token,
+        		DATE_FORMAT(create_date, '%Y-%m-%d %H:%i:%s') as create_date,
+        		TIMESTAMPDIFF(SECOND, create_date, NOW()) as second 
+        from S_USER_TOKEN
+        where token = #{token,jdbcType=INTEGER}
+    </select>
+</mapper>

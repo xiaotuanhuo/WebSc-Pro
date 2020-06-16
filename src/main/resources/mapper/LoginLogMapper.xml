@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.LoginLogMapper">
+  <resultMap id="BaseResultMap" type="sc.system.model.LoginLog">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="login_time" jdbcType="TIMESTAMP" property="loginTime" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="login_status" jdbcType="CHAR" property="loginStatus" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    	id, 
+    	login_time, 
+    	username, 
+    	login_status, 
+    	ip
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from S_LOGIN_LOG
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from S_LOGIN_LOG where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="sc.system.model.LoginLog" useGeneratedKeys="true">
+    insert into S_LOGIN_LOG (login_time, username, login_status, ip)
+    values (#{loginTime,jdbcType=TIMESTAMP}, #{username,jdbcType=VARCHAR}, #{loginStatus,jdbcType=CHAR}, #{ip,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="sc.system.model.LoginLog">
+    update S_LOGIN_LOG
+    set login_time = #{loginTime,jdbcType=TIMESTAMP},
+      	username = #{username,jdbcType=VARCHAR},
+      	login_status = #{loginStatus,jdbcType=CHAR},
+      	ip = #{ip,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from S_LOGIN_LOG 
+    order by login_time desc
+  </select>
+
+  <select id="recentlyWeekLoginCount" parameterType="java.lang.String" resultType="int">
+    select
+      #   a.login_time,
+      ifnull(b.count, 0) as count
+    from (
+           SELECT curdate() as login_time
+           union all
+           SELECT date_sub(curdate(), interval 1 day) as click_date
+           union all
+           SELECT date_sub(curdate(), interval 2 day) as click_date
+           union all
+           SELECT date_sub(curdate(), interval 3 day) as click_date
+           union all
+           SELECT date_sub(curdate(), interval 4 day) as click_date
+           union all
+           SELECT date_sub(curdate(), interval 5 day) as click_date
+           union all
+           SELECT date_sub(curdate(), interval 6 day) as click_date
+         ) a left join (
+      select
+        date(login_time) as datetime,
+        count(*)         as count
+      from S_LOGIN_LOG 
+      where username = #{username}
+      group by date(login_time)
+    ) b on a.login_time = b.datetime order by login_time;
+  </select>
+
+  <select id="count" resultType="int">
+    	select count(*) from S_LOGIN_LOG
+  </select>
+</mapper>

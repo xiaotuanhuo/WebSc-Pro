@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.RoleOperatorMapper">
+
+    <resultMap id="BaseResultMap" type="sc.system.model.WebScRoleOperator">
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="sc.system.model.WebScRoleOperator">
+        insert into WSC_ROLE_OPERATOR (role_id, operator_id)
+        values (#{roleId,jdbcType=INTEGER}, #{operatorId,jdbcType=INTEGER})
+    </insert>
+    
+    <select id="getOperatorsByRoleId" resultType="java.lang.Integer">
+        select operator_id
+        from WSC_ROLE_OPERATOR
+        where role_id = #{roleId}
+    </select>
+
+    <delete id="deleteByRoleId">
+        delete
+        from WSC_ROLE_OPERATOR
+        where role_id = #{roleId}
+    </delete>
+
+    <insert id="insertRoleOperators">
+        INSERT INTO WSC_ROLE_OPERATOR(
+        role_id, operator_id
+        )VALUES
+        <foreach collection="operatorIds" item="operatorId" index="index" separator=",">
+            (
+            #{roleId}
+            ,#{operatorId}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteByOperatorId">
+        delete
+        from S_OPERATOR
+        where operator_id = #{operatorId}
+    </delete>
+
+</mapper>

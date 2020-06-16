@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>App编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,app-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.min.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/formSelects-v4.css}" />
+</head>
+
+<body>
+    <div class="z-body animated fadeIn">
+        <form action="" method="post" class="layui-form layui-form-pane">
+        	<div  class="layui-form-item">
+                <label for="appName" class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" id="appName" name="appName" th:value="${app?.appName}"
+                           lay-verify="required" lay-vertype="tips"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label for="appBackUrl" class="layui-form-label">路径</label>
+                <div class="layui-input-block">
+                    <input type="text" id="appBackUrl" name="appBackUrl" th:value="${app?.appBackUrl}"
+                           lay-verify="required" lay-vertype="tips"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label for="principal" class="layui-form-label">负责人</label>
+                <div class="layui-input-block">
+                    <input type="text" id="principal" name="principal" th:value="${app?.principal}"
+                           lay-verify="required" lay-vertype="tips"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label for="principalPhone" class="layui-form-label">负责人手机</label>
+                <div class="layui-input-block">
+                    <input type="text" id="principalPhone" name="principalPhone" th:value="${app?.principalPhone}"
+                           lay-verify="phone" lay-vertype="tips"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+            <div class="layui-upload">
+            	<button type="button" class="layui-btn" id="btnIcon">上传图片</button>
+<!-- 				  <div class="layui-upload-list"> -->
+				<div class="layui-input-block" style="margin-top: -38px;">
+				    <img class="layui-upload-img" id="icon" style="max-height: 25%; max-width: 25%;" th:src="${app?.appIconSrc} == null ? '' : ${app?.appIconSrc}">
+				    <p id="demoText"></p>
+				</div>
+				</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left:0;text-align:center;">
+                    <input type="hidden" id="appIcon" name="appIcon" th:value="${app?.appIcon}">
+                    <input type="hidden" id="appId" name="appId" th:value="${app?.appId}">
+                    <button th:text="${app}?'修改':'增加'"  class="layui-btn layui-btn-normal btn-w100" lay-submit="" data-th-lay-filter="${app}?'edit':'add'"></button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+
+    <script>
+        layui.config({
+            base: '/lib/layui/extend/'
+        }).extend({
+            formSelects: 'formSelects-v4'
+        }).use(['form', 'layer', 'formSelects', 'dtree', 'upload'], function () {
+            $ = layui.jquery;
+            var form = layui.form
+                , layer = layui.layer
+                , formSelects = layui.formSelects
+                , dtree = layui.dtree
+                , upload = layui.upload;
+
+            	
+            form.on('submit(add)', function (form) {
+                form.field.role = formSelects.value('role-select', 'val');
+                $.post('/app', form.field, function (result) {
+                    handlerResult(result, addDone);
+                });
+                return false;
+            });
+
+            //监听提交
+            form.on('submit(edit)', function (form) {
+                form.field._method = 'PUT';
+                form.field.role = formSelects.value('role-select', 'val');
+                $.post('/app', form.field, function (result) {
+                    handlerResult(result, editDone);
+                });
+                return false;
+            });
+
+            function addDone(data) {
+                layer.msg("添加成功", {icon: 6});
+            }
+
+            function editDone(data) {
+                layer.msg("修改成功", {icon: 6});
+            }
+            
+            //普通图片上传
+            var uploadInst = upload.render({
+              	elem: '#btnIcon'
+              	,url: '/app/updateIcon' //改成您自己的上传接口
+              	,before: function(obj){
+           			//预读本地文件示例，不支持ie8
+                	obj.preview(function(index, file, result){
+                		$('#icon').attr('src', result);
+                  		$('#appIcon').attr('value', file.name); //图片链接（base64）
+                	});
+              }
+              ,done: function(res){
+                	//如果上传失败
+                	if(res.code > 0){
+                  	return layer.msg('上传失败');
+                	}
+                	//上传成功
+              }
+              ,error: function(){
+                	//演示失败状态，并实现重传
+                	var demoText = $('#demoText');
+             	  	demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                	demoText.find('.demo-reload').on('click', function(){
+                  	uploadInst.upload();
+                });
+              }
+            });
+        });
+    </script>
+</body>
+
+</html>

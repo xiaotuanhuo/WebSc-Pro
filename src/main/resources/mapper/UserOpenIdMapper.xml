@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.UserOpenIdMapper">
+
+    <resultMap id="BaseResultMap" type="sc.system.model.UserOpenId">
+        <id column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+        <result column="second" jdbcType="INTEGER" property="second"/>
+    </resultMap>
+    
+    <resultMap id="BaseResultUserDataMap" type="sc.system.model.UserData">
+        <result column="user_name" jdbcType="VARCHAR" property="username"/>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+        <result column="phone" jdbcType="VARCHAR" property="tel"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="isLock" jdbcType="VARCHAR" property="isLock"/>
+    </resultMap>
+    
+    <insert id="insertUserOpenId" parameterType="sc.system.model.UserOpenId">
+    	insert into S_USER_OPENID(user_id, open_id) 
+    	values(#{userId,jdbcType=INTEGER}, #{openId,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateUserOpenId" parameterType="sc.system.model.UserOpenId">
+    	update S_USER_OPENID 
+    	set open_id = #{openId,jdbcType=VARCHAR} 
+    	where 1=1 
+    	and user_id = #{userId,jdbcType=INTEGER}
+    </update>
+    
+    <select id="selectUserOpenIdByUserId" resultMap="BaseResultMap">
+        select user_id,
+        		open_id,
+        		DATE_FORMAT(create_date, '%Y-%m-%d %H:%i:%s') as create_date,
+        		TIMESTAMPDIFF(SECOND, create_date, NOW()) as second 
+        from S_USER_OPENID
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+    
+    <select id="selectUserDataByOpendId" resultMap="BaseResultUserDataMap">
+        select SU.user_name,
+        	   SU.sex,
+        	   SU.phone,
+        	   SU.email,
+        	   case SU.STATUS when 0 then 1 else 0 end as isLock 
+        from S_USER_OPENID SUO 
+        LEFT JOIN S_USER SU ON SUO.USER_ID = SU.USER_ID 
+        where SUO.open_id = #{openId, jdbcType=INTEGER}
+    </select>
+    
+    <select id="selectUserOpenIdByOpenId" resultMap="BaseResultMap">
+    	select user_id,
+        		open_id,
+        		DATE_FORMAT(create_date, '%Y-%m-%d %H:%i:%s') as create_date,
+        		TIMESTAMPDIFF(SECOND, create_date, NOW()) as second 
+        from S_USER_OPENID
+        where open_id = #{openid,jdbcType=INTEGER}
+    </select>
+</mapper>

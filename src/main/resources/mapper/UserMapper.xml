@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="sc.system.model.WebScUser">
+        <id column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="login_name" jdbcType="VARCHAR" property="loginName"/>
+        <result column="login_pwd" jdbcType="VARCHAR" property="loginPwd"/>
+        <result column="salt" jdbcType="VARCHAR" property="salt"/>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+ 		<result column="age" jdbcType="INTEGER" property="age"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="id_card" jdbcType="VARCHAR" property="idCard"/>
+       	<result column="certificate_no" jdbcType="VARCHAR" property="certificateNo"/>
+        <result column="occupational_no" jdbcType="VARCHAR" property="occupationalNo"/>
+        <result column="role_id" jdbcType="VARCHAR" property="roleId"/>
+        <result column="role_type_id" jdbcType="VARCHAR" property="roleTypeId"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+        <result column="patient_type" jdbcType="VARCHAR" property="patientType"/>
+        <result column="operation_type" jdbcType="VARCHAR" property="operationType"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="last_login_time" jdbcType="VARCHAR" property="lastLoginTime"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+        <result column="modify_time" jdbcType="VARCHAR" property="modifyTime"/>
+        <result column="photo" jdbcType="VARCHAR" property="photo" />
+        <result column="wxopenid" jdbcType="VARCHAR" property="wxOpenid"/>
+        <result column="wxuserId" jdbcType="VARCHAR" property="wxUserid"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+            user_id,
+			user_name,
+			login_name,
+			login_pwd,
+			salt,
+			sex,
+			age,
+			phone,
+			email,
+			id_card,
+			certificate_no,
+			occupational_no,
+			titles,
+			titles_no,
+			role_id,
+			role_type_id,
+			province,
+			city,
+			area,
+			patient_type,
+			operation_type,
+			status,
+			last_login_time,
+			create_time,
+			modify_time,
+			photo,
+			wx_openid,
+			wx_userId
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_USER
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from WSC_USER
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" keyColumn="user_id" keyProperty="userId" parameterType="sc.system.model.WebScUser" useGeneratedKeys="true">
+        insert into WSC_USER (user_name,
+							  	login_name,
+							  	login_pwd,
+								salt,
+								sex,
+								age,
+								phone,
+								email,
+								id_card,
+								certificate_no,
+								occupational_no,
+								titles,
+								titles_no,
+								role_id,
+								role_type_id,
+								province,
+								city,
+								area,
+								patient_type,
+								operation_type,
+								status,
+								photo
+							)
+        			values (#{userName,jdbcType=VARCHAR},
+        					#{loginName,jdbcType=VARCHAR},
+        					#{loginPwd,jdbcType=VARCHAR},
+        					#{salt,jdbcType=VARCHAR},
+        					#{sex,jdbcType=VARCHAR},
+        					#{age,jdbcType=INTEGER},
+        					#{phone,jdbcType=VARCHAR},
+        					#{email,jdbcType=VARCHAR},
+        					#{idCard,jdbcType=VARCHAR},
+        					#{certificateNo,jdbcType=VARCHAR},
+        					#{occupationalNo,jdbcType=VARCHAR},
+        					#{titles,jdbcType=VARCHAR},
+        					#{titlesNo,jdbcType=VARCHAR},
+        					#{roleId,jdbcType=VARCHAR},
+        					#{roleTypeId,jdbcType=VARCHAR},
+        					#{province,jdbcType=VARCHAR},
+        					#{city,jdbcType=VARCHAR},
+        					#{area,jdbcType=VARCHAR},
+        					#{patientType,jdbcType=VARCHAR},
+        					#{operationType,jdbcType=VARCHAR},
+        					#{status,jdbcType=INTEGER},
+        					#{photo,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScUser">
+        update WSC_USER
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="loginName != null">
+                login_name = #{loginName,jdbcType=VARCHAR},
+            </if>
+            <if test="loginPwd != null">
+                login_pwd = #{loginPwd,jdbcType=VARCHAR},
+            </if>
+            <if test="salt != null">
+                salt = #{salt,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null">
+                age = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="idCard != null">
+                id_card = #{idCard,jdbcType=VARCHAR},
+            </if>
+            <if test="certificateNo != null">
+                certificate_no = #{certificateNo,jdbcType=VARCHAR},
+            </if>
+            <if test="occupationalNo != null">
+                occupational_no = #{occupationalNo,jdbcType=VARCHAR},
+            </if>
+            <if test="titles != null">
+                titles = #{titles,jdbcType=VARCHAR},
+            </if>
+            <if test="titlesNo != null">
+                titles_no = #{titlesNo,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=VARCHAR},
+            </if>
+            <if test="roleTypeId != null">
+                role_type_id = #{roleTypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null">
+                area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="patientType != null">
+                patient_type = #{patientType,jdbcType=VARCHAR},
+            </if>
+            <if test="operationType != null">
+                operation_type = #{operationType,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="photo != null">
+                photo = #{photo,jdbcType=INTEGER}
+            </if>
+            <if test="wxOpenid != null">
+                wx_openid = #{wxOpenid,jdbcType=INTEGER}
+            </if>
+            <if test="wxUserid != null">
+                wx_userid = #{wxUserid,jdbcType=INTEGER}
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+    
+    <select id="selectPermsByLoginName" resultType="String" parameterType="String">
+        select menu.perms
+        from WSC_USER,
+             WSC_ROLE,
+             S_MENU,
+             WSC_ROLE_MENU
+        where WSC_USER.role_id = WSC_ROLE.role_id
+          and WSC_ROLE.role_id = WSC_ROLE_MENU.role_id
+          and S_MENU.menu_id = WSC_ROLE_MENU.menu_id
+          and WSC_USER.login_name = #{loginName, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectRoleNameByLoginName" resultType="String" parameterType="String">
+        select WSC_ROLE.role_name
+        from WSC_USER,
+             WSC_ROLE,
+             WSC_USER_ROLE
+        where WSC_USER.role_id = WSC_ROLE.role_id
+          and WSC_USER.login_name = #{loginName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectOneByLoginName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_USER
+        where login_name = #{loginname,jdbcType=VARCHAR} limit 1
+    </select>
+
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_USER
+    </select>
+
+    <update id="updateStatusByPrimaryKey">
+        update WSC_USER
+        set status = #{status}
+        where user_id = #{id}
+    </update>
+
+    <update id="updateLastLoginTimeByLoginName">
+        update WSC_USER
+        set last_login_time = current_timestamp
+        where login_name = #{loginname}
+    </update>
+
+    <select id="countByLoginName" resultType="java.lang.Integer">
+        select count(*)
+        from WSC_USER
+        where login_name = #{loginname}
+    </select>
+
+    <select id="countByLoginNameNotIncludeUserId" resultType="java.lang.Integer">
+        select count(*)
+        from WSC_USER
+        where login_name = #{loginname}
+          and user_id != #{userId}
+    </select>
+
+    <select id="selectRoleIdsByUserId" resultType="java.lang.Integer">
+        select role_id
+        from WSC_USER_ROLE
+        where user_id = #{userId}
+    </select>
+
+<!--     <select id="selectByActiveCode" resultMap="BaseResultMap"> -->
+<!--         select -->
+<!--         <include refid="Base_Column_List"/> -->
+<!--         from user where active_code = #{activeCode} -->
+<!--     </select> -->
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(*)
+        from WSC_USER
+    </select>
+
+    <select id="selectOperatorPermsByLoginName" resultType="String" parameterType="String">
+        select WSC_OPERATOR.perms
+        from WSC_USER,
+             WSC_ROLE,
+             WSC_OPERATOR,
+             WSC_ROLE_OPERATOR
+        where WSC_USER.role_id = WSC_ROLE.role_id
+          and WSC_ROLE.role_id = WSC_ROLE_OPERATOR.role_id
+          and WSC_OPERATOR.operator_id = WSC_ROLE_OPERATOR.operator_id
+          and WSC_USER.login_name = #{loginname, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updatePasswordByUserId">
+        update WSC_USER
+        set login_pwd = #{loginPwd},
+            salt     = #{salt}
+        where user_id = #{userId}
+    </update>
+
+    <select id="selectAllWithGroup" resultMap="BaseResultMap">
+        select u.user_id,
+				u.user_name,
+				u.login_name,
+				u.salt,
+				u.sex,
+				u.age,
+				u.phone,
+				u.email,
+				u.status,
+				u.last_login_time,
+				u.create_time,
+				u.modify_time,
+				u.photo,
+				u.wx_openid,
+				u.wx_userId,
+               	r.role_name
+        from WSC_USER u
+    	left join WSC_ROLE r on u.role_id = r.role_id
+        <where>
+            <if test="userName != null and userName != ''">
+                AND u.user_name like CONCAT(#{userName}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND u.phone like CONCAT(#{phone}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <update id="activeUserByUserId">
+        update WSC_USER
+        set status = 1
+        where user_id = #{userId}
+    </update>
+
+</mapper>
