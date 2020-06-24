@@ -6,6 +6,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -26,6 +27,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
             "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM",
             "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM",
             "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM"};
+    
+    private final static Calendar calendar = Calendar.getInstance();
 
     /**
      * 获取当前Date型日期
@@ -123,4 +126,51 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         // long sec = diff % nd % nh % nm / ns;
         return day + "天" + hour + "小时" + min + "分钟";
     }
+    
+    /**
+	 * 返回指定日期实例的年(4位)
+	 */
+	public static int getYear(Date date){
+		calendar.setTime(date);
+		return calendar.get(Calendar.YEAR);
+	}
+	/**
+	 * 返回指定日期实例的月（以0-11表示）
+	 */
+	public static int getMonth(Date date){
+		calendar.setTime(date);
+		return calendar.get(Calendar.MONTH);
+	}
+	/**
+	 * 返回指定日期实例的日
+	 */
+	public static int getDay(Date date){
+		calendar.setTime(date);
+		return calendar.get(Calendar.DAY_OF_MONTH);
+	}
+	/**
+	 * 返回指定日期实例的小时（24小时制）
+	 */
+	public static int getHour(Date date){
+		calendar.setTime(date);
+		return calendar.get(Calendar.HOUR_OF_DAY);
+	}
+	/**
+	 * 返回指定日期实例的分钟
+	 */
+	public static int getMinute(Date date){
+		calendar.setTime(date);
+		return calendar.get(Calendar.MINUTE);
+	}
+	/**
+	 * 返回指定日期实例的秒
+	 */
+	public static int getSecond(Date date){
+		calendar.setTime(date);
+		return calendar.get(Calendar.SECOND);
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(getHour(new Date()));
+	}
 }

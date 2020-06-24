@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>备案管理</title>
+	<link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicon.ico}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon.ico}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</head>
+<body class="z-body">
+	<div class="searchDiv" style="margin-bottom:20px;">
+		<div class="layui-row">
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+				医生姓名：
+				<div class="layui-inline">
+					<input class="layui-input" name="doctorNameInput" id="doctorNameInput" autocomplete="off">
+				</div>
+			</div>
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+				医疗机构名称：
+				<div class="layui-inline">
+					<input class="layui-input" name="orgNameInput" id="orgNameInput" autocomplete="off">
+				</div>
+			</div>
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+				<button class="layui-btn" data-type="reload">
+					<i class="layui-icon layui-icon-search"></i>搜索
+				</button>
+			</div>
+		</div>
+	</div>
+	<table class="layui-hide" id="doctorRecordTable" lay-filter="doctorRecordTableFilter"></table>
+	
+	<script type="text/html" id="recordBar">
+  		<a lay-event="edit">
+			<i class="layui-icon layui-icon-edit zadmin-blue zadmin-icon zadmin-oper-area" title="编辑"></i>
+		</a>
+		<a lay-event="delete">
+			<i class="layui-icon layui-icon-delete zadmin-red zadmin-icon zadmin-oper-area" title="删除"></i>
+		</a>
+	</script>
+	
+	<script type="text/html" id="recordHeaderToolbar">
+  		<div class="layui-btn-container">
+    		<button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">
+				<i class="layui-icon layui-icon-add-1"></i>增加
+			</button>
+    		<button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="import">
+				<i class="layui-icon layui-icon-upload-circle"></i>导入
+			</button>
+  		</div>
+	</script>
+	
+	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
+	<script th:src="@{/lib/layui/layui.js}"></script>
+    <script th:src="@{/lib/layui/lay/modules/layer.js}"></script>
+    
+    <script th:inline="javascript">
+	    layui.use(['table','layer','laydate','form','upload'], function(){
+	  	  var table = layui.table;
+	  	  var $ = layui.$;
+	  	  var layer = layui.layer;
+	  	  var laydate = layui.laydate;
+	  	  var form = layui.form;
+	  	  var upload = layui.upload;
+	  	  
+	  	  table.render({
+	  	    elem: '#doctorRecordTable'
+	  	    ,toolbar: '#recordHeaderToolbar' //开启头部工具栏，并为其绑定左侧模板
+	  	    ,defaultToolbar: ['filter', 'exports', 'print']
+	  	    ,url:'/record/getDoctorRecords'
+	  	    ,method : 'post' //默认：get请求
+	  	    ,where : {
+	  			doctorName: $('#doctorNameInput').val(),
+			    orgName: $('#orgNameInput').val()
+			}
+			,contentType : 'application/json'
+	  	    ,cols: [
+	  	    	[
+	  	    		{field:'recordId', title: 'Id', hide: true}
+	  	    		,{field:'userId', title: '用户Id', hide: true}
+		    	    ,{field:'orgId', title: '医疗机构Id', hide: true}
+		    	    ,{type: 'numbers', title: '序号', align: 'center', width:'5%'}
+		    	    ,{field:'doctorName', width:'15%', align: 'center', title: '医生姓名'}
+		    	    ,{field:'doctorPhone', width:'10%', align: 'center', title: '医生手机号'}
+		    	    ,{field:'orgName', width:'15%', align: 'center', title: '医疗机构'}
+		    	    ,{field:'recordDate', width:'15%', align: 'center', title: '备案日期'}
+		    	    ,{field:'endDate', width:'15%', align: 'center', title: '截止日期'}
+		    	    ,{field:'createDate', width:'15%', align: 'center', title: '创建日期'}
+		    	    ,{fixed: 'right', width:'10%', align:'center', toolbar: '#recordBar'}
+	  	    	]
+	  	    ]
+	  	  	,id: 'recordTableReload'
+	  		,page: true
+	  		,height: 400
+	  	  });
+	  	  
+	  	  var active = {
+	  		reload: function(){
+	  			//执行重载
+	  			table.reload('recordTableReload', {
+	  			    page: {
+	  			    	curr: 1 //重新从第 1 页开始
+	  			    }
+		    		,where: {
+		    			doctorName: $('#doctorNameInput').val().trim(),
+		    			orgName: $('#orgNameInput').val().trim()
+		    		}
+	  			});
+	  		}
+	  	  };
+	  			  
+	  	  $('.searchDiv .layui-btn').on('click', function(){
+	  		var type = $(this).data('type');
+	  		active[type] ? active[type].call(this) : '';
+	  	  });
+	  	  
+	  	  var layerIndex;
+	  	  
+	  	  //监听工具条
+	  	  table.on('tool(doctorRecordTableFilter)', function(obj){
+	  	    var data = obj.data;
+	  	    if(obj.event === 'edit'){
+	  	    	var editContent = '<div class="layui-form" action="" style="margin-top:20px;">'+
+	  	    						'<input name="userId" value="'+data.recordId+'"class="layui-input" type="hidden"/>'+
+	  	    						'<input name="userId" value="'+data.userId+'"class="layui-input" type="hidden"/>'+
+	  	    						'<input name="orgId" value="'+data.orgId+'"class="layui-input" type="hidden"/>'+
+	  	    						'<input name="createDate" value="'+data.createDate+'"class="layui-input" type="hidden"/>'+
+		  	    					'<div class="layui-form-item">'+
+	                    				'<div class="layui-col-md6">'+
+	                						'<div class="layui-inline">'+
+	                    						'<label class="layui-form-label" style="width:60px;">医生姓名</label>'+
+	                    						'<div class="layui-input-inline">'+
+	                        						'<input id="doctorName" name="doctorName" value="'+data.doctorName+'" lay-verify="required" class="layui-input" type="text" placeholder="医生姓名"/>'+
+	                    						'</div>'+
+	                						'</div>'+
+	            						'</div>'+
+	            						'<div class="layui-col-md6">'+
+	                						'<div class="layui-inline">'+
+	                    						'<label class="layui-form-label" style="width:60px;">医疗机构</label>'+
+	                    						'<div class="layui-input-inline">'+
+	                        						'<input id="orgName" name="orgName" value="'+data.orgName+'" lay-verify="required" class="layui-input" type="text" placeholder="医疗机构"/>'+
+	                    						'</div>'+
+	                						'</div>'+
+	            						'</div>'+
+	        						'</div>'+
+	        						'<div class="layui-form-item">'+
+	            						'<div class="layui-col-md6">'+
+	                						'<div class="layui-inline">'+
+	                    						'<label class="layui-form-label" style="width:60px;">截止日期</label>'+
+	                    						'<div class="layui-input-inline">'+
+	                        						'<input id="endDate" name="endDate" value="'+data.endDate+'" lay-verify="required" class="layui-input" type="text" placeholder="截止日期"/>'+
+	                    						'</div>'+
+	                						'</div>'+
+	            						'</div>'+
+	            						'<div class="layui-col-md6">'+
+	                						'<div class="layui-inline">'+
+	                    						'<label class="layui-form-label" style="width:60px;">备案日期</label>'+
+							                    '<div class="layui-input-inline">'+
+							                        '<input id="recordDate" name="recordDate" value="'+data.recordDate+'" lay-verify="required" class="layui-input" type="text" placeholder="备案日期"/>'+
+							                    '</div>'+
+	                						'</div>'+
+	            						'</div>'+
+	        						'</div>'+
+	        						'<div class="layui-form-item">'+
+		        						'<div class="layui-col-md6">'+
+		            						'<div class="layui-inline">'+
+		                						'<label class="layui-form-label" style="width:80px;">医生手机号</label>'+
+							                    '<div class="layui-input-inline">'+
+							                        '<input id="doctorPhone" name="doctorPhone" value="'+data.doctorPhone+'" lay-verify="phone" class="layui-input" type="text" placeholder="医生手机号"/>'+
+							                    '</div>'+
+		            						'</div>'+
+		        						'</div>'+
+	        						'</div>'+
+	        						'<div class="layui-form-item">'+
+		        						'<div class="layui-col-md12">'+
+		            						'<div class="layui-inline-block" style="text-align:center;">'+
+		                						'<button class="layui-btn" lay-submit lay-filter="updRecordForm">确认修改</button>'+
+		            						'</div>'+
+		        						'</div>'+
+	        						'</div>'+
+        						'</div>';
+	  	    	
+        		layerIndex = layer.open({
+	  	    	  type: 1, 
+	  	    	  title: '编辑',
+    			  area: ['650px', '400px'],
+	  	    	  content: editContent
+	  	    	});
+	  	    	
+	  	      //备案时间
+	      	  laydate.render({
+	      	    elem: '#recordDate'
+	      	    ,type: 'datetime'
+	      	  });
+	      	  //截止时间
+	      	  laydate.render({
+	      	    elem: '#endDate'
+	      	    ,type: 'datetime'
+	      	  });
+	  	    }else if(obj.event === 'delete'){
+	  	    	$.ajax({
+					type: "POST",
+			        dataType: "json",
+				    data: JSON.stringify(data),
+			        url: "/record/deleteRecord",
+			        contentType: "application/json",
+			        success:function(resData){
+			        	if(resData.code == 0){
+			        		table.reload('recordTableReload', {
+				  			    page: {
+				  			    	curr: 1
+				  			    }
+					    		,where: {
+					    			doctorName: $('#doctorNameInput').val().trim(),
+					    			orgName: $('#orgNameInput').val().trim()
+					    		}
+				  			});
+			        	}else{
+			        		layer.alert(resData.msg);
+			        	}
+			     	},
+			     	error: function () {
+			     		layer.alert('系统繁忙！', {icon: 1, title:'温馨提示'});
+				 	}
+			   });
+	  	    }
+	  	  });
+	  	  
+	  	  //record编辑
+	  	  form.on('submit(updRecordForm)', function(data){
+	  		$.ajax({
+				type: "POST",
+		        dataType: "json",
+			    data: JSON.stringify(data.field),
+		        url: "/record/editRecord",
+		        contentType: "application/json",
+		        success:function(resData){
+		        	if(resData.code == 0){
+		        		layer.close(layerIndex);
+		        		
+		        		table.reload('recordTableReload', {
+			  			    page: {
+			  			    	curr: 1
+			  			    }
+				    		,where: {
+				    			doctorName: $('#doctorNameInput').val().trim(),
+				    			orgName: $('#orgNameInput').val().trim()
+				    		}
+			  			});
+		        	}else{
+		        		layer.alert(resData.msg);
+		        	}
+		     	},
+		     	error: function () {
+		     		layer.alert('系统繁忙！', {icon: 1, title:'温馨提示'});
+			 	}
+		   });
+	  	  });
+	  	  
+	  	  //头工具栏事件
+	  	  table.on('toolbar(doctorRecordTableFilter)', function(obj){
+	  	    switch(obj.event){
+	  	      case 'add':
+		  	    	var addContent = '<div class="layui-form" action="" style="margin-top:20px;">'+
+					  '<div class="layui-form-item">'+
+	    				'<div class="layui-col-md6">'+
+							'<div class="layui-inline">'+
+	    						'<label class="layui-form-label" style="width:60px;">医生姓名</label>'+
+	    						'<div class="layui-input-inline">'+
+	        						'<input id="doctorName" name="doctorName" lay-verify="required" class="layui-input" type="text" placeholder="医生姓名"/>'+
+	    						'</div>'+
+							'</div>'+
+						'</div>'+
+						'<div class="layui-col-md6">'+
+							'<div class="layui-inline">'+
+	    						'<label class="layui-form-label" style="width:60px;">医疗机构</label>'+
+	    						'<div class="layui-input-inline">'+
+	        						'<input id="orgName" name="orgName" lay-verify="required" class="layui-input" type="text" placeholder="医疗机构"/>'+
+	    						'</div>'+
+							'</div>'+
+						'</div>'+
+					'</div>'+
+					'<div class="layui-form-item">'+
+						'<div class="layui-col-md6">'+
+							'<div class="layui-inline">'+
+	    						'<label class="layui-form-label" style="width:60px;">截止日期</label>'+
+	    						'<div class="layui-input-inline">'+
+	        						'<input id="endDate" name="endDate" lay-verify="required" class="layui-input" type="text" placeholder="截止日期"/>'+
+	    						'</div>'+
+							'</div>'+
+						'</div>'+
+						'<div class="layui-col-md6">'+
+							'<div class="layui-inline">'+
+	    						'<label class="layui-form-label" style="width:60px;">备案日期</label>'+
+			                    '<div class="layui-input-inline">'+
+			                        '<input id="recordDate" name="recordDate" lay-verify="required" class="layui-input" type="text" placeholder="备案日期"/>'+
+			                    '</div>'+
+							'</div>'+
+						'</div>'+
+					'</div>'+
+					'<div class="layui-form-item">'+
+						'<div class="layui-col-md6">'+
+							'<div class="layui-inline">'+
+	    						'<label class="layui-form-label" style="width:80px;">医生手机号</label>'+
+			                    '<div class="layui-input-inline">'+
+			                        '<input id="doctorPhone" name="doctorPhone" lay-verify="phone" class="layui-input" type="text" placeholder="医生手机号"/>'+
+			                    '</div>'+
+							'</div>'+
+						'</div>'+
+					'</div>'+
+					'<div class="layui-form-item">'+
+						'<div class="layui-col-md12">'+
+							'<div class="layui-inline-block" style="text-align:center;">'+
+	    						'<button class="layui-btn" lay-submit lay-filter="addRecordForm">确认添加</button>'+
+							'</div>'+
+						'</div>'+
+					'</div>'+
+				'</div>';
+	
+				layerIndex = layer.open({
+					type: 1, 
+					title: '增加',
+					area: ['650px', '400px'],
+					content: addContent
+				});
+				
+				//备案时间
+				laydate.render({
+					elem: '#recordDate'
+					,type: 'datetime'
+				});
+				//截止时间
+				laydate.render({
+					elem: '#endDate'
+					,type: 'datetime'
+				});
+	  	      	break;
+	  	      case 'import':
+	  	    	var addContent = '<div class="layui-upload" style="text-align:center;">'+
+						  	    	'<div class="layui-upload-list">'+
+							  	      '<table class="layui-table">'+
+							  	        '<thead>'+
+							  	          '<tr><th>文件名</th>'+
+							  	          '<th>大小</th>'+
+							  	          '<th>状态</th>'+
+							  	        '</tr></thead>'+
+							  	        '<tbody id="recordList"></tbody>'+
+							  	      '</table>'+
+							  	    '</div>'+
+	  	    						'<button type="button" class="layui-btn" id="uploadRecordList" style="margin-right:10px;"><i class="layui-icon layui-icon-add-1"></i>选择文件</button>'+
+	  	    	  					'<button type="button" class="layui-btn" id="uploadRecordListAction"><i class="layui-icon layui-icon-upload-drag"></i>开始上传</button>'+
+	  	    					'</div>';
+	  	    	layerIndex = layer.open({
+	  	    		type: 1, 
+	  	    		title: '批量导入',
+	  	    		area: ['650px', '400px'],
+	  	    		content: addContent
+	  	    	});
+	  	    	
+	  	      //文件上传
+	  	      var fileIndex;
+	  	      var recordListView = $('#recordList');
+	  	  	  var uploadListIns = upload.render({
+	  	  	    elem: '#uploadRecordList'
+	  	  	    ,url: '/record/importRecords'
+	  	  	    ,accept: 'file'
+	  	  	    ,exts: 'xlsx|xls'
+	  	  	    ,auto: false
+	  	  	    ,bindAction: '#uploadRecordListAction'
+	  	  	    ,choose: function(obj){
+	  	  	    	var files = obj.pushFile();
+	  	  	    	delete files[fileIndex];
+		  	  	    //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+		  	  	    obj.preview(function(index, file, result){
+		  	  	      fileIndex = index;
+		  	  	      //这里还可以做一些 append 文件列表 DOM 的操作
+			  	  	  var tr = $(['<tr id="upload-'+ index +'">'
+			  	          ,'<td>'+ file.name +'</td>'
+			  	          ,'<td>'+ (file.size/1024).toFixed(1) +'kb</td>'
+			  	          ,'<td>等待导入</td>'
+			  	        ,'</tr>'].join(''));
+		  	  	      
+			  	  	  recordListView.html(tr);
+		  	  	    });
+	  	  	    }
+		  	  	,before: function(obj){
+		  	  	  var tr = recordListView.find('tr#upload-'+ fileIndex)
+	  	          ,tds = tr.children();
+	  	          tds.eq(2).html('<i class="layui-icon layui-icon-loading"></i>');
+		  	    }
+	  	  	    ,done: function(res, index, upload){
+		  	  	    if(res.code == 0){ //上传成功
+		  	          var tr = recordListView.find('tr#upload-'+ fileIndex)
+		  	          ,tds = tr.children();
+		  	          tds.eq(2).html('<span style="color: #5FB878;">'+res.msg+'</span>');
+		  	          tds.eq(2).css('text-align','left');
+		  	          return delete this.files[index]; //删除文件队列已经上传成功的文件
+		  	        }else{
+		  	        	var tr = recordListView.find('tr#upload-'+ fileIndex)
+			  	          ,tds = tr.children();
+			  	          tds.eq(2).html('<span style="color: #FF5722;">'+res.msg+'</span>');
+			  	          tds.eq(2).css('text-align','left');
+			  	          return delete this.files[index];
+		  	        }
+	  	  	    }
+	  	  	    ,error: function(index, upload){
+	  	  	      layer.msg('导入失败');
+	  	  	    }
+	  	  	  });
+	  	      
+	  	      break;
+	  	    };
+	  	  });
+	  	  //record增加
+	  	  form.on('submit(addRecordForm)', function(data){
+	  		 $.ajax({
+				type: "POST",
+		        dataType: "json",
+			    data: JSON.stringify(data.field),
+		        url: "/record/addRecord",
+		        contentType: "application/json",
+		        success:function(resData){
+		        	if(resData.code == 0){
+		        		layer.close(layerIndex);
+		        		
+		        		table.reload('recordTableReload', {
+			  			    page: {
+			  			    	curr: 1
+			  			    }
+				    		,where: {
+				    			doctorName: $('#doctorNameInput').val().trim(),
+				    			orgName: $('#orgNameInput').val().trim()
+				    		}
+			  			});
+		        	}else{
+		        		layer.alert(resData.msg);
+		        	}
+		     	},
+		     	error: function () {
+		     		layer.alert('系统繁忙！', {icon: 1, title:'温馨提示'});
+			 	}
+		   });
+	  	  });
+	  	});
+    </script>
+</body>
+</html>

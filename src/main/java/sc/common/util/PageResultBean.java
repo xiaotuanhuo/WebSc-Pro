@@ -10,8 +10,12 @@ public class PageResultBean<T> implements Serializable {
     private long count;
     private int code;
     private List<T> data;
+    
+    public PageResultBean() {
+		super();
+	}
 
-    public PageResultBean(long count, List<T> data) {
+	public PageResultBean(long count, List<T> data) {
         this.count = count;
         this.data = data;
     }

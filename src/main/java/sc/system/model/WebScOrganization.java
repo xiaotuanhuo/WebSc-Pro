@@ -110,4 +110,12 @@ public class WebScOrganization {
 	public void setOrgParentId(String orgParentId) {
 		this.orgParentId = orgParentId;
 	}
+
+	@Override
+	public String toString() {
+		return "WebScOrganization [orgId=" + orgId + ", orgPid=" + orgPid + ", orgName=" + orgName + ", orgAddress="
+				+ orgAddress + ", orgTel=" + orgTel + ", leaderName=" + leaderName + ", leaderTel=" + leaderTel
+				+ ", province=" + province + ", city=" + city + ", area=" + area + ", orgParentId=" + orgParentId + "]";
+	}
+	
 }

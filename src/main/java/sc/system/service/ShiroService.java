@@ -63,6 +63,8 @@ public class ShiroService {
 //        filterChainDefinitionMap.put("/oauth2/render/*", "anon");
 //        filterChainDefinitionMap.put("/oauth2/error", "anon");
         filterChainDefinitionMap.put("/captcha", "anon");
+        filterChainDefinitionMap.put("/calendar/**", "anon");
+        filterChainDefinitionMap.put("/record/**", "anon");
 
         List<WebScMenu> menuList = menuService.getLeafNodeMenu();
         for (WebScMenu menu : menuList) {
