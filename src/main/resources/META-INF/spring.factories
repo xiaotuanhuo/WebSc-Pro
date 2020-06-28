@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=sc.common.config.exculd.DataAuthConfig

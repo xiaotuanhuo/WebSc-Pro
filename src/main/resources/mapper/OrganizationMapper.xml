@@ -36,6 +36,18 @@
         
     </select>
     
+    <select id="getList" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_ORGANIZATION where org_pid != '0'
+    </select>
+    
+    <select id="selectAll" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_ORGANIZATION
+    </select>
+    
     <insert id="insert" parameterType="sc.system.model.WebScOrganization" >
         insert into WSC_ORGANIZATION (org_id, org_pid, org_name, org_address, org_tel, leader_name, leader_tel, province, city, area)
         values (#{orgId,jdbcType=VARCHAR}, #{orgPid,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, #{orgAddress,jdbcType=VARCHAR}, #{orgTel,jdbcType=VARCHAR},

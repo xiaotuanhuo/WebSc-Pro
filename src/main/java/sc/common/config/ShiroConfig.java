@@ -1,11 +1,14 @@
 package sc.common.config;
 
+import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.Filter;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
@@ -19,6 +22,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.io.ClassPathResource;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import sc.common.shiro.EnhanceModularRealmAuthenticator;
 import sc.common.shiro.RestShiroFilterFactoryBean;
@@ -28,12 +35,16 @@ import sc.common.shiro.filter.RestAuthorizationFilter;
 import sc.common.shiro.filter.RestFormAuthenticationFilter;
 import sc.common.shiro.realm.LoginNameRealm;
 import sc.common.shiro.realm.PhoneRealm;
+import sc.system.model.vo.CDO;
+import sc.system.model.vo.District;
 import sc.system.service.ShiroService;
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 
 @Configuration
 public class ShiroConfig {
 
+	private static Map<String, CDO> cdoMap = new HashMap<String, CDO>();
+	
     @Lazy
     @Resource
     private ShiroService shiroService;
@@ -140,5 +151,43 @@ public class ShiroConfig {
         sessionManager.setSessionDAO(redisSessionDAO());
         sessionManager.setSessionIdUrlRewritingEnabled(false);
         return sessionManager;
+    }
+    
+    @Bean(value = "district")
+    public District district() {
+    	District district = new District();
+    	try {
+    		// 读取数据权限json文件
+    		ClassPathResource classPathResource = new ClassPathResource("/static/lib/layui/json/address.json");
+    		String districtJson = IOUtils.toString(new InputStreamReader(classPathResource.getInputStream(), "UTF-8"));
+    		JSONArray jsonArray = JSONObject.parseArray(districtJson);
+    		Map<String, CDO> map = getDistrict(jsonArray, "0");		// 省级区划父节点为0
+    		district.setDistrictMap(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return district;
+    }
+    
+    /**
+     * 递归获取所有行政区划
+     * @param jsonArray
+     * @param parentId
+     * @return
+     */
+    private static Map<String, CDO> getDistrict(JSONArray jsonArray, String parentId) {
+    	for (int i = 0; i < jsonArray.size(); i++) {
+    		CDO cdo = new CDO();
+    		String id = jsonArray.getJSONObject(i).getString("code");
+    		cdo.setId(id);
+    		cdo.setName(jsonArray.getJSONObject(i).getString("name"));
+    		cdo.setParentId(parentId);
+        	JSONArray recursiveArray = jsonArray.getJSONObject(i).getJSONArray("childs");
+        	if (recursiveArray != null) {
+				getDistrict(recursiveArray, id);
+			}
+        	cdoMap.put(id, cdo);
+    	}
+    	return cdoMap;
     }
 }

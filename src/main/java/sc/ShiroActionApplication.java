@@ -4,17 +4,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
 @MapperScan("sc.system.mapper")
-public class ShiroActionApplication extends SpringBootServletInitializer{
-	
+@ComponentScan(basePackages = {
+		"sc" }, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "sc.common.config.exculd.*"))
+public class ShiroActionApplication extends SpringBootServletInitializer {
+
 	@Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(ShiroActionApplication.class);
-    }
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(ShiroActionApplication.class);
+	}
 	
-    public static void main(String[] args) {
-        SpringApplication.run(ShiroActionApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(ShiroActionApplication.class, args);
+	}
 }

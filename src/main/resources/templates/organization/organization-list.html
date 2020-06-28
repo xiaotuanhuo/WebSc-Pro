@@ -15,204 +15,140 @@
 </head>
 
 <body>
+	<div class="page-loading">
+		<div class="rubik-loader"></div>
+	</div>
+	
+	<div class="z-body animated fadeIn">
+		<form class="layui-form zadmin-search-area input">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label for="province" class="layui-form-label">区域</label>
+					<div class="layui-inline">
+						<select name="province" lay-filter="province" class="province">
+							<option value="">请选择省</option>
+						</select>
+					</div>
+					<div class="layui-inline">
+						<select name="city" lay-filter="city" disabled>
+							<option value="">请选择市</option>
+						</select>
+					</div>
+					<div class="layui-inline">
+						<select name="area" lay-filter="area" disabled>
+							<option value="">请选择县/区</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-row">
+					<label for="organizationName" class="layui-form-label">名称</label>
+					<div class="layui-inline">
+						<input type="text" name="organizationName" autocomplete="off"
+							class="layui-input">
+					</div>
+					<button lay-submit="" lay-filter="search"
+						class="layui-btn layui-btn-sm layui-btn-primary table-action">
+						<i class="zadmin-icon zadmin-icon-search"></i>
+					</button>
+				</div>
+			</div>
+		</form>
+		<table class="layui-hide" id="organization-table" lay-filter="treeTable"></table>
+	</div>
+	
+	<script type="text/html" id="toolbar">
+		<shiro:hasPermission name="organization:add">
+			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">
+				<i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area"></i>
+					新增
+			</button>
+		</shiro:hasPermission>
+	</script>
+	
+	<script type="text/html" id="column-toolbar">
+		<shiro:hasPermission name="organization:update">
+			<a lay-event="edit">
+				<i class="zadmin-icon zadmin-icon-edit-square zadmin-oper-area zadmin-blue" title="编辑"></i>
+			</a>
+		</shiro:hasPermission>
 
-    <div class="page-loading">
-        <div class="rubik-loader"></div>
-    </div>
+		<shiro:hasPermission name="organization:delete">
+			<a lay-event="del">
+				<i class="zadmin-icon zadmin-icon-delete zadmin-oper-area zadmin-red" title="注销"></i>
+			</a>
+		</shiro:hasPermission>
 
-    <div class="z-body animated fadeIn">
-        <form class="layui-form zadmin-search-area input">
-            <div class="layui-form-item">
-            	<div class="layui-row">
-	            	<div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
-	            		<label for="" class="layui-form-label">区域</label>
-	                    <div class="layui-inline">
-	                        <select name="province" lay-filter="province" class="province">
-								<option value="">请选择省</option>
-							</select>
-						</div>	
-						<div class="layui-inline">
-							<select name="city" lay-filter="city" disabled>
-								<option value="">请选择市</option>
-							</select>
-						</div>	
-						<div class="layui-inline">
-							<select name="area" lay-filter="area" disabled>
-								<option value="">请选择县/区</option>
-							</select>
-	                    </div>
-	            	</div>
-	            </div>
-	            <div class="layui-row">
-	            	<div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
-				   		<label for="organizationName" class="layui-form-label">名称</label>
-	                    <div class="layui-input-inline">
-	                        <input type="text" name="organizationName" autocomplete="off" id="userName" class="layui-input">
-	                    </div>
-				    </div>
-	            	
-	            	<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" align="right" style="padding-right:10px">
-	            	 	<button lay-submit="" lay-filter="search" class="layui-btn layui-btn-sm layui-btn-primary table-action">
-	                        <i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i>
-	                    </button>
-	            	</div>
-	            </div>
-            </div>
-        </form>
-
-        <table class="layui-hide" id="organization-table" lay-filter="treeTable"></table>
-    </div>
-
-    <script type="text/html" id="toolbar">
-        <shiro:hasPermission name="organization:add">
-            <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">
-                <i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area"></i>
-                新增
-            </button>
-        </shiro:hasPermission>
-    </script>
-
-    <script type="text/html" id="column-toolbar">
-        <shiro:hasPermission name="organization:update">
-            <a lay-event="edit">
-                <i class="zadmin-icon zadmin-icon-edit-square zadmin-oper-area zadmin-blue" title="编辑"></i>
-            </a>
-        </shiro:hasPermission>
-
-        <shiro:hasPermission name="organization:delete">
-            <a lay-event="del">
-                <i class="zadmin-icon zadmin-icon-delete zadmin-oper-area zadmin-red" title="注销"></i>
-            </a>
-        </shiro:hasPermission>
-
-        <shiro:lacksPermission  name="organization:update,organization:delete">
-            <i class="zadmin-icon zadmin-icon-wuquanxian zadmin-oper-area zadmin-red"></i>无权限
-        </shiro:lacksPermission>
-    </script>
-
-    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
-    <script th:src="@{/lib/layui/layui.js}"></script>
-    <script th:src="@{/js/common.js}"></script>
-
-    <script type="text/javascript" th:inline="none">
-        layui.config({
-            base: '/lib/layui/extend/'
-        }).use(['table', 'element', 'form', 'dtree', 'tablePlug', "address", "treeGrid"], function () {
-            var table = layui.table;
-            var $ = layui.$;
-            var form = layui.form;
-            var dtree = layui.dtree;
-            var tablePlug = layui.tablePlug;
-            var address = layui.address();
-            var treeGrid = layui.treeGrid;
+		<shiro:lacksPermission  name="organization:update,organization:delete">
+			<i class="zadmin-icon zadmin-icon-wuquanxian zadmin-oper-area zadmin-red"></i>无权限
+		</shiro:lacksPermission>
+	</script>
+	
+	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
+	<script th:src="@{/lib/layui/layui.js}"></script>
+	<script th:src="@{/js/common.js}"></script>
+	
+	<script type="text/javascript" th:inline="none">
+		layui.config({
+			base: '/lib/layui/extend/'
+		}).use(['table', 'element', 'form', 'dtree', 'tablePlug', "address"], function () {
+			var $ = layui.$;
+			var table = layui.table;
+			var form = layui.form;
+			var dtree = layui.dtree;
+			var tablePlug = layui.tablePlug;
+			var address = layui.address();
+			
+			tablePlug.smartReload.enable(true);
             
-
-            tablePlug.smartReload.enable(true);
-
-            treeGrid.render({
-                id:'organization-table'
-                , elem: '#organization-table'
-                , method: 'get'
-                , idField:'id'
-                , url:'/organization/list'
-                , cellMinWidth: 100
-                , treeId:'id'//树形id字段名称
-                , treeUpId:'pid'//树形父id字段名称
-                , treeShowName:'orgName'//以树形式显示的字段
-            	, page:false
-               	, cols: [[
-               	         {field: 'orgName', title: '水果名称', align: 'center',sort: true}
-               	         ,{field:'id', title: 'id'}
-               	         ,{field:'pid', title: 'pid'}
-               	         ]]
-            });
-            
-//             table.render({
-//                 elem: '#organization-table'
-//                 , url: '/organization/list'
-//                 , page: true
-//                 , toolbar: '#toolbar'
-//                 , smartReloadModel: true
-//                 , cols: [
-//                     [
-//                         {type: 'numbers', title: '序号', align: 'center', width:'5%'}
-//                         ,{field: 'userId', title: 'ID', align: 'center',sort: true, hide: true}
-//                         , {field: 'userName', title: '机构名称', align: 'center',sort: true}
-//                         , {field: 'sex', title: '省', templet: '#sexTpl', unresize: true, align: 'center',sort: true}
-//                         , {field: 'phone', title: '市', align: 'center',sort: true}
-//                         , {field: 'groupName', title: '区', align: 'center',sort: true}
-//                         , {field: 'lastLoginTime', title: '地址', align: 'center',sort: true}
-//                         , {field: 'status', title: '联系人', templet: "#statusTpl", align: 'center',sort: true}
-//                         , {title: '操作', fixed: '联系电话', align: 'center', toolbar: '#column-toolbar'}
-//                     ]
-//                 ]
-//             });
-
-            // 工具条点击事件
-            treeGrid.on('toolbar', function (obj) {
-                var data = obj.data;
-                var event = obj.event;
-
-                if (event === 'add') {
-                    add();
-                }
-            });
-
-            function add() {
-                layer.open({
-                    content: "/organization",
-                    title: "新增医疗机构",
-                    area: ['100%', '100%'],
-                    type: 2,
-                    shadeClose: true,
-                    end: function () {
-                        table.reload('organization-table');
-                    }
-                });
-            }
-
-//             function del(obj) {
-//                 layer.confirm("确定删除用户吗?", {icon: 3, title: '提示'},
-//                     function (index) {//确定回调
-//                         var id = obj.data.userid;
-//                         $.post('/user/' + id, {_method: "DELETE"}, function (data) {
-//                             layer.close(index);
-//                             handlerResult(data, deleteDone);
-//                         });
-//                     }, function (index) {//取消回调
-//                         layer.close(index);
-//                     }
-//                 );
-//             }
-
-//             function deleteDone(data) {
-//                 parent.layer.msg("删除成功", {icon: 6});
-//                 table.reload('organization-table');
-//             }
-
-//             function edit(id) {
-//                 layer.open({
-//                     content: '/user/' + id,
-//                     title: "编辑",
-//                     area: ['100%', '100%'],
-//                     type: 2,
-//                     maxmin: true,
-//                     shadeClose: true,
-//                     end: function () {
-//                         table.reload('organization-table');
-//                     }
-//                 });
-//             }
-
-            form.on('submit(search)', function (form) {
-                table.reload('organization-table', {
-                    where: form.field
-                });
-                return false;
-            });
-
-        });
-    </script>
+			table.render({
+				elem: '#organization-table',
+				url: '/organization/list',
+				page: true,
+				toolbar: '#toolbar',
+				defaultToolbar: null,
+				smartReloadModel: true,
+				cols: [
+					[
+						{type: 'numbers', title: '序号', width:'5%'},
+						{field: 'userId', title: 'ID', hide: true},
+						{field: 'orgName', title: '机构名称', sort: true},
+						{field: 'provinceName', title: '省', sort: true},
+						{field: 'cityName', title: '市', sort: true},
+						{field: 'areaName', title: '区', sort: true},
+						{field: 'orgAddress', title: '地址'}
+					]
+				]
+			});
+			
+			// 工具条点击事件
+			treeGrid.on('toolbar', function (obj) {
+				var data = obj.data;
+				var event = obj.event;
+				if (event === 'add') {
+					add();
+				}
+			});
+			
+			function add() {
+				layer.open({
+					content: "/organization",
+					title: "新增医疗机构",
+					area: ['45%', '80%'],
+					type: 2,
+					shadeClose: true,
+					end: function () {
+						table.reload('organization-table');
+					}
+				});
+			}
+			
+			form.on('submit(search)', function (form) {
+				table.reload('organization-table', {
+					where: form.field
+				});
+				return false;
+			});
+		});
+	</script>
 </body>
-
 </html>

@@ -1,0 +1,26 @@
+{
+	"dataAuthCode1": [
+		{
+			"role": 1,
+			"exps": "{uid}",
+			"desc": "vvv11"
+		},
+		{
+			"role": 2,
+			"exps": "ss12",
+			"desc": "vvv12"
+		}
+	],
+	"dataAuthCode2": [
+		{
+			"role": 1,
+			"exps": "ss21",
+			"desc": "vvv21"
+		},
+		{
+			"role": 2,
+			"exps": "ss22",
+			"desc": "vvv22"
+		}
+	]
+}

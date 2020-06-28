@@ -15,268 +15,217 @@
 </head>
 
 <body>
+	<div class="page-loading">
+		<div class="rubik-loader"></div>
+	</div>
 
-    <div class="page-loading">
-        <div class="rubik-loader"></div>
-    </div>
-
-    <div class="z-body animated fadeIn">
-        <form class="layui-form zadmin-search-area input">
-            <div class="layui-form-item">
-            	<div class="layui-row">
-	            	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
-				   		<label for="loginName" class="layui-form-label">姓名</label>
-	                    <div class="layui-input-inline">
-	                        <input type="text" name="userName" autocomplete="off" id="userName" class="layui-input">
-	                    </div>
-				    </div>
-	            	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
-	            		<label for=phone class="layui-form-label">手机</label>
-	                    <div class="layui-input-inline">
-	                        <input type="text" name="phone" autocomplete="off" id="phone" class="layui-input">
-	                    </div>
-	            	</div>
-	            </div>
-	            <div class="layui-row">
-	            	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
-	            		<label for="status" class="layui-form-label">状态</label>
-	                    <div class="layui-input-inline">
-	                        <select name="status" id="status">
-	                            <option value="">请选择</option>
-	                            <option value="1">正常</option>
-	                            <option value="0">锁定</option>
-	                        </select>
-	                    </div>
-	            	</div>
-	            	<div class="layui-col-xs12 layui-col-sm6 layui-col-md4" align="right" style="padding-right:10px">
-	            	 	<button lay-submit="" lay-filter="search" class="layui-btn layui-btn-sm layui-btn-primary table-action">
-	                        <i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i>
-	                    </button>
-	            	</div>
-	            </div>
-            </div>
-        </form>
-
-        <table class="layui-hide" id="user-table"></table>
-    </div>
-
-    <script type="text/html" id="toolbar">
-        <shiro:hasPermission name="user:add">
-            <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">
-                <i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area"></i>
-                新增
-            </button>
-        </shiro:hasPermission>
-    </script>
-
-    <script type="text/html" id="column-toolbar">
-        <shiro:hasPermission name="user:update">
-            <a lay-event="edit">
-                <i class="zadmin-icon zadmin-icon-edit-square zadmin-oper-area zadmin-blue" title="编辑"></i>
-            </a>
-        </shiro:hasPermission>
+	<div class="z-body animated fadeIn">
+		<form class="layui-form zadmin-search-area input">
+			<div class="layui-form-item">
+				<div class="layui-row">
+					<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+						<label for="userName" class="layui-form-label">姓名</label>
+						<div class="layui-input-inline">
+							<input type="text" name="userName" autocomplete="off"
+								id="userName" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+						<label for=phone class="layui-form-label">手机</label>
+						<div class="layui-input-inline">
+							<input type="text" name="phone" autocomplete="off" id="phone"
+								class="layui-input">
+						</div>
+					</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+						<label for="status" class="layui-form-label">状态</label>
+						<div class="layui-input-inline">
+							<select name="status" id="status">
+								<option value="">请选择</option>
+								<option value="1">正常</option>
+								<option value="0">锁定</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-col-xs12 layui-col-sm6 layui-col-md4"
+						align="right" style="padding-right: 10px">
+						<button lay-submit="" lay-filter="search"
+							class="layui-btn layui-btn-sm layui-btn-primary table-action">
+							<i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</form>
+		<table class="layui-hide" id="user-table"></table>
+	</div>
+	
+	<script type="text/html" id="toolbar">
+		<shiro:hasPermission name="user:add">
+			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">
+				<i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area"></i>
+					 新增
+			</button>
+		</shiro:hasPermission>
+	</script>
+	
+	<script type="text/html" id="column-toolbar">
+		<shiro:hasPermission name="user:update">
+			<a lay-event="edit">
+				<i class="zadmin-icon zadmin-icon-edit-square zadmin-oper-area zadmin-blue" title="编辑"></i>
+			</a>
+		</shiro:hasPermission>
 
 		<shiro:hasPermission name="user:reset">
-            <a lay-event="reset">
-                <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-red" title="密码重置"></i>
-            </a>
-        </shiro:hasPermission>
+			<a lay-event="reset">
+				<i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-red" title="密码重置"></i>
+			</a>
+		</shiro:hasPermission>
 
-        <shiro:hasPermission name="user:delete">
-            <a lay-event="del">
-                <i class="zadmin-icon zadmin-icon-delete zadmin-oper-area zadmin-red" title="注销"></i>
-            </a>
-        </shiro:hasPermission>
+		<shiro:hasPermission name="user:delete">
+			<a lay-event="del">
+				<i class="zadmin-icon zadmin-icon-delete zadmin-oper-area zadmin-red" title="注销"></i>
+			</a>
+		</shiro:hasPermission>
 
-        <shiro:lacksPermission  name="user:update,user:reset,user:delete">
-            <i class="zadmin-icon zadmin-icon-wuquanxian zadmin-oper-area zadmin-red"></i>无权限
-        </shiro:lacksPermission>
-    </script>
-
-
-    <script type="text/html" id="statusTpl">
-		{{ d.status == '1' ? '正常' : '锁定' }}
-    </script>
+		<shiro:lacksPermission  name="user:update,user:reset,user:delete">
+			<i class="zadmin-icon zadmin-icon-wuquanxian zadmin-oper-area zadmin-red"></i>无权限
+		</shiro:lacksPermission>
+	</script>
     
-    <script type="text/html" id="sexTpl">
+	<script type="text/html" id="statusTpl">
+		{{ d.status == '1' ? '正常' : '锁定' }}
+	</script>
+    
+	<script type="text/html" id="sexTpl">
 		{{ d.sex == '0' ? '男' : '女' }}
-    </script>
-
-    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
-    <script th:src="@{/lib/layui/layui.js}"></script>
-    <script th:src="@{/js/common.js}"></script>
-
-    <script>
+	</script>
+	
+	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
+	<script th:src="@{/lib/layui/layui.js}"></script>
+	<script th:src="@{/js/common.js}"></script>
+	
+	<script>
         layui.config({
-            base: '/lib/layui/extend/'
-        }).use(['table', 'element', 'form', 'dtree', 'tablePlug'], function () {
-            var table = layui.table;
-            var $ = layui.$;
-            var form = layui.form;
-            var dtree = layui.dtree;
-            var tablePlug = layui.tablePlug;
-
-            tablePlug.smartReload.enable(true);
-
-//             dtree.renderSelect({
-//                 elem: "#deptTree",
-//                 url: "/dept/tree",
-//                 dataStyle: "layuiStyle",
-//                 width: "100%",
-//                 method: "GET",
-//                 dot: false,
-//                 menubar: true,
-//                 response: {
-//                     statusCode: 0,
-//                     message: "msg",
-//                     treeId: "dept_id",
-//                     parentId: "parentId",
-//                     title: "name"
-//                 }
-//             });
-
-//             dtree.on("node('deptTree')" ,function(obj) {
-//                 var typeDom = layui.$('#deptId');
-//                 console.log(typeDom.val() , obj.param.nodeId);
-//                 console.log(typeDom.val() === obj.param.nodeId);
-//                 if (typeDom.val() === obj.param.nodeId) {
-//                     typeDom.val('');
-//                     layui.$("input[dtree-id='deptTree']").val('请选择');
-//                 } else {
-//                     typeDom.val(obj.param.nodeId)
-//                 }
-//             });
-
-            table.render({
-                elem: '#user-table'
-                , url: '/user/list'
-                , page: true
-                , toolbar: '#toolbar'
-                , smartReloadModel: true
-                , cols: [
-                    [
-                        {type: 'numbers', title: '序号', align: 'center', width:'5%'}
-                        ,{field: 'userId', title: 'ID', align: 'center',sort: true, hide: true}
-                        , {field: 'userName', title: '姓名', align: 'center',sort: true}
-                        , {field: 'sex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true}
-                        , {field: 'phone', title: '手机', align: 'center',sort: true}
-                        , {field: 'groupName', title: '部门', align: 'center',sort: true}
-                        , {field: 'lastLoginTime', title: '最后登陆时间', align: 'center',sort: true}
-                        , {field: 'status', title: '状态', templet: "#statusTpl", align: 'center',sort: true}
-                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#column-toolbar'}
-                    ]
-                ]
+			base: '/lib/layui/extend/'
+		}).use(['table', 'element', 'form', 'dtree', 'tablePlug'], function () {
+			var table = layui.table;
+			var $ = layui.$;
+			var form = layui.form;
+			var dtree = layui.dtree;
+			var tablePlug = layui.tablePlug;
+			
+			tablePlug.smartReload.enable(true);
+            
+			table.render({
+				elem: '#user-table',
+				url: '/user/list',
+				page: true,
+				toolbar: '#toolbar',
+				smartReloadModel: true,
+				cols: [
+					[
+                        {type: 'numbers', title: '序号', align: 'center', width:'5%'},
+						{field: 'userId', title: 'ID', align: 'center',sort: true, hide: true},
+						{field: 'userName', title: '姓名', align: 'center',sort: true},
+						{field: 'sex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true},
+						{field: 'phone', title: '手机', align: 'center',sort: true},
+						{field: 'groupName', title: '部门', align: 'center',sort: true},
+						{field: 'lastLoginTime', title: '最后登陆时间', align: 'center',sort: true},
+						{field: 'status', title: '状态', templet: "#statusTpl", align: 'center',sort: true},
+						{title: '操作', fixed: 'right', align: 'center', toolbar: '#column-toolbar'}
+					]
+				]
+			});
+			
+			// 工具条点击事件
+			table.on('toolbar', function (obj) {
+				var data = obj.data;
+				var event = obj.event;
+				if (event === 'add') {
+					add();
+				}
             });
 
-            // 账号状态(正常/锁定)点击事件
-//             form.on('switch(status)', function(data){
-//                 if (data.elem.checked) {
-//                     $.post('/user/' + data.value + '/enable', function (data) {
-//                         handlerResult(data, enableDone);
-//                     });
-//                 } else {
-//                     $.post('/user/' + data.value +'/disable', function (data) {
-//                         handlerResult(data, disableDone);
-//                     });
-//                 }
-//             });
-
-            // 工具条点击事件
-            table.on('toolbar', function (obj) {
-                var data = obj.data;
-                var event = obj.event;
-
-                if (event === 'add') {
-                    add();
-                }
-            });
-
-            // 行点击事件 重置密码
-            table.on('tool', function (obj) {
-                var data = obj.data;
-                var event = obj.event;
-                if (event === 'edit') {
-                    edit(data.userid);
-                } else if (event === 'reset') {
-                    layer.open({
-                        content: '/user/' + data.userid + "/reset",
-                        title: "重置密码",
-                        area: ['500px', '200px'],
-                        type: 2,
-                        maxmin: true,
-                        shadeClose: true,
-                        end: function () {
-                            table.reload('user-table');
-                        }
-                    });
-                } else if (event === 'del') {
-                    del(obj);
-                }
-            });
-
-//             function disableDone(data) {
-//                 parent.layer.msg("禁用成功", {icon: 6});
-//             }
-
-//             function enableDone(data) {
-//                 parent.layer.msg("激活成功", {icon: 6});
-//             }
-
-            function add() {
-                layer.open({
-                    content: "/user",
-                    title: "新增用户",
-                    area: ['100%', '100%'],
-                    type: 2,
-                    shadeClose: true,
-                    end: function () {
-                        table.reload('user-table');
-                    }
-                });
-            }
-
-            function del(obj) {
-                layer.confirm("确定删除用户吗?", {icon: 3, title: '提示'},
-                    function (index) {//确定回调
-                        var id = obj.data.userid;
-                        $.post('/user/' + id, {_method: "DELETE"}, function (data) {
-                            layer.close(index);
-                            handlerResult(data, deleteDone);
-                        });
-                    }, function (index) {//取消回调
-                        layer.close(index);
-                    }
-                );
-            }
-
-            function deleteDone(data) {
-                parent.layer.msg("删除成功", {icon: 6});
-                table.reload('user-table');
-            }
-
-            function edit(id) {
-                layer.open({
-                    content: '/user/' + id,
-                    title: "编辑",
-                    area: ['100%', '100%'],
-                    type: 2,
-                    maxmin: true,
-                    shadeClose: true,
-                    end: function () {
-                        table.reload('user-table');
-                    }
-                });
-            }
-
-            form.on('submit(search)', function (form) {
-                table.reload('user-table', {
-                    where: form.field
-                });
-                return false;
-            });
-
-        });
-    </script>
+			// 行点击事件 重置密码
+			table.on('tool', function (obj) {
+				var data = obj.data;
+				var event = obj.event;
+				if (event === 'edit') {
+					edit(data.userid);
+				} else if (event === 'reset') {
+					layer.open({
+						content: '/user/' + data.userid + "/reset",
+						title: "重置密码",
+						area: ['500px', '200px'],
+						type: 2,
+						maxmin: true,
+						shadeClose: true,
+						end: function () {
+							table.reload('user-table');
+						}
+					});
+				} else if (event === 'del') {
+					del(obj);
+				}
+			});
+			
+			function add() {
+				layer.open({
+					content: "/user",
+					title: "新增用户",
+					area: ['40%', '85%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true,
+					end: function () {
+						table.reload('user-table');
+					}
+				});
+			}
+			
+			function del(obj) {
+				layer.confirm("确定删除用户吗?", {icon: 3, title: '提示'},
+					function (index) {//确定回调
+						var id = obj.data.userid;
+						$.post('/user/' + id, {_method: "DELETE"}, function (data) {
+						layer.close(index);
+							handlerResult(data, deleteDone);
+						});
+					}, function (index) {//取消回调
+						layer.close(index);
+					}
+				);
+			}
+			
+			function deleteDone(data) {
+				parent.layer.msg("删除成功", {icon: 6});
+				table.reload('user-table');
+			}
+			
+			function edit(id) {
+				layer.open({
+					content: '/user/' + id,
+					title: "编辑",
+					area: ['100%', '100%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true,
+					end: function () {
+						table.reload('user-table');
+					}
+				});
+			}
+			
+			form.on('submit(search)', function (form) {
+				table.reload('user-table', {
+					where: form.field
+				});
+				return false;
+			});
+		});
+	</script>
 </body>
-
 </html>
