@@ -8,6 +8,7 @@
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/animate.min.css}">
     <link rel="stylesheet" th:href="@{/iconfont/iconfont.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/eleTree.css}" />
 </head>
 
 <style>
@@ -40,7 +41,8 @@
 						<div class="layui-card">
 							<div class="layui-card-header">医疗机构架构树</div>
 							<div class="layui-card-body" id="toolbarDiv">
-								<ul id="deptTree" class="dtree" data-id="0"></ul>
+								<!-- <ul id="cdoTree" class="dtree" data-id="0"></ul> -->
+								<ul id="cdoTree" class="eleTree ele3" lay-filter="cdoData"></ul>
 							</div>
 						</div>
 					</div>
@@ -117,76 +119,20 @@
 		
 		layui.config({
 			base: '/lib/layui/extend/'
-		}).use(['jquery', 'dtree', 'layer', 'table', 'element', 'tablePlug'], function () {
-			var dtree = layui.dtree;
+		}).use(['jquery', 'eleTree', 'layer', 'table', 'element', 'tablePlug'], function () {
+			var eleTree = layui.eleTree;
 			var layer = layui.layer;
 			var table = layui.table;
 			var tablePlug = layui.tablePlug;
 			
 			tablePlug.smartReload.enable(true);
 			
-			var DTree = dtree.render({
-				elem: "#deptTree",
+			var EleTree = eleTree.render({
+				elem: "#cdoTree",
 				url: "/framework/cdo/tree/root",
-				dataStyle: "layuiStyle",
-				initLevel: 2,   // 初始打开节点级别
-				method: "GET",
-				dot: false,     // 圆点是否显示
-				toolbar: true,  // 右键工具栏
-				menubar: true,  // 树上方工具栏, 展开、收缩、刷新、搜索等
-				toolbarShow: [],
-				toolbarScroll: "#toolbarDiv",
-				toolbarExt: [
-					{
-						toolbarId: "add",
-						icon: "dtree-icon-roundadd",
-						title: "添加子节点",
-						handler: function (node, $div) {
-							if (node.level == '1');
-								add(node.nodeId);
-						}
-					},
-					{
-						toolbarId: "edit",
-						icon: "dtree-icon-bianji",
-						title: "编辑",
-						handler: function (node, $div) {
-							edit(node.nodeId);
-						}
-					},
-					{
-						toolbarId: "remove",
-						icon: "dtree-icon-roundclose",
-						title: "删除",
-						handler: function (node, $div) {
-							del(node.nodeId);
-						}
-					}
-				],
-				response: {
-					statusCode: 0,
-					message: "msg",
-					treeId: "id",
-					parentId: "parentId",
-					title: "name"
-				},
-				toolbarFun:{
-					loadToolbarBefore: function(buttons, param, $div) {
-						if (param.level === "1") { // 如果是顶级节点, 则取消编辑和删除功能.
-							buttons.edit = "";
-							buttons.remove = "";
-						}
-						if (!hasDeptAdd) {
-							buttons.add = "";
-						}
-						if (!hasDeptDelete) {
-							buttons.remove = "";
-						}
-						if (!hasDeptUpdate) {
-							buttons.edit = "";
-						}
-						return buttons;
-					}
+				highlightCurrent: true,
+				request: {
+					name: "name"
 				}
 			});
 			
@@ -208,6 +154,10 @@
 						{title: '操作', align: 'center', toolbar: '#column-toolbar'}
 					]
 				]
+			});
+			
+			eleTree.on("nodeClick(cdoData)", function(d) {
+				console.log(d.data);
 			});
 			
 			dtree.on("node('deptTree')", function (obj) {

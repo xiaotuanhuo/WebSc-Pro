@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
+
 import sc.system.mapper.OrganizationMapper;
 import sc.system.model.WebScOrganization;
 import sc.system.model.vo.CDO;
@@ -24,9 +26,7 @@ public class FrameworkService {
 	private OrganizationMapper organizationMapper;
 	
 	public List<CDO> selectCdoTreeAndRoot() {
-    	CDO root = new CDO();	// 树形根节点
-    	root.setId("0");
-        root.setName("医疗机构");
+    	List<CDO> rootList = new ArrayList<CDO>();
     	List<WebScOrganization> organizations = organizationMapper.selectAll();
     	
     	for (WebScOrganization webScOrganization : organizations) {
@@ -37,15 +37,9 @@ public class FrameworkService {
 				cdo.setName(webScOrganization.getOrgName());
 				cdo.setParentId("0");
 				
-				if (root.getChildren() == null) {
-					root.setChildren(new ArrayList<CDO>());
-				}
-				root.getChildren().add(cdo);
+				rootList.add(cdo);
 			}
 		}
-    	// 2、组装完整的医疗机构树形架构
-    	List<CDO> rootList = new ArrayList<CDO>();
-    	rootList.add(root);
     	return rootList;
     }
 	
@@ -58,10 +52,10 @@ public class FrameworkService {
     private CDO listToTree(WebScOrganization organization, List<WebScOrganization> organizations) {
     	CDO cdo = new CDO();	// 树形XXXX医疗机构
     	for (WebScOrganization webScOrganization : organizations) {
-			if (organization.getOrgId().equals(webScOrganization.getOrgPid())) {	// XXXX医疗机构下属机构
+			if (webScOrganization.getOrgPid().equals(organization.getOrgId())) {	// XXXX医疗机构下属机构
 				if (cdo.getChildren() == null) {	// 未追加下属机构
 					CDO leafcdo = new CDO();		// 下属机构
-					CDO countrycdo = new CDO();		// 区/县节点
+					CDO countycdo = new CDO();		// 区/县节点
 					CDO citycdo = new CDO();		// 市节点
 					CDO provincecdo = new CDO();	// 省节点
 					// 将该下属机构作为区/县的叶子节点
@@ -70,22 +64,26 @@ public class FrameworkService {
 					leafcdo.setId(webScOrganization.getOrgId());
 					leafcdo.setName(webScOrganization.getOrgName());
 					leafcdo.setParentId(webScOrganization.getArea());
+					leafcdo.setRootOrgId(organization.getOrgId());
 					
-					countrycdo.setId(webScOrganization.getArea());
-					countrycdo.setName(district.getDistrictMap().get(webScOrganization.getArea()).getName());
-					countrycdo.setParentId(webScOrganization.getCity());
-					countrycdo.setChildren(new ArrayList<CDO>());
-					countrycdo.getChildren().add(leafcdo);
+					countycdo.setId(webScOrganization.getArea());
+					countycdo.setName(district.getDistrictMap().get(webScOrganization.getArea()).getName());
+					countycdo.setParentId(webScOrganization.getCity());
+					countycdo.setRootOrgId(organization.getOrgId());
+					countycdo.setChildren(new ArrayList<CDO>());
+					countycdo.getChildren().add(leafcdo);
 					
 					citycdo.setId(webScOrganization.getCity());
 					citycdo.setName(district.getDistrictMap().get(webScOrganization.getCity()).getName());
 					citycdo.setParentId(webScOrganization.getProvince());
+					citycdo.setRootOrgId(organization.getOrgId());
 					citycdo.setChildren(new ArrayList<CDO>());
-					citycdo.getChildren().add(countrycdo);
+					citycdo.getChildren().add(countycdo);
 					
 					provincecdo.setId(webScOrganization.getProvince());
 					provincecdo.setName(district.getDistrictMap().get(webScOrganization.getProvince()).getName());
 					provincecdo.setParentId(organization.getOrgId());
+					provincecdo.setRootOrgId(organization.getOrgId());
 					provincecdo.setChildren(new ArrayList<CDO>());
 					provincecdo.getChildren().add(citycdo);
 					
@@ -107,6 +105,7 @@ public class FrameworkService {
 											leafcdo.setId(webScOrganization.getOrgId());
 											leafcdo.setName(webScOrganization.getOrgName());
 											leafcdo.setParentId(webScOrganization.getArea());
+											leafcdo.setRootOrgId(organization.getOrgId());
 											county.getChildren().add(leafcdo);
 											isCounty = true;
 											break;
@@ -114,19 +113,21 @@ public class FrameworkService {
 									}
 									if (!isCounty) {	// 区/县级区划未添加
 										CDO leafcdo = new CDO();
-										CDO countcdo = new CDO();
+										CDO countycdo = new CDO();
 										
 										leafcdo.setId(webScOrganization.getOrgId());
 										leafcdo.setName(webScOrganization.getOrgName());
 										leafcdo.setParentId(webScOrganization.getArea());
+										leafcdo.setRootOrgId(organization.getOrgId());
 										
-										countcdo.setId(webScOrganization.getArea());
-										countcdo.setName(district.getDistrictMap().get(webScOrganization.getArea()).getName());
-										countcdo.setParentId(webScOrganization.getCity());
-										countcdo.setChildren(new ArrayList<CDO>());
-										countcdo.getChildren().add(leafcdo);
+										countycdo.setId(webScOrganization.getArea());
+										countycdo.setName(district.getDistrictMap().get(webScOrganization.getArea()).getName());
+										countycdo.setParentId(webScOrganization.getCity());
+										countycdo.setRootOrgId(organization.getOrgId());
+										countycdo.setChildren(new ArrayList<CDO>());
+										countycdo.getChildren().add(leafcdo);
 										
-										city.getChildren().add(countcdo);
+										city.getChildren().add(countycdo);
 										
 										isCounty = true;
 									}
@@ -135,24 +136,27 @@ public class FrameworkService {
 							}
 							if (!isCity) {	// 市级区划未添加
 								CDO leafcdo = new CDO();
-								CDO countcdo = new CDO();
+								CDO countycdo = new CDO();
 								CDO citycdo = new CDO();
 								
 								leafcdo.setId(webScOrganization.getOrgId());
 								leafcdo.setName(webScOrganization.getOrgName());
 								leafcdo.setParentId(webScOrganization.getArea());
+								leafcdo.setRootOrgId(organization.getOrgId());
 								
-								countcdo.setId(webScOrganization.getArea());
-								countcdo.setName(district.getDistrictMap().get(webScOrganization.getArea()).getName());
-								countcdo.setParentId(webScOrganization.getCity());
-								countcdo.setChildren(new ArrayList<CDO>());
-								countcdo.getChildren().add(leafcdo);
+								countycdo.setId(webScOrganization.getArea());
+								countycdo.setName(district.getDistrictMap().get(webScOrganization.getArea()).getName());
+								countycdo.setParentId(webScOrganization.getCity());
+								countycdo.setRootOrgId(organization.getOrgId());
+								countycdo.setChildren(new ArrayList<CDO>());
+								countycdo.getChildren().add(leafcdo);
 								
 								citycdo.setId(webScOrganization.getCity());
 								citycdo.setName(district.getDistrictMap().get(webScOrganization.getCity()).getName());
 								citycdo.setParentId(webScOrganization.getProvince());
+								citycdo.setRootOrgId(organization.getOrgId());
 								citycdo.setChildren(new ArrayList<CDO>());
-								citycdo.getChildren().add(countcdo);
+								citycdo.getChildren().add(countycdo);
 								
 								province.getChildren().add(citycdo);
 								
@@ -163,29 +167,33 @@ public class FrameworkService {
 					}
 					if (!isProvince) {
 						CDO leafcdo = new CDO();
-						CDO countcdo = new CDO();
+						CDO countycdo = new CDO();
 						CDO citycdo = new CDO();
 						CDO provincecdo = new CDO();
 						
 						leafcdo.setId(webScOrganization.getOrgId());
 						leafcdo.setName(webScOrganization.getOrgName());
 						leafcdo.setParentId(webScOrganization.getArea());
+						leafcdo.setRootOrgId(organization.getOrgId());
 						
-						countcdo.setId(webScOrganization.getArea());
-						countcdo.setName(district.getDistrictMap().get(webScOrganization.getArea()).getName());
-						countcdo.setParentId(webScOrganization.getCity());
-						countcdo.setChildren(new ArrayList<CDO>());
-						countcdo.getChildren().add(leafcdo);
+						countycdo.setId(webScOrganization.getArea());
+						countycdo.setName(district.getDistrictMap().get(webScOrganization.getArea()).getName());
+						countycdo.setParentId(webScOrganization.getCity());
+						countycdo.setRootOrgId(organization.getOrgId());
+						countycdo.setChildren(new ArrayList<CDO>());
+						countycdo.getChildren().add(leafcdo);
 						
 						citycdo.setId(webScOrganization.getCity());
 						citycdo.setName(district.getDistrictMap().get(webScOrganization.getCity()).getName());
 						citycdo.setParentId(webScOrganization.getProvince());
+						citycdo.setRootOrgId(organization.getOrgId());
 						citycdo.setChildren(new ArrayList<CDO>());
-						citycdo.getChildren().add(countcdo);
+						citycdo.getChildren().add(countycdo);
 						
 						provincecdo.setId(webScOrganization.getProvince());
 						provincecdo.setName(district.getDistrictMap().get(webScOrganization.getProvince()).getName());
 						provincecdo.setParentId(webScOrganization.getOrgId());
+						provincecdo.setRootOrgId(organization.getOrgId());
 						provincecdo.setChildren(new ArrayList<CDO>());
 						provincecdo.getChildren().add(citycdo);
 						

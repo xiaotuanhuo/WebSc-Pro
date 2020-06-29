@@ -13,7 +13,8 @@ public class CDO {
 
 	private String id;
 	private String name;
-	private String parentId;
+	private String parentId;		// 所属的行政区划或者医疗机构
+	private String rootOrgId;		// 医疗机构根节点id
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private List<CDO> children;
@@ -48,6 +49,14 @@ public class CDO {
 	
 	public void setChildren(List<CDO> children) {
 		this.children = children;
+	}
+	
+	public String getRootOrgId() {
+		return rootOrgId;
+	}
+	
+	public void setRootOrgId(String rootOrgId) {
+		this.rootOrgId = rootOrgId;
 	}
 	
 }
