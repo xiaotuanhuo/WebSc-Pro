@@ -26,6 +26,13 @@ public class RoleController {
     }
 
     @OperationLog("查询角色列表")
+    @GetMapping("/user/list")
+    @ResponseBody
+    public ResultBean getUserRole() {
+    	return ResultBean.success(roleService.selectRolesByUser());
+    }
+    
+    @OperationLog("查询角色列表")
     @GetMapping("/list")
     @ResponseBody
     public PageResultBean<WebScRole> getList(@RequestParam(value = "page", defaultValue = "1") int page,

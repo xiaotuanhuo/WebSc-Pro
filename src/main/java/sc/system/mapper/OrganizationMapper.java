@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import sc.common.annotation.DataAuth;
 import sc.system.model.WebScOrganization;
 
 @Mapper
@@ -20,6 +21,7 @@ public interface OrganizationMapper {
 	  * 获取所有医疗机构节点
 	  * @return
 	  */
+	@DataAuth(authCode = "authDataCode1")
 	List<WebScOrganization> selectAll();
 	
 	int insert(WebScOrganization wso);

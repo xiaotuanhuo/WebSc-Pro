@@ -6,7 +6,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -14,11 +17,14 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.common.annotation.DataAuth;
 import sc.common.config.exculd.DataAuthConfig;
+import sc.system.model.WebScUser;
 
 @Intercepts({@Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class,
 		RowBounds.class, ResultHandler.class})})
@@ -74,17 +80,68 @@ public class PermissionHelper implements Interceptor {
 	
 	private void processIntercept(Invocation invocation) {
 		try {
-			PermissionRule permissionRule = dataAuthMap.get("dataAuthCode2");
-			String exps = permissionRule.getRuleMap().get(3);
-			
 			MappedStatement ms = (MappedStatement) invocation.getArgs()[MAPPED_STATEMENT_INDEX];
 			DataAuth dataAuth = getPermissionByDelegate(ms);
 			if (dataAuth == null) {
 				return;
 			}
+			Subject subject = SecurityUtils.getSubject();
+			WebScUser user = (WebScUser) subject.getPrincipal();
+			
+			PermissionRule permissionRule = dataAuthMap.get(dataAuth.authCode());
+			if (permissionRule == null) {	// 没有权限code则退出
+				return;
+			}
+			String sql = permissionRule.getRuleMap().get(user.getRoleId());
+			if (sql == null || sql.equals("")) { // 角色对应规则不存在则退出
+				return;
+			}
+			Object parameter = invocation.getArgs()[PARAMETER_INDEX];
+			BoundSql boundSql = ms.getBoundSql(parameter);
+			BoundSql newBoundSql = new BoundSql(ms.getConfiguration(), sql, boundSql.getParameterMappings(),
+					boundSql.getParameterObject());
+			for (ParameterMapping mapping : boundSql.getParameterMappings()) {
+				String prop = mapping.getProperty();
+				if (boundSql.hasAdditionalParameter(prop)) {
+					newBoundSql.setAdditionalParameter(prop, boundSql.getAdditionalParameter(prop));
+				}
+			}
+			MappedStatement newMs = copyFromMappedStatement(ms, new BoundSqlSqlSource(newBoundSql));
+			invocation.getArgs()[MAPPED_STATEMENT_INDEX] = newMs;
 		} catch (Exception e) {
 			log.error("处理Sql出错！", e);
 		}
+	}
+	
+	private MappedStatement copyFromMappedStatement(MappedStatement ms, SqlSource newSqlSource) {
+		MappedStatement.Builder builder = new MappedStatement.Builder(ms.getConfiguration(), ms.getId(), newSqlSource,
+				ms.getSqlCommandType());
+		builder.resource(ms.getResource());
+		builder.fetchSize(ms.getFetchSize());
+		builder.statementType(ms.getStatementType());
+		builder.keyGenerator(ms.getKeyGenerator());
+		try {
+			builder.keyProperty(ms.getKeyProperties()[0]);
+		} catch (Exception e) {
+			builder.keyProperty(null);
+		}
+		
+//		setStatementTimeout()
+		builder.timeout(ms.getTimeout());
+
+//		setStatementResultMap()
+		builder.parameterMap(ms.getParameterMap());
+
+//		setStatementResultMap()
+		builder.resultMaps(ms.getResultMaps());
+		builder.resultSetType(ms.getResultSetType());
+
+//		setStatementCache()
+		builder.cache(ms.getCache());
+		builder.flushCacheRequired(ms.isFlushCacheRequired());
+		builder.useCache(ms.isUseCache());
+		
+		return builder.build();
 	}
 	
 	/**
@@ -110,5 +167,18 @@ public class PermissionHelper implements Interceptor {
 			e.printStackTrace();
 		}
 		return dataAuth;
+	}
+	
+	public static class BoundSqlSqlSource implements SqlSource {
+		BoundSql boundSql;
+		
+		public BoundSqlSqlSource(BoundSql boundSql) {
+			this.boundSql = boundSql;
+		}
+		
+		@Override
+		public BoundSql getBoundSql(Object parameterObject) {
+			return boundSql;
+		}
 	}
 }

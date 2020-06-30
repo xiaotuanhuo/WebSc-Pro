@@ -14,13 +14,13 @@ public class PermissionRule {
 	 * Integer 角色id
 	 * String 规则表达式
 	 */
-	private Map<Integer, String> ruleMap = new HashMap<Integer, String>();
+	private Map<String, String> ruleMap = new HashMap<String, String>();
 	
-	public Map<Integer, String> getRuleMap() {
+	public Map<String, String> getRuleMap() {
 		return ruleMap;
 	}
 	
-	public void setRuleMap(Map<Integer, String> ruleMap) {
+	public void setRuleMap(Map<String, String> ruleMap) {
 		this.ruleMap = ruleMap;
 	}
 	

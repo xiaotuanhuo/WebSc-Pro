@@ -65,4 +65,10 @@
         count(*)
         from WSC_ROLE
     </select>
+    
+    <select id="selectRolesByUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_ROLE
+    </select>
 </mapper>

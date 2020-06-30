@@ -1,24 +1,24 @@
 {
-	"dataAuthCode1": [
+	"getRolesByUser": [
 		{
-			"role": 1,
-			"exps": "{uid}",
-			"desc": "vvv11"
+			"role": "1",
+			"exps": "select * from WSC_ROLE",
+			"desc": "系统管理员角色用户可以查询所有角色"
 		},
 		{
-			"role": 2,
+			"role": "2",
 			"exps": "ss12",
 			"desc": "vvv12"
 		}
 	],
 	"dataAuthCode2": [
 		{
-			"role": 1,
+			"role": "1",
 			"exps": "ss21",
 			"desc": "vvv21"
 		},
 		{
-			"role": 2,
+			"role": "2",
 			"exps": "ss22",
 			"desc": "vvv22"
 		}

@@ -46,11 +46,11 @@ public class DataAuthConfig {
 			// 遍历ruleMap 将权限code对应的规则转换成对象
 			for (Map.Entry<String, JSONArray> entry : jsonMap.entrySet()) {
 				PermissionRule permissionRule = new PermissionRule();
-				Map<Integer, String> ruleMap = new HashMap<Integer, String>();
+				Map<String, String> ruleMap = new HashMap<String, String>();
 				JSONArray ruleArray = entry.getValue();
 				for (int i = 0; i < ruleArray.size(); i++) {
 					JSONObject jsonObject = (JSONObject) ruleArray.get(i);
-					ruleMap.put(jsonObject.getInteger("role"), jsonObject.getString("exps"));
+					ruleMap.put(jsonObject.getString("role"), jsonObject.getString("exps"));
 				}
 				permissionRule.setRuleMap(ruleMap);
 				dataAuthMap.put(entry.getKey(), permissionRule);
