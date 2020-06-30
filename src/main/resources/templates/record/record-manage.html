@@ -126,14 +126,14 @@
 	  	    var data = obj.data;
 	  	    if(obj.event === 'edit'){
 	  	    	var editContent = '<div class="layui-form" action="" style="margin-top:20px;">'+
-	  	    						'<input name="userId" value="'+data.recordId+'"class="layui-input" type="hidden"/>'+
+	  	    						'<input name="recordId" value="'+data.recordId+'"class="layui-input" type="hidden"/>'+
 	  	    						'<input name="userId" value="'+data.userId+'"class="layui-input" type="hidden"/>'+
 	  	    						'<input name="orgId" value="'+data.orgId+'"class="layui-input" type="hidden"/>'+
 	  	    						'<input name="createDate" value="'+data.createDate+'"class="layui-input" type="hidden"/>'+
 		  	    					'<div class="layui-form-item">'+
 	                    				'<div class="layui-col-md6">'+
 	                						'<div class="layui-inline">'+
-	                    						'<label class="layui-form-label" style="width:60px;">医生姓名</label>'+
+	                    						'<label class="layui-form-label" style="width:100px;">医生姓名</label>'+
 	                    						'<div class="layui-input-inline">'+
 	                        						'<input id="doctorName" name="doctorName" value="'+data.doctorName+'" lay-verify="required" class="layui-input" type="text" placeholder="医生姓名"/>'+
 	                    						'</div>'+
@@ -141,7 +141,7 @@
 	            						'</div>'+
 	            						'<div class="layui-col-md6">'+
 	                						'<div class="layui-inline">'+
-	                    						'<label class="layui-form-label" style="width:60px;">医疗机构</label>'+
+	                    						'<label class="layui-form-label" style="width:100px;">医疗机构</label>'+
 	                    						'<div class="layui-input-inline">'+
 	                        						'<input id="orgName" name="orgName" value="'+data.orgName+'" lay-verify="required" class="layui-input" type="text" placeholder="医疗机构"/>'+
 	                    						'</div>'+
@@ -151,17 +151,17 @@
 	        						'<div class="layui-form-item">'+
 	            						'<div class="layui-col-md6">'+
 	                						'<div class="layui-inline">'+
-	                    						'<label class="layui-form-label" style="width:60px;">截止日期</label>'+
+	                    						'<label class="layui-form-label" style="width:100px;">截止日期</label>'+
 	                    						'<div class="layui-input-inline">'+
-	                        						'<input id="endDate" name="endDate" value="'+data.endDate+'" lay-verify="required" class="layui-input" type="text" placeholder="截止日期"/>'+
+	                        						'<input id="endDate" name="endDate" value="'+data.endDate+'" lay-verify="required" class="layui-input" type="text" placeholder="截止日期" autocomplete="off"/>'+
 	                    						'</div>'+
 	                						'</div>'+
 	            						'</div>'+
 	            						'<div class="layui-col-md6">'+
 	                						'<div class="layui-inline">'+
-	                    						'<label class="layui-form-label" style="width:60px;">备案日期</label>'+
+	                    						'<label class="layui-form-label" style="width:100px;">备案日期</label>'+
 							                    '<div class="layui-input-inline">'+
-							                        '<input id="recordDate" name="recordDate" value="'+data.recordDate+'" lay-verify="required" class="layui-input" type="text" placeholder="备案日期"/>'+
+							                        '<input id="recordDate" name="recordDate" value="'+data.recordDate+'" lay-verify="required" class="layui-input" type="text" placeholder="备案日期" autocomplete="off"/>'+
 							                    '</div>'+
 	                						'</div>'+
 	            						'</div>'+
@@ -169,7 +169,7 @@
 	        						'<div class="layui-form-item">'+
 		        						'<div class="layui-col-md6">'+
 		            						'<div class="layui-inline">'+
-		                						'<label class="layui-form-label" style="width:80px;">医生手机号</label>'+
+		                						'<label class="layui-form-label" style="width:110px;">医生手机号</label>'+
 							                    '<div class="layui-input-inline">'+
 							                        '<input id="doctorPhone" name="doctorPhone" value="'+data.doctorPhone+'" lay-verify="phone" class="layui-input" type="text" placeholder="医生手机号"/>'+
 							                    '</div>'+
@@ -188,6 +188,7 @@
         		layerIndex = layer.open({
 	  	    	  type: 1, 
 	  	    	  title: '编辑',
+	  	    	  offset: 't',
     			  area: ['650px', '400px'],
 	  	    	  content: editContent
 	  	    	});
@@ -270,7 +271,7 @@
 					  '<div class="layui-form-item">'+
 	    				'<div class="layui-col-md6">'+
 							'<div class="layui-inline">'+
-	    						'<label class="layui-form-label" style="width:60px;">医生姓名</label>'+
+	    						'<label class="layui-form-label" style="width:100px;">医生姓名</label>'+
 	    						'<div class="layui-input-inline">'+
 	        						'<input id="doctorName" name="doctorName" lay-verify="required" class="layui-input" type="text" placeholder="医生姓名"/>'+
 	    						'</div>'+
@@ -278,7 +279,7 @@
 						'</div>'+
 						'<div class="layui-col-md6">'+
 							'<div class="layui-inline">'+
-	    						'<label class="layui-form-label" style="width:60px;">医疗机构</label>'+
+	    						'<label class="layui-form-label" style="width:100px;">医疗机构</label>'+
 	    						'<div class="layui-input-inline">'+
 	        						'<input id="orgName" name="orgName" lay-verify="required" class="layui-input" type="text" placeholder="医疗机构"/>'+
 	    						'</div>'+
@@ -288,17 +289,17 @@
 					'<div class="layui-form-item">'+
 						'<div class="layui-col-md6">'+
 							'<div class="layui-inline">'+
-	    						'<label class="layui-form-label" style="width:60px;">截止日期</label>'+
+	    						'<label class="layui-form-label" style="width:100px;">截止日期</label>'+
 	    						'<div class="layui-input-inline">'+
-	        						'<input id="endDate" name="endDate" lay-verify="required" class="layui-input" type="text" placeholder="截止日期"/>'+
+	        						'<input id="endDate" name="endDate" lay-verify="required" class="layui-input" type="text" placeholder="截止日期" autocomplete="off"/>'+
 	    						'</div>'+
 							'</div>'+
 						'</div>'+
 						'<div class="layui-col-md6">'+
 							'<div class="layui-inline">'+
-	    						'<label class="layui-form-label" style="width:60px;">备案日期</label>'+
+	    						'<label class="layui-form-label" style="width:100px;">备案日期</label>'+
 			                    '<div class="layui-input-inline">'+
-			                        '<input id="recordDate" name="recordDate" lay-verify="required" class="layui-input" type="text" placeholder="备案日期"/>'+
+			                        '<input id="recordDate" name="recordDate" lay-verify="required" class="layui-input" type="text" placeholder="备案日期" autocomplete="off"/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
@@ -306,7 +307,7 @@
 					'<div class="layui-form-item">'+
 						'<div class="layui-col-md6">'+
 							'<div class="layui-inline">'+
-	    						'<label class="layui-form-label" style="width:80px;">医生手机号</label>'+
+	    						'<label class="layui-form-label" style="width:110px;">医生手机号</label>'+
 			                    '<div class="layui-input-inline">'+
 			                        '<input id="doctorPhone" name="doctorPhone" lay-verify="phone" class="layui-input" type="text" placeholder="医生手机号"/>'+
 			                    '</div>'+
@@ -325,6 +326,7 @@
 				layerIndex = layer.open({
 					type: 1, 
 					title: '增加',
+					offset: 't',
 					area: ['650px', '400px'],
 					content: addContent
 				});
@@ -341,13 +343,13 @@
 				});
 	  	      	break;
 	  	      case 'import':
-	  	    	var addContent = '<div class="layui-upload" style="text-align:center;">'+
+	  	    	var addContent = '<div class="layui-upload" style="text-align:center;margin-left:10px;margin-right:10px;">'+
 						  	    	'<div class="layui-upload-list">'+
 							  	      '<table class="layui-table">'+
 							  	        '<thead>'+
-							  	          '<tr><th>文件名</th>'+
-							  	          '<th>大小</th>'+
-							  	          '<th>状态</th>'+
+							  	          '<tr><th style="text-align:center;">文件名</th>'+
+							  	          '<th style="text-align:center;">大小</th>'+
+							  	          '<th style="text-align:center;">状态</th>'+
 							  	        '</tr></thead>'+
 							  	        '<tbody id="recordList"></tbody>'+
 							  	      '</table>'+
@@ -358,6 +360,7 @@
 	  	    	layerIndex = layer.open({
 	  	    		type: 1, 
 	  	    		title: '批量导入',
+	  	    		offset: 't',
 	  	    		area: ['650px', '400px'],
 	  	    		content: addContent
 	  	    	});

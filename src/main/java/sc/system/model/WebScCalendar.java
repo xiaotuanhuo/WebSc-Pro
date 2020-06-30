@@ -3,7 +3,9 @@ package sc.system.model;
 import java.util.Date;
 
 public class WebScCalendar {
-    private String userId;
+    private Integer calendarId;
+
+    private Integer userId;
 
     private String title;
 
@@ -13,12 +15,20 @@ public class WebScCalendar {
 
     private String memo;
 
-    public String getUserId() {
+    public Integer getCalendarId() {
+        return calendarId;
+    }
+
+    public void setCalendarId(Integer calendarId) {
+        this.calendarId = calendarId;
+    }
+
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId == null ? null : userId.trim();
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getTitle() {
@@ -55,8 +65,8 @@ public class WebScCalendar {
 
 	@Override
 	public String toString() {
-		return "WebScCalendar [userId=" + userId + ", title=" + title + ", startTime=" + startTime + ", endTime="
-				+ endTime + ", memo=" + memo + "]";
+		return "WebScCalendar [calendarId=" + calendarId + ", userId=" + userId + ", title=" + title + ", startTime="
+				+ startTime + ", endTime=" + endTime + ", memo=" + memo + "]";
 	}
     
 }

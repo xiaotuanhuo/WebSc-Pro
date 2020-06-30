@@ -12,8 +12,11 @@ import com.github.pagehelper.PageInfo;
 
 import sc.common.util.DateUtils;
 import sc.common.util.PageResultBean;
+import sc.common.util.ShiroUtil;
+import sc.common.util.StringUtil;
 import sc.system.mapper.WebScCalendarMapper;
 import sc.system.model.WebScCalendarAid;
+import sc.system.model.WebScUser;
 
 @Service
 public class CalendarService {
@@ -28,6 +31,12 @@ public class CalendarService {
 		PageHelper.startPage(paraMap.get("page")==null?1:(int)paraMap.get("page"), 
 				paraMap.get("limit")==null?10:(int)paraMap.get("limit"));
 		
+		WebScUser user = ShiroUtil.getCurrentUser();
+		if (!StringUtil.isEmpty(user.getCity())) {
+			paraMap.put("cityPre", user.getCity());
+		}else {
+			paraMap.put("cityPre", user.getProvince());
+		}
 		List<WebScCalendarAid> webScCalendarAids = webScCalendarMapper.selectWebScCalendarAidsByConditions(paraMap);
 		
 		for (WebScCalendarAid webScCalendarAid : webScCalendarAids) {

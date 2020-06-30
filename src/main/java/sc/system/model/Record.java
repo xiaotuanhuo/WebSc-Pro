@@ -13,6 +13,8 @@ public class Record {
 
     private String doctorPhone;
 
+    private String doctorCity;
+
     private String orgName;
 
     private Date recordDate;
@@ -61,6 +63,14 @@ public class Record {
         this.doctorPhone = doctorPhone == null ? null : doctorPhone.trim();
     }
 
+    public String getDoctorCity() {
+        return doctorCity;
+    }
+
+    public void setDoctorCity(String doctorCity) {
+        this.doctorCity = doctorCity == null ? null : doctorCity.trim();
+    }
+
     public String getOrgName() {
         return orgName;
     }
@@ -92,12 +102,4 @@ public class Record {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
-
-	@Override
-	public String toString() {
-		return "Record [recordId=" + recordId + ", userId=" + userId + ", orgId=" + orgId + ", doctorName=" + doctorName
-				+ ", doctorPhone=" + doctorPhone + ", orgName=" + orgName + ", recordDate=" + recordDate + ", endDate="
-				+ endDate + ", createDate=" + createDate + "]";
-	}
-    
 }

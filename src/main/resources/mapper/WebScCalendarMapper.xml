@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="sc.system.mapper.WebScCalendarMapper" >
-  <resultMap id="BaseResultMap" type="sc.system.model.WebScCalendar" >
-    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+   <resultMap id="BaseResultMap" type="sc.system.model.WebScCalendar" >
+    <result column="calendar_id" property="calendarId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
     <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
@@ -15,7 +16,7 @@
   </resultMap>
   
   <sql id="Base_Column_List" >
-    cal.user_id, cal.title, cal.start_time, cal.end_time, cal.memo
+    cal.calendar_id, cal.user_id, cal.title, cal.start_time, cal.end_time, cal.memo
   </sql>
   <sql id="Aid_Column_List" >
     rd.org_name, user.user_name, user.phone
@@ -31,7 +32,8 @@
     inner join WSC_USER user on user.user_id=cal.user_id 
     left join WSC_RECORD rd on cal.user_id=rd.user_id
     where 
-    1 = 1
+    user.role_id='5'
+    and user.city like concat(#{cityPre,jdbcType=VARCHAR},'%')
     <if test="doctorName != null and doctorName != ''" >
     	and user.user_name = #{doctorName,jdbcType=VARCHAR}
     </if>
@@ -51,14 +53,19 @@
   </select>
   
   <insert id="insert" parameterType="sc.system.model.WebScCalendar" >
-    insert into WSC_CALENDAR (user_id, title, start_time, 
-      end_time, memo)
-    values (#{userId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
-      #{endTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR})
+    insert into WSC_CALENDAR (calendar_id, user_id, title, 
+      start_time, end_time, memo
+      )
+    values (#{calendarId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="sc.system.model.WebScCalendar" >
     insert into WSC_CALENDAR
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="calendarId != null" >
+        calendar_id,
+      </if>
       <if test="userId != null" >
         user_id,
       </if>
@@ -76,8 +83,11 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="calendarId != null" >
+        #{calendarId,jdbcType=INTEGER},
+      </if>
       <if test="userId != null" >
-        #{userId,jdbcType=VARCHAR},
+        #{userId,jdbcType=INTEGER},
       </if>
       <if test="title != null" >
         #{title,jdbcType=VARCHAR},

@@ -19,6 +19,7 @@ import sc.common.constants.RecordTitleEnum;
 import sc.common.util.ExcelUtil;
 import sc.common.util.MailTelValidateUtil;
 import sc.common.util.PageResultBean;
+import sc.common.util.ShiroUtil;
 import sc.common.util.StringUtil;
 import sc.system.mapper.OrganizationMapper;
 import sc.system.mapper.RecordMapper;
@@ -45,6 +46,12 @@ public class RecordService {
 		PageHelper.startPage(paraMap.get("page")==null?1:(int)paraMap.get("page"), 
 				paraMap.get("limit")==null?10:(int)paraMap.get("limit"));
 		
+		WebScUser user = ShiroUtil.getCurrentUser();
+		if (!StringUtil.isEmpty(user.getCity())) {
+			paraMap.put("cityPre", user.getCity());
+		}else {
+			paraMap.put("cityPre", user.getProvince());
+		}
 		List<Record> records = recordMapper.selectRecordByConditions(paraMap);
 		
 		PageInfo<Record> pageInfo = new PageInfo<>(records);
@@ -162,6 +169,10 @@ public class RecordService {
 			if(!user.getUserName().equals(record.getDoctorName())) {
 				throw new Exception("医生名字和注册时的名字不相同，（注册姓名：“"+user.getUserName()+"”）");
 			}
+			//判断是否为医生账号
+			if(!"5".equals(user.getRoleId())) {
+				throw new Exception("此账号非医生账号，（姓名：“"+user.getUserName()+"”）");
+			}
 		}
 		
 		//校验医疗机构是否存在
@@ -175,9 +186,10 @@ public class RecordService {
 			throw new Exception("备案日期（"+record.getRecordDate()+"）不能大于截止日期（"+record.getEndDate()+"）");
 		}
 		
-		//查重
+		//只能增加自己辖区的医生备案信息？？
 		
 		record.setUserId(user.getUserId());
+		record.setDoctorCity(user.getCity());
 		record.setOrgId(organization.getOrgId());
 		record.setCreateDate(new Date());
 		return record;

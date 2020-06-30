@@ -7,6 +7,7 @@
     <result column="org_id" property="orgId" jdbcType="VARCHAR" />
     <result column="doctor_name" property="doctorName" jdbcType="VARCHAR" />
     <result column="doctor_phone" property="doctorPhone" jdbcType="VARCHAR" />
+    <result column="doctor_city" property="doctorCity" jdbcType="VARCHAR" />
     <result column="org_name" property="orgName" jdbcType="VARCHAR" />
     <result column="record_date" property="recordDate" jdbcType="TIMESTAMP" />
     <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
@@ -14,7 +15,7 @@
   </resultMap>
   
   <sql id="Base_Column_List" >
-    record_id, user_id, org_id, doctor_name, doctor_phone, org_name, 
+    record_id, user_id, org_id, doctor_name, doctor_phone, doctor_city, org_name, 
     record_date, end_date, create_date
   </sql>
   
@@ -31,17 +32,18 @@
     <if test="orgName != null and orgName != ''" >
     	and org_name = #{orgName,jdbcType=VARCHAR}
     </if>
+    and doctor_city like concat(#{cityPre,jdbcType=VARCHAR},'%')
   </select>
   
   <insert id="insert" parameterType="sc.system.model.Record" >
     insert into WSC_RECORD (record_id, user_id, org_id, 
-      doctor_name, doctor_phone, org_name, 
-      record_date, end_date, create_date
-      )
+      doctor_name, doctor_phone, doctor_city, 
+      org_name, record_date, end_date, 
+      create_date)
     values (#{recordId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{orgId,jdbcType=VARCHAR}, 
-      #{doctorName,jdbcType=VARCHAR}, #{doctorPhone,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, 
-      #{recordDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}
-      )
+      #{doctorName,jdbcType=VARCHAR}, #{doctorPhone,jdbcType=VARCHAR}, #{doctorCity,jdbcType=VARCHAR}, 
+      #{orgName,jdbcType=VARCHAR}, #{recordDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, 
+      #{createDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="sc.system.model.Record" >
     insert into WSC_RECORD
@@ -60,6 +62,9 @@
       </if>
       <if test="doctorPhone != null" >
         doctor_phone,
+      </if>
+      <if test="doctorCity != null" >
+        doctor_city,
       </if>
       <if test="orgName != null" >
         org_name,
@@ -90,6 +95,9 @@
       <if test="doctorPhone != null" >
         #{doctorPhone,jdbcType=VARCHAR},
       </if>
+      <if test="doctorCity != null" >
+        #{doctorCity,jdbcType=VARCHAR},
+      </if>
       <if test="orgName != null" >
         #{orgName,jdbcType=VARCHAR},
       </if>
@@ -119,6 +127,9 @@
       <if test="doctorPhone != null" >
         doctor_phone = #{doctorPhone,jdbcType=VARCHAR},
       </if>
+      <if test="doctorCity != null" >
+        doctor_city = #{doctorCity,jdbcType=VARCHAR},
+      </if>
       <if test="orgName != null" >
         org_name = #{orgName,jdbcType=VARCHAR},
       </if>
@@ -140,6 +151,7 @@
       org_id = #{orgId,jdbcType=VARCHAR},
       doctor_name = #{doctorName,jdbcType=VARCHAR},
       doctor_phone = #{doctorPhone,jdbcType=VARCHAR},
+      doctor_city = #{doctorCity,jdbcType=VARCHAR},
       org_name = #{orgName,jdbcType=VARCHAR},
       record_date = #{recordDate,jdbcType=TIMESTAMP},
       end_date = #{endDate,jdbcType=TIMESTAMP},
