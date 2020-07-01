@@ -25,11 +25,11 @@ public class RoleController {
         return "role/role-list";
     }
 
-    @OperationLog("查询角色列表")
-    @GetMapping("/user/list")
+    @OperationLog("新增或编辑用户时获取可选择角色")
+    @GetMapping("/addEditUser/list")
     @ResponseBody
-    public ResultBean getUserRole() {
-    	return ResultBean.success(roleService.selectRolesByUser());
+    public ResultBean getRolesForAddEidtUser() {
+    	return ResultBean.success(roleService.getRolesForAddEidtUser());
     }
     
     @OperationLog("查询角色列表")

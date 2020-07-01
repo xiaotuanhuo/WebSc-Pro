@@ -21,8 +21,10 @@ public interface OrganizationMapper {
 	  * 获取所有医疗机构节点
 	  * @return
 	  */
-	@DataAuth(authCode = "authDataCode1")
 	List<WebScOrganization> selectAll();
+	
+	@DataAuth(authCode = "getOrgForAddEidtUser")
+    List<WebScOrganization> selectOrgForAddEidtUser();
 	
 	int insert(WebScOrganization wso);
 	

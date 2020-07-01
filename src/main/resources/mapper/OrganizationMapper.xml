@@ -68,4 +68,9 @@
         where org_id = #{orgId,jdbcType=VARCHAR}
     </update>
     
+    <select id="selectOrgForAddEidtUser" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from WSC_ORGANIZATION
+    </select>
 </mapper>

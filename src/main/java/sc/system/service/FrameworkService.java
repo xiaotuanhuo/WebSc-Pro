@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
-
 import sc.system.mapper.OrganizationMapper;
 import sc.system.model.WebScOrganization;
 import sc.system.model.vo.CDO;

@@ -20,8 +20,8 @@ public interface RoleMapper {
 
 	List<WebScRole> selectAllByQuery(WebScRole roleQuery);
 	
-	@DataAuth(authCode="getRolesByUser")
-	List<WebScRole> selectRolesByUser();
+	@DataAuth(authCode = "getRolesForAddEidtUser")
+    List<WebScRole> selectRolesForAddEidtUser();
 
 	int count();
 }

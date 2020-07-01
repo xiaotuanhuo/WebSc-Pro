@@ -47,8 +47,8 @@ public class RoleService {
         return roleMapper.selectAll();
     }
 
-    public List<WebScRole> selectRolesByUser() {
-        return roleMapper.selectRolesByUser();
+    public List<WebScRole> getRolesForAddEidtUser() {
+        return roleMapper.selectRolesForAddEidtUser();
     }
     
     public List<WebScRole> selectAllByQuery(WebScRole roleQuery) {

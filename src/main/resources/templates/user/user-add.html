@@ -17,6 +17,9 @@
 
 <body>
 	<div class="z-body animated fadeIn">
+		<span id="userProvince" style="display: none;"><shiro:principal property="province"/></span>
+		<span id="userCity" style="display: none;"><shiro:principal property="city"/></span>
+		<span id="userArea" style="display: none;"><shiro:principal property="area"/></span>
 		<form action="" method="post" class="layui-form layui-form-pane">
 			<div class="layui-form-item">
 				<div class="layui-row">
@@ -78,18 +81,18 @@
 							</div>
 						</div>
 						<div class="layui-form-item">
-							<label for="role2" class="layui-form-label">角色</label>
+							<label for="role" class="layui-form-label">角色</label>
 							<div class="layui-input-block">
-								<div id="role2" class="xm-select-demo"></div>
+								<div id="role" class="xm-select-demo"></div>
 							</div>
 						</div>
-						<div id="role3Div" class="layui-form-item" style="display: none;">
-							<label for="role3" class="layui-form-label">所属机构</label>
+						<div id="orgDiv" class="layui-form-item" style="display: none;">
+							<label for="organization" class="layui-form-label">所属机构</label>
 							<div class="layui-input-block">
-								<div id="role3" class="xm-select-demo"></div>
+								<div id="organization" class="xm-select-demo"></div>
 							</div>
 						</div>
-						<div class="layui-form-item">
+						<!-- <div id="districtDiv" class="layui-form-item" style="display: none;">
 							<div class="layui-inline">
 								<label for="province" class="layui-form-label">区域</label>
 								<div class="layui-inline">
@@ -102,27 +105,13 @@
 										<option value="">请选择市</option>
 									</select>
 								</div>
-								<div class="layui-inline">
+								<div id="areaDiv" class="layui-inline" style="display: none;">
 									<select name="area" lay-filter="area" disabled>
 										<option value="">请选择县/区</option>
 									</select>
 								</div>
 							</div>
-						</div>
-						<div class="layui-form-item">
-							<label for="deptid" class="layui-form-label">部门</label>
-							<div class="layui-input-block">
-								<ul id="deptTree" class="dtree" data-id="0" data-value="请选择部门"></ul>
-							</div>
-						</div>
-						<div th:if="${user != null}" class="layui-form-item">
-							<label for="status" class="layui-form-label">状态</label>
-							<div class="layui-input-block">
-								<input type="checkbox" checked="true" id="status" name="status"
-									th:value="${user?.status}" lay-skin="switch"
-									lay-filter="switchTest" lay-text="启用|停用">
-							</div>
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</div>
@@ -146,6 +135,8 @@
     <script th:src="@{/js/common.js}"></script>
 
     <script>
+    	var userProvince = $('')
+    
 		layui.config({
 			base: '/lib/layui/extend/'
 		}).extend({
@@ -155,15 +146,14 @@
 			var form = layui.form,
 				layer = layui.layer,
 				xmSelect = layui.xmSelect,
-				dtree = layui.dtree
+				dtree = layui.dtree,
 				address = layui.address();
-			
 			var sex = [[${user?.sex} + '']];
 			$("input[name='sex'][value='" + sex + "']").attr('checked',true);
 			form.render();
 			
-			var demo2 = xmSelect.render({
-				el: '#role2',
+			var roleKit = xmSelect.render({
+				el: '#role',
 				radio: true,
 				clickClose: true,
 				repeat: true,
@@ -189,94 +179,141 @@
 					var change = data.change;
 					//isAdd, 此次操作是新增还是删除
 					var isAdd = data.isAdd;
-					if (arr.length != 0) {
-						$('#role3Div').show();
+					if (isAdd && arr.length != 0 && (arr[0].roleId == 4 || arr[0].roleId == 5 || arr[0].roleId == 6)) {
+						// 选择医生集团角色时加载医生集团组织
+						loadDept();
+					} else if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
+						// 选择医疗机构角色时加载医疗机构组织
+						loadOrganization();
+					} else if (isAdd && arr.length != 0 && arr[0].roleId == 3) {
+						// 选择卫监局角色时加载卫监局组织
+						loadBureau();
+					} else {
+						$('#orgDiv').hide();
 					}
 					console.log(data);
 				}
 			});
 			
 			$.ajax({
-				url: "/role/user/list",
+				url: "/role/addEditUser/list",
 				type: "GET",
-		        dataType: "json",
-		        success:function(response) {
-		        	var data = response.data;
-					console.log("sdssf");
-					demo2.update({
+				dataType: "json",
+				success:function(response) {
+					var data = response.data;
+					roleKit.update({
 						data: data,
 						autoRow: true
 					})
-		        }
+				}
 			});
 			
-			xmSelect.render({
-				el: '#role3',
-				radio: true,
-				clickClose: true,
-				data: [
-					{name: '张三', value: 1},
-					{name: '李四', value: 2},
-					{name: '王五', value: 3},
-				]
-			});
-            	
-            dtree.renderSelect({
-                elem: "#deptTree",
-                url: "/dept/tree",
-                dataStyle: "layuiStyle",
-                width: "100%",
-                method: "GET",
-                dot: false,
-                accordion: true,
-                menubar: true,
-                response: {
-                    statusCode: 0,
-                    message: "msg",
-                    treeId: "id",
-                    parentId: "parentId",
-                    title: "name"
-                },
-                done: function() {
-                    var deptid = [[${user?.deptid + ''}]];
-                    dtree.dataInit("deptTree", deptid);
-                    dtree.setSelectValue("deptTree");
-                }
-            });
-
-            dtree.on("node('deptTree')" ,function(obj){
-                $("#deptid").val(obj.param.nodeId);
-            });
-            
-            form.on('submit(add)', function (form) {
-                form.field.role = formSelects.value('role-select', 'val');
-                $.post('/user', form.field, function (result) {
-                    handlerResult(result, addDone);
-                });
-                return false;
-            });
-
-            //监听提交
-            form.on('submit(edit)', function (form) {
-                form.field._method = 'PUT';
-                form.field.role = formSelects.value('role-select', 'val');
-                $.post('/user', form.field, function (result) {
-                    handlerResult(result, editDone);
-                });
-                return false;
-            });
-
-            function addDone(data) {
-            	var index = parent.layer.getFrameIndex(window.name); 
-                parent.layer.close(index); 
-                parent.layer.msg("添加成功", {icon: 6});
-            }
-
-            function editDone(data) {
-                var index = parent.layer.getFrameIndex(window.name); 
-                parent.layer.close(index); 
-                parent.layer.msg("修改成功", {icon: 6});
-            }
+			// 医疗集团加载
+			var loadDept = function() {
+				var deptKit = xmSelect.render({
+					el: '#organization',
+					radio: true,
+					clickClose: true,
+					repeat: true,
+					model: {
+						label: {
+							type: 'block',
+							block: {
+								//最大显示数量, 0:不限制
+								showCount: 0,
+								//是否显示删除图标
+								showIcon: false
+							}
+						}
+					},
+					prop: {
+						name: 'orgName',
+						value: 'orgId'
+					},
+					on: function(data) {
+						//arr:  当前已选中的数据
+						var arr = data.arr;
+						//change, 此次选择变化的数据,数组
+						var change = data.change;
+						//isAdd, 此次操作是新增还是删除
+						var isAdd = data.isAdd;
+						if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
+							loadOrganization();
+						} else {
+							$('#orgDiv').hide();
+						}
+						console.log(data);
+					}
+				});
+				
+				$.ajax({
+					url: "/dept/addEditUser/list",
+					type: "GET",
+					dataType: "json",
+					success:function(response) {
+						var data = response.data;
+						orgKit.update({
+							data: data,
+							autoRow: true
+						})
+					}
+				});
+				
+				$('#orgDiv').show();
+			};
+			
+			var loadOrganization = function() {
+				var orgKit = xmSelect.render({
+					el: '#organization',
+					radio: true,
+					clickClose: true,
+					repeat: true,
+					model: {
+						label: {
+							type: 'block',
+							block: {
+								//最大显示数量, 0:不限制
+								showCount: 0,
+								//是否显示删除图标
+								showIcon: false
+							}
+						}
+					},
+					prop: {
+						name: 'orgName',
+						value: 'orgId'
+					},
+					on: function(data) {
+						//arr:  当前已选中的数据
+						var arr = data.arr;
+						//change, 此次选择变化的数据,数组
+						var change = data.change;
+						//isAdd, 此次操作是新增还是删除
+						var isAdd = data.isAdd;
+						if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
+							loadOrganization();
+						} else {
+							$('#orgDiv').hide();
+						}
+						console.log(data);
+					}
+				});
+				
+				$.ajax({
+					url: "/organization/addEditUser/list",
+					type: "GET",
+					dataType: "json",
+					success:function(response) {
+						var data = response.data;
+						orgKit.update({
+							data: data,
+							autoRow: true
+						})
+					}
+				});
+				
+				$('#orgDiv').show();
+			};
         });
     </script>
 </body>

@@ -1,9 +1,9 @@
 {
-	"getRolesByUser": [
+	"getRolesForAddEidtUser": [
 		{
 			"role": "1",
-			"exps": "select * from WSC_ROLE",
-			"desc": "系统管理员角色用户可以查询所有角色"
+			"exps": "select role_id, role_name from WSC_ROLE",
+			"desc": "添加编辑 用户时，系统管理员角色用户可以查询所有角色"
 		},
 		{
 			"role": "2",
@@ -11,11 +11,35 @@
 			"desc": "vvv12"
 		}
 	],
-	"dataAuthCode2": [
+	"getDeptForAddEidtUser": [
 		{
 			"role": "1",
-			"exps": "ss21",
-			"desc": "vvv21"
+			"exps": "select org_id, org_name from WSC_DEPT where org_pid = '0'",
+			"desc": "添加编辑用户时，系统管理员角色用户可以查询所有医疗机构根节点"
+		},
+		{
+			"role": "2",
+			"exps": "ss22",
+			"desc": "vvv22"
+		}
+	],
+	"getOrgForAddEidtUser": [
+		{
+			"role": "1",
+			"exps": "select org_id, org_name from WSC_ORGANIZATION where org_pid = '0'",
+			"desc": "添加编辑用户时，系统管理员角色用户可以查询所有医疗机构根节点"
+		},
+		{
+			"role": "2",
+			"exps": "ss22",
+			"desc": "vvv22"
+		}
+	],
+	"getBereauForAddEidtUser": [
+		{
+			"role": "1",
+			"exps": "select org_id, org_name from WSC_BEREAU where org_pid = '0'",
+			"desc": "添加编辑用户时，系统管理员角色用户可以查询所有医疗机构根节点"
 		},
 		{
 			"role": "2",

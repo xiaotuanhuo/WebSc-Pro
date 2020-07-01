@@ -35,6 +35,10 @@ public class OrganizationService {
 		return wsoList;
 	}
 	
+	public List<WebScOrganization> getOrgForAddEidtUser() {
+        return organizationMapper.selectOrgForAddEidtUser();
+    }
+	
 	public int insert(WebScOrganization wso) {
 		return organizationMapper.insert(wso);
 	}
