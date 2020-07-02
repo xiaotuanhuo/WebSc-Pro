@@ -25,7 +25,7 @@
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
         <result column="area" jdbcType="VARCHAR" property="area"/>
-        <collection property="children" ofType="aisino.system.model.Dept" select="selectAllTree" column="{parent_id = dept_id}"/>
+        <collection property="children" ofType="sc.system.model.WebScDept" select="selectAllTree" column="{parent_id = dept_id}"/>
     </resultMap>
 
     <sql id="Base_Column_List">

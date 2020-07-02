@@ -15,6 +15,23 @@
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="VARCHAR" />
   </resultMap>
+  
+  <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScBureau">
+    <id column="bureau_id" property="bureauId" jdbcType="VARCHAR" />
+    <result column="bureau_pid" property="bureauPid" jdbcType="VARCHAR" />
+    <result column="bureau_name" property="bureauName" jdbcType="VARCHAR" />
+    <result column="bureau_address" property="bureauAddress" jdbcType="VARCHAR" />
+    <result column="bureau_tel" property="bureauTel" jdbcType="VARCHAR" />
+    <result column="leader_name" property="leaderName" jdbcType="VARCHAR" />
+    <result column="leader_tel" property="leaderTel" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+        <collection property="children" ofType="sc.system.model.WebScBureau" select="selectAllTree" column="{bureau_pid = bureau_id}"/>
+    </resultMap>
+    
   <sql id="Base_Column_List" >
     bureau_id, bureau_pid, bureau_name, bureau_address, bureau_tel, leader_name, leader_tel, 
     province, city, area, create_date, status
@@ -174,4 +191,20 @@
       status = #{status,jdbcType=VARCHAR}
     where bureau_id = #{bureauId,jdbcType=VARCHAR}
   </update>
+  
+  <select id="selectAllTree" resultMap="TreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_BUREAU
+        <where>
+            <choose>
+                <when test="bureau_pid!=null">
+                    and bureau_pid = #{bureau_pid}
+                </when>
+                <otherwise>
+                    and bureau_pid = '0'
+                </otherwise>
+            </choose>
+        </where>
+    </select>
 </mapper>
