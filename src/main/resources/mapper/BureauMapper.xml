@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sc.system.mapper.BureauMapper" >
+  <resultMap id="BaseResultMap" type="sc.system.model.WebScBureau" >
+    <id column="bureau_id" property="bureauId" jdbcType="VARCHAR" />
+    <result column="bureau_pid" property="bureauPid" jdbcType="VARCHAR" />
+    <result column="bureau_name" property="bureauName" jdbcType="VARCHAR" />
+    <result column="bureau_address" property="bureauAddress" jdbcType="VARCHAR" />
+    <result column="bureau_tel" property="bureauTel" jdbcType="VARCHAR" />
+    <result column="leader_name" property="leaderName" jdbcType="VARCHAR" />
+    <result column="leader_tel" property="leaderTel" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    bureau_id, bureau_pid, bureau_name, bureau_address, bureau_tel, leader_name, leader_tel, 
+    province, city, area, create_date, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSC_BUREAU
+    where bureau_id = #{bureauId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from WSC_BUREAU
+    where bureau_id = #{bureauId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="sc.system.model.WebScBureau" >
+    insert into WSC_BUREAU (bureau_id, bureau_pid, bureau_name, 
+      bureau_address, bureau_tel, leader_name, 
+      leader_tel, province, city, 
+      area, create_date, status
+      )
+    values (#{bureauId,jdbcType=VARCHAR}, #{bureauPid,jdbcType=VARCHAR}, #{bureauName,jdbcType=VARCHAR}, 
+      #{bureauAddress,jdbcType=VARCHAR}, #{bureauTel,jdbcType=VARCHAR}, #{leaderName,jdbcType=VARCHAR}, 
+      #{leaderTel,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{area,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="sc.system.model.WebScBureau" >
+    insert into WSC_BUREAU
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bureauId != null" >
+        bureau_id,
+      </if>
+      <if test="bureauPid != null" >
+        bureau_pid,
+      </if>
+      <if test="bureauName != null" >
+        bureau_name,
+      </if>
+      <if test="bureauAddress != null" >
+        bureau_address,
+      </if>
+      <if test="bureauTel != null" >
+        bureau_tel,
+      </if>
+      <if test="leaderName != null" >
+        leader_name,
+      </if>
+      <if test="leaderTel != null" >
+        leader_tel,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bureauId != null" >
+        #{bureauId,jdbcType=VARCHAR},
+      </if>
+      <if test="bureauPid != null" >
+        #{bureauPid,jdbcType=VARCHAR},
+      </if>
+      <if test="bureauName != null" >
+        #{bureauName,jdbcType=VARCHAR},
+      </if>
+      <if test="bureauAddress != null" >
+        #{bureauAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="bureauTel != null" >
+        #{bureauTel,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderName != null" >
+        #{leaderName,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderTel != null" >
+        #{leaderTel,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="sc.system.model.WebScBureau" >
+    update WSC_BUREAU
+    <set >
+      <if test="bureauPid != null" >
+        bureau_pid = #{bureauPid,jdbcType=VARCHAR},
+      </if>
+      <if test="bureauName != null" >
+        bureau_name = #{bureauName,jdbcType=VARCHAR},
+      </if>
+      <if test="bureauAddress != null" >
+        bureau_address = #{bureauAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="bureauTel != null" >
+        bureau_tel = #{bureauTel,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderName != null" >
+        leader_name = #{leaderName,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderTel != null" >
+        leader_tel = #{leaderTel,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where bureau_id = #{bureauId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScBureau" >
+    update WSC_BUREAU
+    set bureau_pid = #{bureauPid,jdbcType=VARCHAR},
+      bureau_name = #{bureauName,jdbcType=VARCHAR},
+      bureau_address = #{bureauAddress,jdbcType=VARCHAR},
+      bureau_tel = #{bureauTel,jdbcType=VARCHAR},
+      leader_name = #{leaderName,jdbcType=VARCHAR},
+      leader_tel = #{leaderTel,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR}
+    where bureau_id = #{bureauId,jdbcType=VARCHAR}
+  </update>
+</mapper>
