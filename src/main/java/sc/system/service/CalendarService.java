@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import sc.common.constants.DayPeriodEnum;
 import sc.common.util.DateUtils;
 import sc.common.util.PageResultBean;
 import sc.common.util.ShiroUtil;
@@ -42,10 +43,14 @@ public class CalendarService {
 		for (WebScCalendarAid webScCalendarAid : webScCalendarAids) {
 			webScCalendarAid.setCalendarDate(DateUtils.parseDateToStr("yyyy-MM-dd", 
 					webScCalendarAid.getStartTime()));
-			webScCalendarAid.setCalendarPeriod(
+			
+			DayPeriodEnum dayPeriodEnum = DayPeriodEnum.getvalueOf(
 					DateUtils.getHour(webScCalendarAid.getStartTime())
 					+"-"+
-					DateUtils.getHour(webScCalendarAid.getEndTime()));
+					DateUtils.getHour(webScCalendarAid.getEndTime())
+			);
+			webScCalendarAid.setCalendarPeriod(
+					dayPeriodEnum.getTxt());
 		}
 		
 		PageInfo<WebScCalendarAid> pageInfo = new PageInfo<>(webScCalendarAids);

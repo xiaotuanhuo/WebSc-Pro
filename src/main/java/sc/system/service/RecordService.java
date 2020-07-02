@@ -16,6 +16,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import sc.common.constants.RecordTitleEnum;
+import sc.common.util.DateUtils;
 import sc.common.util.ExcelUtil;
 import sc.common.util.MailTelValidateUtil;
 import sc.common.util.PageResultBean;
@@ -139,9 +140,6 @@ public class RecordService {
 			}
 		}
 		
-		logger.info("records : "+records);
-		logger.info("msg : "+msg);
-		
 		//4、数据持久化
 		for (Record record : records) {
 			recordMapper.insert(record);
@@ -184,6 +182,14 @@ public class RecordService {
 		//备案日期不能小于截止日期
 		if (record.getRecordDate().compareTo(record.getEndDate()) == 1) {
 			throw new Exception("备案日期（"+record.getRecordDate()+"）不能大于截止日期（"+record.getEndDate()+"）");
+		}
+		
+		//判重
+		if("1".equals(recordMapper.isExists(
+				record.getDoctorPhone(), record.getOrgName(), 
+				DateUtils.parseDateToStr("yyyy-MM-dd", record.getEndDate())))) {
+			
+			throw new Exception("这条备案信息已存在，不可重复添加");
 		}
 		
 		//只能增加自己辖区的医生备案信息？？

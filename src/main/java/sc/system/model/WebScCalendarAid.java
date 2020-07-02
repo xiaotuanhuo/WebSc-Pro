@@ -4,8 +4,8 @@ public class WebScCalendarAid extends WebScCalendar {
 	private String orgName;
 	private String doctorName;
 	private String doctorPhone;
-	private String calendarDate; //报休日
-	private String calendarPeriod; //报休时间段
+	private String calendarDate; //备休日
+	private String calendarPeriod; //备休时间段
 	
 	public WebScCalendarAid() {
 	}

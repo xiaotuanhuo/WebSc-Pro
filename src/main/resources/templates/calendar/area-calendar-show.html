@@ -81,10 +81,11 @@
 			,contentType : 'application/json'
     	    ,cols: [
     	    	[
-	    	      {field:'doctorName', width:'20%', title: '医生姓名'}
+    	    	  {type: 'numbers', title: '序号', align: 'center', width:'5%'}
+	    	      ,{field:'doctorName', width:'20%', title: '医生姓名'}
 	    	      ,{field:'doctorPhone', width:'20%', title: '医生手机号'}
-	    	      ,{field:'calendarDate', width:'20%', title: '报休日'}
-	    	      ,{field:'calendarPeriod', width:'20%', title: '报休时段'}
+	    	      ,{field:'calendarDate', width:'20%', title: '备休日'}
+	    	      ,{field:'calendarPeriod', width:'15%', title: '备休时段'}
 	    	      ,{field:'orgName', width:'20%', title: '备案机构'}
     	    	]
     	    ]

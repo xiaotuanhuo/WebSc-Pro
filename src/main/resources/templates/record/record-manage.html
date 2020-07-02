@@ -196,12 +196,12 @@
 	  	      //备案时间
 	      	  laydate.render({
 	      	    elem: '#recordDate'
-	      	    ,type: 'datetime'
+	      	    ,type: 'date'
 	      	  });
 	      	  //截止时间
 	      	  laydate.render({
 	      	    elem: '#endDate'
-	      	    ,type: 'datetime'
+	      	    ,type: 'date'
 	      	  });
 	  	    }else if(obj.event === 'delete'){
 	  	    	$.ajax({
@@ -334,13 +334,18 @@
 				//备案时间
 				laydate.render({
 					elem: '#recordDate'
-					,type: 'datetime'
+					,type: 'date'
 				});
 				//截止时间
 				laydate.render({
 					elem: '#endDate'
-					,type: 'datetime'
+					,type: 'date'
 				});
+				
+				//获取医生信息
+				
+				//获取机构信息
+				
 	  	      	break;
 	  	      case 'import':
 	  	    	var addContent = '<div class="layui-upload" style="text-align:center;margin-left:10px;margin-right:10px;">'+

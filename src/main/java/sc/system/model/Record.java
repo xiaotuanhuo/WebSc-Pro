@@ -2,6 +2,10 @@ package sc.system.model;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class Record {
     private Integer recordId;
 
@@ -17,8 +21,12 @@ public class Record {
 
     private String orgName;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date recordDate;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
 
     private Date createDate;

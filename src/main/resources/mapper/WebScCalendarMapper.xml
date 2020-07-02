@@ -24,6 +24,7 @@
   
   <select id="selectWebScCalendarAidsByConditions" resultMap="ResultMapWithAid" parameterType="hashmap">
   	select 
+  	distinct
     <include refid="Base_Column_List" />
     ,
     <include refid="Aid_Column_List" />
@@ -34,6 +35,7 @@
     where 
     user.role_id='5'
     and user.city like concat(#{cityPre,jdbcType=VARCHAR},'%')
+    and cal.end_time > now()
     <if test="doctorName != null and doctorName != ''" >
     	and user.user_name = #{doctorName,jdbcType=VARCHAR}
     </if>

@@ -9,8 +9,8 @@
     <result column="doctor_phone" property="doctorPhone" jdbcType="VARCHAR" />
     <result column="doctor_city" property="doctorCity" jdbcType="VARCHAR" />
     <result column="org_name" property="orgName" jdbcType="VARCHAR" />
-    <result column="record_date" property="recordDate" jdbcType="TIMESTAMP" />
-    <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+    <result column="record_date" property="recordDate" jdbcType="DATE" />
+    <result column="end_date" property="endDate" jdbcType="DATE" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
   </resultMap>
   
@@ -30,7 +30,7 @@
     	and doctor_name = #{doctorName,jdbcType=VARCHAR}
     </if>
     <if test="orgName != null and orgName != ''" >
-    	and org_name = #{orgName,jdbcType=VARCHAR}
+    	and org_name like concat(#{orgName,jdbcType=VARCHAR},'%')
     </if>
     and doctor_city like concat(#{cityPre,jdbcType=VARCHAR},'%')
   </select>
@@ -42,7 +42,7 @@
       create_date)
     values (#{recordId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{orgId,jdbcType=VARCHAR}, 
       #{doctorName,jdbcType=VARCHAR}, #{doctorPhone,jdbcType=VARCHAR}, #{doctorCity,jdbcType=VARCHAR}, 
-      #{orgName,jdbcType=VARCHAR}, #{recordDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, 
+      #{orgName,jdbcType=VARCHAR}, #{recordDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, 
       #{createDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="sc.system.model.Record" >
@@ -102,10 +102,10 @@
         #{orgName,jdbcType=VARCHAR},
       </if>
       <if test="recordDate != null" >
-        #{recordDate,jdbcType=TIMESTAMP},
+        #{recordDate,jdbcType=DATE},
       </if>
       <if test="endDate != null" >
-        #{endDate,jdbcType=TIMESTAMP},
+        #{endDate,jdbcType=DATE},
       </if>
       <if test="createDate != null" >
         #{createDate,jdbcType=TIMESTAMP},
@@ -134,10 +134,10 @@
         org_name = #{orgName,jdbcType=VARCHAR},
       </if>
       <if test="recordDate != null" >
-        record_date = #{recordDate,jdbcType=TIMESTAMP},
+        record_date = #{recordDate,jdbcType=DATE},
       </if>
       <if test="endDate != null" >
-        end_date = #{endDate,jdbcType=TIMESTAMP},
+        end_date = #{endDate,jdbcType=DATE},
       </if>
       <if test="createDate != null" >
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -153,8 +153,8 @@
       doctor_phone = #{doctorPhone,jdbcType=VARCHAR},
       doctor_city = #{doctorCity,jdbcType=VARCHAR},
       org_name = #{orgName,jdbcType=VARCHAR},
-      record_date = #{recordDate,jdbcType=TIMESTAMP},
-      end_date = #{endDate,jdbcType=TIMESTAMP},
+      record_date = #{recordDate,jdbcType=DATE},
+      end_date = #{endDate,jdbcType=DATE},
       create_date = #{createDate,jdbcType=TIMESTAMP}
     where record_id = #{recordId,jdbcType=INTEGER}
   </update>

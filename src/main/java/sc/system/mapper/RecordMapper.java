@@ -1,5 +1,6 @@
 package sc.system.mapper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,13 @@ import sc.system.model.Record;
 
 @Mapper
 public interface RecordMapper {
+	
+	@Select("SELECT '1' FROM WSC_RECORD WHERE doctor_phone=#{doctorPhone} "
+			+ "AND org_name=#{orgName} AND end_date=str_to_date(#{endDate},'%Y-%m-%d')")
+	String isExists(
+			@Param("doctorPhone") String doctorPhone, 
+			@Param("orgName") String orgName, 
+			@Param("endDate") String endDate);
 	
 	@Delete("DELETE FROM WSC_RECORD WHERE record_id=${recordId}")
 	int deleteRecord(@Param("recordId") int recordId);
