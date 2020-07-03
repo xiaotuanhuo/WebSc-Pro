@@ -1,9 +1,20 @@
 package sc.system.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class WebScOrganization {
+	
+	@JsonProperty("id")
 	private String orgId;
-	private String orgPid;
+	
+	@JsonProperty("name")
 	private String orgName;
+	
+	@JsonProperty("parentId")
+	private String orgPid;
+	
 	private String orgAddress;
 	private String orgTel;
 	private String leaderName;
@@ -15,6 +26,7 @@ public class WebScOrganization {
 	private String area;
 	private String areaName;
 	private String orgParentId;
+	private List<WebScOrganization> children;
 	
 	public String getOrgId() {
 		return orgId;
@@ -24,20 +36,20 @@ public class WebScOrganization {
 		this.orgId = orgId;
 	}
 	
-	public String getOrgPid() {
-		return orgPid;
-	}
-	
-	public void setOrgPid(String orgPid) {
-		this.orgPid = orgPid;
-	}
-	
 	public String getOrgName() {
 		return orgName;
 	}
 	
 	public void setOrgName(String orgName) {
 		this.orgName = orgName;
+	}
+	
+	public String getOrgPid() {
+		return orgPid;
+	}
+	
+	public void setOrgPid(String orgPid) {
+		this.orgPid = orgPid;
 	}
 	
 	public String getOrgAddress() {
@@ -126,6 +138,14 @@ public class WebScOrganization {
 	
 	public void setOrgParentId(String orgParentId) {
 		this.orgParentId = orgParentId;
+	}
+	
+	public List<WebScOrganization> getChildren() {
+		return children;
+	}
+	
+	public void setChildren(List<WebScOrganization> children) {
+		this.children = children;
 	}
 	
 	@Override

@@ -3,14 +3,14 @@
  *@Author 智慧的小西瓜
  *@DOCS http://www.wisdomelon.com/DTreeHelper/
  *@License https://www.layui.com/
- *@LASTTIME 2019/06/21
- *@VERSION v2.5.4
+ *@LASTTIME 2019/10/24
+ *@VERSION v2.5.6
  */
 layui.define(['jquery','layer','form'], function(exports) {
     var $ = layui.$,
         layer = layui.layer,
         form = layui.form;
-
+    
     layui.link('/lib/layui/extend/dtree.css');
     layui.link('/lib/layui/extend/font/dtreefont.css');
 
@@ -35,7 +35,7 @@ layui.define(['jquery','layer','form'], function(exports) {
         $WIN = $(window),				//window窗口
         $DOC = $(document),				//当前文档
         MOD_NAME = "dtree",				//模块名称
-        VERSION = "v2.5.4",				//版本
+        VERSION = "v2.5.6",				//版本
         OPTIONS = {},					//全局属性配置
         DTrees = {};				    //当前被实例化的树的集合
 
@@ -407,17 +407,18 @@ layui.define(['jquery','layer','form'], function(exports) {
             basicData: "",		//用户自定义的记录节点数据
             recordData: "",		//当前data数据（排除basicData和children字段）
         };
+        
         this.toolbarMenu = {};	// 工具栏右键菜单绑定的所有元素
         this.checkbarNode = [];	// 复选框标记的全部节点数据
         this.errData = [];		// 记录在渲染节点时有问题的数据
         this.checkArrLen = 0;	//添加节点的时判断复选框个数
         this.temp = [];	// 临时变量
-
+        this.bak = "";	// 临时变量
         this.setting(options);
     };
 
     /******************** 初始参数加载 ********************/
-    // 设置值
+    // 设置基本参数值
     DTree.prototype.setting = function(options) {
         this.options = options || {};
 
@@ -548,11 +549,18 @@ layui.define(['jquery','layer','form'], function(exports) {
         this.iframeRequest = $.extend(this.iframeRequest, this.options.iframeRequest) || $.extend(this.iframeRequest, OPTIONS.iframeRequest) || this.iframeRequest; //iframe的自定义参数
         this.iframeFun = $.extend(this.iframeFun, this.options.iframeFun) || $.extend(this.iframeFun, OPTIONS.iframeFun) || this.iframeFun;	//iframe事件加载
 
+        /** 下拉树模式参数**/
+        this.select = this.options.select || false; 
+        if(this.select) {
+        	// 重置下拉树
+        	this.selectSetting();
+        }
+        
         /** 调用确认最终主题方法*/
         this.ensureTheme();
     };
 
-    // 设置值
+    // 设置基本参数值
     DTree.prototype.reloadSetting = function(options) {
         this.options = $.extend(this.options, options) || this.options;
 
@@ -681,23 +689,43 @@ layui.define(['jquery','layer','form'], function(exports) {
         this.iframeRequest = $.extend(this.iframeRequest, this.options.iframeRequest) || this.iframeRequest; //iframe的自定义参数
         this.iframeFun = $.extend(this.iframeFun, this.options.iframeFun) || this.iframeFun; //iframe事件加载
 
+        /** 下拉树模式参数**/
+        if(this.select) {
+        	// 重置下拉树
+        	this.reloadSelectSetting();
+        }
+        
         /** 调用确认最终主题方法*/
         this.ensureTheme();
+        
     };
-
-    // 设置下拉树值
-    DTree.prototype.selectSetting = function(options) {
-        /** select模式参数*/
+    
+    // 设置下拉树的基本参数值
+    DTree.prototype.selectSetting = function() {
+    	/** select模式参数*/
         this.select = true; //配置成select模式
-
-        this.selectValue = this.obj.attr("data-value") || options.selectValue || "";	//输入框的值
+        
+        this.selectInitVal = this.obj.attr("data-value") || this.options.selectInitVal || "";	//输入框的值
         this.selectTreeDiv = this.obj[0].id + "_tree_div";		// 上级DIV节点
         this.selectCardDiv = this.obj[0].id + "_select_card_div";	// 上级layui卡片节点
         this.selectDiv = this.obj[0].id + "_select_div";		// 模拟的select节点
-        this.selectInput = this.obj[0].id + "_select_input";		// select的提示输入框名称
+        this.selectTipsName = this.obj[0].id + "_select_input"; // select的提示输入框名称
         this.selectTips = this.options.selectTips || "请选择";			// 输入框的提示语
+        this.selectInputName = this.options.selectInputName || {nodeId: this.obj[0].id + "_select_nodeId"};  // select表单中的元素
+        
         // 调取下拉树的特殊处理页面元素标识
         this.renderSelectDom();
+    }
+    
+    // 重新设置下拉树的基本参数值
+    DTree.prototype.reloadSelectSetting = function() {
+        
+    	this.selectInitVal = this.obj.attr("data-value") || this.options.selectInitVal || this.selectInitVal;	//输入框的值
+        this.selectTips = this.options.selectTips || this.selectTips;			// 输入框的提示语
+        this.selectInputName = $.extend(this.selectInputName, this.options.selectInputName) || this.selectInputName;  // select表单中的元素
+        
+        // 调取下拉树的特殊处理页面元素标识
+        this.reloadSelectDom();
     }
 
     /******************** 下拉树设置区域 ********************/
@@ -705,26 +733,128 @@ layui.define(['jquery','layer','form'], function(exports) {
     DTree.prototype.renderSelectDom = function() {
         var _this = this;
         var rootId = _this.obj[0].id;
+        
+        // 设置自定义表单隐藏域
+        var selectInputName = _this.selectInputName;
+        var selectInput = [];
+        for(var key in selectInputName) {
+        	selectInput.push('<input type="hidden" dtree-id="' + rootId + '" dtree-node="' + key + '" name="' + selectInputName[key] + '" value="" readonly>');
+        }
 
+        // 设置html
         var prevHtml = ['<div class="layui-unselect layui-form-select" dtree-id="' + rootId + '" dtree-select="' + _this.selectDiv + '">',
-            '<div class="layui-select-title">',
-            '<input type="text" dtree-id="' + rootId + '" name="' + _this.selectInput + '" placeholder="' + _this.selectTips + '" value="' + _this.selectValue + '" readonly class="layui-input layui-unselect">',
-            '<i class="layui-edge"></i>',
-            '</div></div>'].join('');
+			            '<div class="layui-select-title">', selectInput.join(""), 
+			            '<input type="text" dtree-id="' + rootId + '" id="' +  _this.selectTipsName +'_id" name="' + _this.selectTipsName + '" placeholder="' + _this.selectTips + '" value="" readonly class="layui-input layui-unselect">',
+			            '<i class="layui-edge"></i>',
+			            '</div></div>'].join('');
 
         _this.obj.before(prevHtml);
 
         _this.obj.wrap('<div class="layui-card dtree-select" dtree-id="' + rootId + '" dtree-card="' + _this.selectCardDiv + '"></div>').wrap('<div class="layui-card-body"></div>').wrap('<div id="' + _this.selectTreeDiv + '"></div>');
+    
+    }
+    
+    // 重新渲染下拉树的Dom结构
+    DTree.prototype.reloadSelectDom = function() {
+        var _this = this;
+        var rootId = _this.obj[0].id;
+        
+        // 设置自定义表单隐藏域
+        var selectInputName = _this.selectInputName;
+        var selectInput = [];
+        for(var key in selectInputName) {
+        	selectInput.push('<input type="hidden" dtree-id="' + rootId + '" dtree-node="' + key + '" name="' + selectInputName[key] + '" value="" readonly>');
+        }
+        
+        $("div[dtree-id='"+rootId+"'][dtree-select='"+_this.selectDiv+"']").find("div.layui-select-title").html("");
+
+        // 设置html
+        var prevHtml = [selectInput.join(""), 
+			            '<input type="text" dtree-id="' + rootId + '" id="' +  _this.selectTipsName +'_id" name="' + _this.selectTipsName + '" placeholder="' + _this.selectTips + '" value="" readonly class="layui-input layui-unselect">',
+			            '<i class="layui-edge"></i>'].join('');
+
+        $("div[dtree-id='"+rootId+"'][dtree-select='"+_this.selectDiv+"']").find("div.layui-select-title").html(prevHtml);
+
     }
 
     // 设置输入框的值
-    DTree.prototype.setSelectValue = function(selectValue) {
+    DTree.prototype.selectVal = function(param) {
         var _this = this;
         var rootId = _this.obj[0].id;
-        if(typeof selectValue === 'undefined') {
-            selectValue = _this.node.context;
+        var selectInputName = _this.selectInputName;
+        var selectTipsNameValue = "";
+        var selectValues = {};
+        
+        // 如果开启了复选框，则此方法用来取值
+        if(_this.checkbar) {
+        	$("div[dtree-select='" + _this.selectDiv + "']").find("input[dtree-id='" + rootId + "']").each(function(){
+        		var name = $(this).attr("name");
+        		var val = $(this).val();
+        		selectValues[name] = val;
+        	});
+        } else {
+        	if(typeof param === 'undefined') { // 不传，则为当前树中记录的ID
+            	param = _this.getNowParam();
+            }
+            if(typeof param === 'string') { // 传递ID，则查询树节点ID对应的值
+            	param = _this.getParam(param);
+            }
+            
+            selectTipsNameValue = param["context"];
+        	for(var key in selectInputName) {
+        		selectValues[selectInputName[key]] = param[key];
+        		$("div[dtree-select='" + _this.selectDiv + "']").find("input[dtree-id='" + rootId + "'][name='"+selectInputName[key]+"']").val(param[key] || "");
+        	}
+        	
+        	if(param["nodeId"] && !param["context"]) {
+        		selectTipsNameValue = _this.getParam(param["nodeId"]);
+        	}
+        	
+            // 返显提示输入框值
+            $("div[dtree-select='" + _this.selectDiv + "']").find("input[dtree-id='" + rootId + "'][name='"+_this.selectTipsName+"']").val(selectTipsNameValue || "");
+            
         }
-        $("input[dtree-id='" + rootId + "'][name='"+_this.selectInput+"']").val(selectValue);
+        
+        
+        // 返回隐藏域中的值
+        return selectValues;
+    }
+    
+    // 设置复选框模式中的下拉树的值
+    DTree.prototype.selectCheckboxVal = function() {
+    	var _this = this;
+    	var rootId = _this.obj[0].id;
+    	var selectInputName = _this.selectInputName;
+    	
+    	// 获取全部复选框选中节点
+    	var param = _this.getCheckbarJsonArrParam();
+    	
+    	selectTipsNameValue = param["context"];
+    	var selectValues = {};
+    	for(var key in selectInputName) {
+    		var value = param[key].join(",");
+    		selectValues[selectInputName[key]] = value;
+    		$("div[dtree-select='" + _this.selectDiv + "']").find("input[dtree-id='" + rootId + "'][name='"+selectInputName[key]+"']").val(value);
+    	}
+    	
+    	$("div[dtree-select='" + _this.selectDiv + "']").find("input[dtree-id='" + rootId + "'][name='"+_this.selectTipsName+"']").val(selectTipsNameValue);
+    	
+    	// 返回隐藏域中的值
+        return selectValues;
+    }
+    
+    // 重置下拉树的值
+    DTree.prototype.selectResetVal = function() {
+    	var _this = this;
+    	var rootId = _this.obj[0].id;
+    	// 表单清空
+        $("input[dtree-id='"+rootId+"']").val("");
+        // 节点重置
+        _this.cancelNavThis();
+        if(_this.checkbar) {
+        	// 复选框重置
+        	_this.cancelCheckedNode();
+        }
     }
 
 
@@ -1310,7 +1440,15 @@ layui.define(['jquery','layer','form'], function(exports) {
 
                 // 判断是否存在错误数据，并是否打印错误数据
                 _this.msgErrData();
+                
+                // 设置复选框的初始值
+                if(_this.select){
+                	_this.selectVal(_this.selectInitVal);
+                }
 
+                // 保存树副本
+                _this.bak = _this.obj.html();
+                
                 // 加载完毕后的回调
                 _this.done(_this.data, _this.obj);
             }, 100);
@@ -1339,6 +1477,10 @@ layui.define(['jquery','layer','form'], function(exports) {
                     if (typeof result === 'string') {
                         result = $.parseJSON(result);
                     }
+                    
+                    // 加载完毕后执行树解析前的回调
+                    _this.success(result, _this.obj);
+                    
                     var code = "";
                     if (_this.dataStyle == 'layuiStyle'){
                         code = result[_this.response.statusName];
@@ -1359,10 +1501,6 @@ layui.define(['jquery','layer','form'], function(exports) {
                             _this.obj.html(_this.getNoneDom().text());
                             return ;
                         }
-
-
-                        // 加载完毕后执行树解析前的回调
-                        _this.success(result, _this.obj);
 
                         // 第一次解析树
                         if (_this.dataFormat == 'list'){
@@ -1385,7 +1523,15 @@ layui.define(['jquery','layer','form'], function(exports) {
 
                         // 判断是否存在错误数据，并是否打印错误数据
                         _this.msgErrData();
+                        
+                        // 设置复选框的初始值
+                        if(_this.select){
+                        	_this.selectVal(_this.selectInitVal);
+                        }
 
+                        // 保存树副本
+                        _this.bak = _this.obj.html();
+                        
                         // 加载完毕后的回调
                         _this.done(result, _this.obj);
                     } else {
@@ -1450,6 +1596,9 @@ layui.define(['jquery','layer','form'], function(exports) {
 
             // 判断是否存在错误数据，并是否打印错误数据
             _this.msgErrData();
+            
+            // 保存树副本
+            _this.bak = _this.obj.html();
 
         } else {
             if (!_this.url) {
@@ -1502,6 +1651,9 @@ layui.define(['jquery','layer','form'], function(exports) {
                         _this.msgErrData();
 
                         $ul.addClass(NAV_SHOW);
+                        
+                        // 保存树副本
+                        _this.bak = _this.obj.html();
                     } else {
                         if (_this.dataStyle == 'layuiStyle'){
                             _this.obj.html(_this.getNoneDom().errText(result[_this.response.message]));
@@ -1983,6 +2135,9 @@ layui.define(['jquery','layer','form'], function(exports) {
                     (spread ? "<ul class='"+LI_NAV_CHILD+" "+NAV_SHOW+"' data-id='"+treeId+"' dtree-id='"+rootId+"'></ul>" : "<ul class='"+LI_NAV_CHILD+"' data-id='"+treeId+"' dtree-id='"+rootId+"'></ul>");
                 _this.getNodeDom($div).nextUl().replaceWith($(ul));
             },
+            div: function(){
+                $div.attr("data-id", treeId);
+            },
             basicData: function(basicData){
                 basicData = (basicData == "{}") ? "" : basicData;
                 $div.attr("data-basic", basicData);
@@ -1991,8 +2146,13 @@ layui.define(['jquery','layer','form'], function(exports) {
                 recordData = (recordData == "{}") ? "" : recordData;
                 $div.attr("data-record", recordData);
             },
-            p_li: function(){
-                $div.parent("li").attr("data-id", treeId);
+            p_li: function(pId){
+            	var $li = $div.parent("li");
+            	$li.attr("data-id", treeId);
+                if(pId) {
+                	$li.attr("data-pid", pId);
+                }
+                return $li;
             }
         };
 
@@ -2047,7 +2207,26 @@ layui.define(['jquery','layer','form'], function(exports) {
         $li_parents.children("."+LI_DIV_ITEM).children("i[data-spread]."+event.trimToDot(_this.usefontStyle.snode.node.close)).removeClass(_this.usefontStyle.snode.node.close);
         return _this.getNowParam();
     };
+    
+    // 基于备份的Html数据回滚
+    DTree.prototype.rollbackHtml = function(chooseId){
+    	var _this = this;
+    	if(_this.bak) {
+    		_this.obj.html(_this.bak);
+    		// 取消全部选中状态
+    		_this.cancelNavThis();
+    		if(_this.checkbar) {
+    			_this.cancelCheckedNode();
+    			_this.chooseDataInit(chooseId);
+    		} else {
+    			_this.dataInit(chooseId);
+    		}
+    		
+    		_this.bak = _this.obj.html();
+    	}
+    };
 
+    
     /******************** 基础事件区域 ********************/
     // 数据格式化
     DTree.prototype.escape = function(html){
@@ -2150,6 +2329,23 @@ layui.define(['jquery','layer','form'], function(exports) {
                 $cite.addClass(NAV_DIS);
             }
         }
+    };
+    
+    // 设置全部节点为disabled
+    DTree.prototype.setDisabledAllNodes = function(){
+    	var _this = this;
+    	_this.obj.find("div[dtree-click='"+eventName.itemNodeClick+"']").each(function(){
+    		var $div = $(this);
+    		var $i = $div.children("div."+LI_DIV_CHECKBAR).children("i[data-par]");
+    		var $cite = $div.children("cite[data-leaf]");
+    		if($div != null && $div.attr("dtree-disabled") != "true") {
+    			$div.attr("dtree-disabled", "true");
+    			$i.attr("dtree-disabled", "true");
+    			$i.addClass(NAV_DIS);
+    			$cite.attr("dtree-disabled", "true");
+    			$cite.addClass(NAV_DIS);
+    		}
+    	});
     };
 
     // 将节点的disabled取消
@@ -2301,7 +2497,8 @@ layui.define(['jquery','layer','form'], function(exports) {
     // 局部刷新树--编辑当前节点选中节点时
     DTree.prototype.partialRefreshEdit = function($div, data){
         var _this = this;
-        $ul = $div.next("ul");
+        $ul = $div.next("ul"),
+        $p_li = $div.parent("li");
 
         if(data) {
             if(typeof data === 'object') {
@@ -2309,12 +2506,33 @@ layui.define(['jquery','layer','form'], function(exports) {
 
                 if(parseData.treeId()){
                     var replaceDom = _this.replaceDom($div, parseData.treeId(), parseData.last(0), parseData.spread(), parseData.disabled(), parseData.hide());
+                    replaceDom.div();
                     replaceDom.node(parseData.iconClass());
                     replaceDom.checkbox(parseData.checkArr());
                     replaceDom.text(parseData.title());
                     replaceDom.ul();
                     replaceDom.basicData(parseData.basicData());
                     replaceDom.recordData(parseData.recordData());
+                    
+                    var parentId = parseData.parentId();
+                    var oldParentId = $p_li.attr("data-pid");
+                    if(parentId && parentId != oldParentId) {
+                    	// 变更了父节点
+                    	$p_li = replaceDom.p_li(parentId);
+                    	
+                    	// 根据parentId找到下挂节点的ul
+                    	var $goto_div = _this.getNodeDom(parentId).div(), 
+                    		$goto_ul = _this.getNodeDom(parentId).nextUl();
+                    	// 判断父级ul中是否还存在li,如果不存在，则需要修改节点的样式
+                        if($goto_ul.children("li").length == 0){
+                            var $icon_i = $goto_div.find("i[data-spread]");
+                            _this.operateIcon($icon_i.eq(0), $icon_i.eq(1)).openWithLeaf();
+                            $goto_ul.addClass(NAV_SHOW);
+                        }
+                    	$goto_ul.append($p_li);
+                    } else {
+                    	replaceDom.p_li();
+                    }
                     _this.setNodeParam($div);
                 } else {
                     layer.msg("编辑失败,节点ID为undefined！",{icon:5});
@@ -2558,9 +2776,14 @@ layui.define(['jquery','layer','form'], function(exports) {
             _this.checkAllOrNot($i);
         }
 
+        if(_this.select) {
+        	// 设置复选框模式中的下拉树的值
+        	_this.selectCheckboxVal();
+        }
+        
         // 获取复选框选中节点的内容
-        var checkbarNodes = _this.setAndGetCheckbarNodesParam();
-
+        var checkbarNodes = _this.setAndGetCheckbarNodesParam(true);
+        
         // 用户自定义想做的事情
         _this.checkbarFun.chooseDone(checkbarNodes);
         layui.event.call(this, MOD_NAME, "chooseDone("+$(_this.obj)[0].id+")", {"checkbarParams": checkbarNodes});
@@ -2651,7 +2874,7 @@ layui.define(['jquery','layer','form'], function(exports) {
     };
 
     // 设置树的复选框操作值的全部参数,并获取
-    DTree.prototype.setAndGetCheckbarNodesParam = function() {
+    DTree.prototype.setAndGetCheckbarNodesParam = function(requestParamFlag) {
         var _this = this;
         //操作前先清空
         _this.checkbarNode = [];
@@ -2660,27 +2883,47 @@ layui.define(['jquery','layer','form'], function(exports) {
             _this.obj.find("i[data-par][dtree-disabled='false']").each(function(){
                 var $i = $(this), $div = $i.closest("."+LI_DIV_ITEM);
                 if ($i.attr("data-checked") != $i.attr("data-initchecked")) {
-                    _this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+                	if(requestParamFlag) {
+                		_this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+                	} else {
+                		_this.checkbarNode.push(_this.getCheckbarNodeParam($div, $i));
+                	}
                 }
             });
         } else if (_this.checkbarData == "all"){	//记录全部数据
             _this.obj.find("i[data-par][data-checked][dtree-disabled='false']").each(function(){
                 var $i = $(this), $div = $i.closest("."+LI_DIV_ITEM);
-                _this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+                if(requestParamFlag) {
+            		_this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+            	} else {
+            		_this.checkbarNode.push(_this.getCheckbarNodeParam($div, $i));
+            	}
             });
         } else if (_this.checkbarData == "choose"){	//记录选中数据
             _this.obj.find("i[data-par][data-checked='1'][dtree-disabled='false']").each(function(){
                 var $i = $(this), $div = $i.closest("."+LI_DIV_ITEM);
-                _this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+                if(requestParamFlag) {
+            		_this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+            	} else {
+            		_this.checkbarNode.push(_this.getCheckbarNodeParam($div, $i));
+            	}
             });
         } else if (_this.checkbarData == "halfChoose"){	//记录选中和半选数据
             _this.obj.find("i[data-par][data-checked='1'][dtree-disabled='false']").each(function(){
                 var $i = $(this), $div = $i.closest("."+LI_DIV_ITEM);
-                _this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+                if(requestParamFlag) {
+            		_this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+            	} else {
+            		_this.checkbarNode.push(_this.getCheckbarNodeParam($div, $i));
+            	}
             });
             _this.obj.find("i[data-par][data-checked='2'][dtree-disabled='false']").each(function(){
                 var $i = $(this), $div = $i.closest("."+LI_DIV_ITEM);
-                _this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+                if(requestParamFlag) {
+            		_this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+            	} else {
+            		_this.checkbarNode.push(_this.getCheckbarNodeParam($div, $i));
+            	}
             });
         }
         return _this.checkbarNode;
@@ -2689,7 +2932,7 @@ layui.define(['jquery','layer','form'], function(exports) {
     // 获取树的复选框操作值的全部参数
     DTree.prototype.getCheckbarNodesParam = function() {
         var _this = this;
-        return _this.setAndGetCheckbarNodesParam();
+        return _this.setAndGetCheckbarNodesParam(true);
     };
 
     // 获取树的一个复选框的参数
@@ -2702,12 +2945,63 @@ layui.define(['jquery','layer','form'], function(exports) {
         temp_node.leaf = _this.getNodeDom($div).cite().attr("data-leaf") == "leaf" ? true : false;
         temp_node.level = _this.getNodeDom($div).parentLi().attr("data-index");
         temp_node.spread = _this.getNodeDom($div).fnode().attr("data-spread") == "open" ? true : false;
-        temp_node.basicData = $div.attr("data-basic")
-        temp_node.recordData = $div.attr("data-record");
+        
+        var basicData = $div.attr("data-basic");
+        if(basicData) {
+        	basicData = JSON.parse(event.unescape(basicData));
+        }
+        temp_node.basicData = basicData;
+        var recordData = $div.attr("data-record");
+        if(recordData) {
+        	recordData = JSON.parse(event.unescape(recordData));
+        }
+        temp_node.recordData = recordData;
+        
         temp_node.dataType = $i.attr("data-type");
         temp_node.checked = $i.attr("data-checked");
         temp_node.initchecked = $i.attr("data-initchecked");
         return temp_node;
+    };
+    
+    // 获取基于返回参数的树的复选框参数
+    DTree.prototype.getCheckbarJsonArrParam = function(){
+    	var _this = this;
+    	var checkbarJsonArr = {
+			nodeId: [],		//节点ID
+            parentId: [],	//父节点ID
+            context: [],	//节点内容
+            leaf: [],		//是否叶子节点
+            level: [],		//层级
+            spread: [],		//节点展开状态
+            dataType: [],	//节点标记
+            checked: [],	//节点复选框选中状态
+            initchecked: [],	//节点复选框初始状态
+            basicData: [],		//用户自定义的记录节点数据
+            recordData: [],		//当前data数据（排除basicData和children字段）
+    	};
+    	// 获取全部复选框选中节点
+    	var params = _this.setAndGetCheckbarNodesParam(false);
+    	if(params && params.length > 0) {
+    		for(var i=0; i<params.length; i++) { 
+    			var param = params[i];
+    			console.log(param);
+    			checkbarJsonArr["nodeId"].push(param["nodeId"]);
+    			checkbarJsonArr["parentId"].push(param["parentId"]);
+    			checkbarJsonArr["context"].push(param["context"]);
+    			checkbarJsonArr["leaf"].push(param["leaf"]);
+    			checkbarJsonArr["level"].push(param["level"]);
+    			checkbarJsonArr["spread"].push(param["spread"]);
+    			checkbarJsonArr["dataType"].push(param["dataType"]);
+    			checkbarJsonArr["checked"].push(param["checked"]);
+    			checkbarJsonArr["initchecked"].push(param["initchecked"]);
+    			checkbarJsonArr["basicData"].push(param["basicData"]);
+    			checkbarJsonArr["recordData"].push(param["recordData"]);
+    		}
+    	}
+    	
+    	checkbarJsonArr = _this.getRequestParam(checkbarJsonArr);
+    	console.log(checkbarJsonArr);
+    	return checkbarJsonArr;
     };
 
     //判断复选框是否发生变更
@@ -2725,6 +3019,82 @@ layui.define(['jquery','layer','form'], function(exports) {
         });
         return flag;
     };
+    
+    //点击节点选中/不选 复选框
+    DTree.prototype.clickNodeCheckbar = function(nodeId){
+    	var _this = this;
+    	var $checkbar = _this.getNodeDom(nodeId).checkbox();
+    	_this.temp = [$checkbar];
+		_this.changeCheck();
+    }
+    
+    //复选框全选
+    DTree.prototype.checkAllNode = function(nodeId){
+    	var _this = this;
+    	 var $i = _this.obj.find("i[data-par][data-checked!='1']");
+         if($i.length > 0) { _this.checkStatus($i).check(); }
+    }
+    
+    //取消全部复选框选中
+    DTree.prototype.cancelCheckedNode = function(nodeId){
+    	var _this = this;
+    	var $i = _this.obj.find("i[data-par][data-checked!='0']");
+    	if($i.length > 0) { _this.checkStatus($i).noCheck(); }
+    }
+    
+    //反选复选框
+    DTree.prototype.invertCheckedNode = function(nodeId){
+    	var _this = this;
+    	if(_this.obj.find("i[data-par]").length > 0) {
+            var b = false;
+            _this.obj.find("i[data-par]").each(function(){
+                var $i = $(this);
+                if($i.attr("data-checked") == '2'){
+                    b = true;
+                }else if($i.attr("data-checked") == '0') {
+                    _this.checkStatus($i).check();
+                }else if($i.attr("data-checked") == '1') {
+                    _this.checkStatus($i).noCheck();
+                }
+            });
+
+            if(b) {
+                _this.initNoAllCheck();
+            } else {
+                _this.initAllCheck();
+            }
+        }
+    }
+    
+    //删除选中节点
+    DTree.prototype.removeCheckedNode = function(nodeId){
+    	var _this = this;
+    	var len = _this.obj.find("i[data-par][data-checked='1']").length;
+        if(len == 0){
+            layer.msg("请至少选中一个节点",{icon:2});
+        }else{
+            //操作前先清空
+            _this.checkbarNode = [];
+            // 选择所有复选框节点
+            var i_node = {};
+            _this.obj.find("i[data-par][data-checked='1']").each(function(){
+                var $i = $(this), $div = $i.closest("."+LI_DIV_ITEM);
+
+                _this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
+            });
+
+            layer.confirm('确定要删除选中节点？', {icon: 3, title:'删除选中节点'}, function(index1){
+                var flag = _this.menubarFun.remove(_this.checkbarNode);
+                if(flag){
+                    _this.obj.find("i[data-par][data-checked='1']").closest("."+LI_DIV_ITEM).next("ul").remove();
+                    _this.obj.find("i[data-par][data-checked='1']").closest("."+LI_DIV_ITEM).remove();
+                    _this.checkbarNode=[];
+                }
+
+                layer.close(index1);
+            });
+        }
+    }
 
     /******************** 工具栏及菜单栏区域 ********************/
     // 初始化菜单栏和工具栏的div
@@ -2930,60 +3300,16 @@ layui.define(['jquery','layer','form'], function(exports) {
                 _this.refreshTree();
             },
             checkAll: function(){ // 全选节点
-                var $i = _this.obj.find("i[data-par][data-checked!='1']");
-                if($i.length > 0) { _this.checkStatus($i).check(); }
+            	_this.checkAllNode();
             },
             unCheckAll: function(){ // 全不选节点
-                var $i = _this.obj.find("i[data-par][data-checked!='0']");
-                if($i.length > 0) { _this.checkStatus($i).noCheck(); }
+                _this.cancelCheckedNode();
             },
             invertAll: function(){ // 反选节点
-                if(_this.obj.find("i[data-par]").length > 0) {
-                    var b = false;
-                    _this.obj.find("i[data-par]").each(function(){
-                        var $i = $(this);
-                        if($i.attr("data-checked") == '2'){
-                            b = true;
-                        }else if($i.attr("data-checked") == '0') {
-                            _this.checkStatus($i).check();
-                        }else if($i.attr("data-checked") == '1') {
-                            _this.checkStatus($i).noCheck();
-                        }
-                    });
-
-                    if(b) {
-                        _this.initNoAllCheck();
-                    } else {
-                        _this.initAllCheck();
-                    }
-                }
+            	_this.invertCheckedNode();
             },
             remove: function(){// 删除选中节点
-                var len = _this.obj.find("i[data-par][data-checked='1']").length;
-                if(len == 0){
-                    layer.msg("请至少选中一个节点",{icon:2});
-                }else{
-                    //操作前先清空
-                    _this.checkbarNode = [];
-                    // 选择所有复选框节点
-                    var i_node = {};
-                    _this.obj.find("i[data-par][data-checked='1']").each(function(){
-                        var $i = $(this), $div = $i.closest("."+LI_DIV_ITEM);
-
-                        _this.checkbarNode.push(_this.getRequestParam(_this.getCheckbarNodeParam($div, $i)));
-                    });
-
-                    layer.confirm('确定要删除选中节点？', {icon: 3, title:'删除选中节点'}, function(index1){
-                        var flag = _this.menubarFun.remove(_this.checkbarNode);
-                        if(flag){
-                            _this.obj.find("i[data-par][data-checked='1']").closest("."+LI_DIV_ITEM).next("ul").remove();
-                            _this.obj.find("i[data-par][data-checked='1']").closest("."+LI_DIV_ITEM).remove();
-                            _this.checkbarNode=[];
-                        }
-
-                        layer.close(index1);
-                    });
-                }
+            	_this.removeCheckedNode();
             },
             searchNode: function(){//模糊查询该值，展开该值节点
                 layer.prompt({
@@ -3918,8 +4244,19 @@ layui.define(['jquery','layer','form'], function(exports) {
         _this.node.leaf = _this.getNodeDom($div).cite().attr("data-leaf") == "leaf" ? true : false;
         _this.node.level = _this.getNodeDom($div).parentLi().attr("data-index");
         _this.node.spread = _this.getNodeDom($div).fnode().attr("data-spread") == "open" ? true : false;
-        _this.node.basicData = $div.attr("data-basic")
-        _this.node.recordData = $div.attr("data-record");
+
+        var basicData = $div.attr("data-basic");
+        if(basicData) {
+        	basicData = JSON.parse(event.unescape(basicData));
+        }
+        _this.node.basicData = basicData;
+        
+        var recordData = $div.attr("data-record");
+        if(recordData) {
+        	recordData = JSON.parse(event.unescape(recordData));
+        }
+        _this.node.recordData = recordData;
+        
         if (_this.getNodeDom($div).checkbox()) {
             var dataTypes = "", checkeds = "", initcheckeds = "";
             _this.getNodeDom($div).checkbox().each(function(){
@@ -3960,8 +4297,18 @@ layui.define(['jquery','layer','form'], function(exports) {
         temp_node.leaf = _this.getNodeDom($div).cite().attr("data-leaf") == "leaf" ? true : false;
         temp_node.level = _this.getNodeDom($div).parentLi().attr("data-index");
         temp_node.spread = _this.getNodeDom($div).fnode().attr("data-spread") == "open" ? true : false;
-        temp_node.basicData = $div.attr("data-basic")
-        temp_node.recordData = $div.attr("data-record");
+        
+        var basicData = $div.attr("data-basic");
+        if(basicData) {
+        	basicData = JSON.parse(event.unescape(basicData));
+        }
+        temp_node.basicData = basicData;
+        var recordData = $div.attr("data-record");
+        if(recordData) {
+        	recordData = JSON.parse(event.unescape(recordData));
+        }
+        temp_node.recordData = recordData;
+        
         if (_this.getNodeDom($div).checkbox()) {
             var dataTypes = "", checkeds = "", initcheckeds = "";
             _this.getNodeDom($div).checkbox().each(function(){
@@ -3994,6 +4341,10 @@ layui.define(['jquery','layer','form'], function(exports) {
         _this.node.initchecked = "";
         _this.node.basicData = "";
         _this.node.recordData = "";
+        
+        if(_this.select) {
+             _this.selectResetVal();
+        }
     };
 
     // 获取传递出去的参数，根据defaultRequest、request和node拼出发出请求的参数
@@ -4141,11 +4492,10 @@ layui.define(['jquery','layer','form'], function(exports) {
                 node = _this.getNodeParam($div);
             _this.toolbarHide();
             _this.navThis($div);
-
+            
             if(_this.select) {
-                _this.setSelectValue(node.context);
-                $("div[dtree-id='" + rootId + "'][dtree-select='"+_this.selectTreeDiv+"']").toggleClass("layui-form-selected");
-                $("div[dtree-id='" + rootId + "'][dtree-card='"+_this.selectCardDiv+"']").toggleClass("dtree-select-show layui-anim layui-anim-upbit");
+                _this.selectVal(node.nodeId);
+                $("div[dtree-id='" + rootId + "'][dtree-select='"+_this.selectDiv+"']").click();
             }
 
             if (_this.useIframe) {
@@ -4181,9 +4531,8 @@ layui.define(['jquery','layer','form'], function(exports) {
             _this.navThis($div);
 
             if(_this.select) {
-                _this.setSelectValue(node.context);
-                $("div[dtree-id='" + rootId + "'][dtree-select='"+_this.selectTreeDiv+"']").toggleClass("layui-form-selected");
-                $("div[dtree-id='" + rootId + "'][dtree-card='"+_this.selectCardDiv+"']").toggleClass("dtree-select-show layui-anim layui-anim-upbit");
+                _this.selectVal(node.nodeId);
+                $("div[dtree-id='" + rootId + "'][dtree-select='"+_this.selectDiv+"']").click();
             }
 
             // 双击事件执行完毕后，用户自定义想做的事情
@@ -4206,6 +4555,7 @@ layui.define(['jquery','layer','form'], function(exports) {
                 var flag = _this.checkbarFun.chooseBefore($i, _this.getRequestParam(node));
                 _this.temp = [$i];
                 if(flag){_this.changeCheck();}
+                
                 event.stopPropagation();
             });
         }
@@ -4321,6 +4671,12 @@ layui.define(['jquery','layer','form'], function(exports) {
                 event.stopPropagation();
                 $(this).toggleClass("layui-form-selected");
                 $("div[dtree-id='" + rootId + "'][dtree-card='"+_this.selectCardDiv+"']").toggleClass("dtree-select-show layui-anim layui-anim-upbit");
+            
+                // 下拉树面板开闭状态改变后，用户自定义想做的事情
+                layui.event.call(this, MOD_NAME, "changeSelect("+$(_this.obj)[0].id+")",  {
+                	show: $(this).hasClass("layui-form-selected"),
+                    param: _this.selectVal()
+                });
             });
 
         }
@@ -4329,7 +4685,9 @@ layui.define(['jquery','layer','form'], function(exports) {
     // 绑定body的单击，让本页面所有的toolbar隐藏
     $BODY.on("click", function(event){
         $("div."+LI_DIV_TOOLBAR).find(".layui-show").removeClass('layui-anim-fadein layui-show');
-        $("div[dtree-id][dtree-card]").removeClass("dtree-select-show layui-anim layui-anim-upbit");
+       // $("div[dtree-id][dtree-select]").removeClass("layui-form-selected");
+       // $("div[dtree-id][dtree-card]").removeClass("dtree-select-show layui-anim layui-anim-upbit");
+        
     });
 
     // 解绑浏览器事件
@@ -4355,6 +4713,14 @@ layui.define(['jquery','layer','form'], function(exports) {
                 }
             }
         }
+        
+        // 下拉树解绑
+        if(_this.select) {
+            // 解绑select的点击事件
+        	$("div[dtree-id='" + _this.obj[0].id + "'][dtree-select='"+_this.selectDiv+"']").removeClass("layui-form-selected");
+            $("div[dtree-id='" + _this.obj[0].id + "'][dtree-card='"+_this.selectCardDiv+"']").removeClass("dtree-select-show layui-anim layui-anim-upbit");
+            $("div[dtree-id='" + _this.obj[0].id + "'][dtree-select='"+_this.selectDiv+"']").unbind();
+        }
     };
 
 
@@ -4373,23 +4739,16 @@ layui.define(['jquery','layer','form'], function(exports) {
             } else {
                 dTree = DTrees[id];
                 if(typeof dTree === 'object'){
-                    dTree.reloadSetting(options);
-                    dTree.initTreePlus();
-                    dTree.openTreePlus();
-                    dTree.initNodeParam();
-                    dTree.init();
                     dTree.unbindBrowserEvent();
-                    dTree.bindBrowserEvent();
-                } else {
-                    // 创建树
-                    dTree = new DTree(options);
-                    // 添加到树数组中去
-                    DTrees[id] = dTree;
-                    dTree.initTreePlus();
-                    dTree.openTreePlus();
-                    dTree.init();
-                    dTree.bindBrowserEvent();
                 }
+                // 创建树
+                dTree = new DTree(options);
+                // 添加到树数组中去
+                DTrees[id] = dTree;
+                dTree.initTreePlus();
+                dTree.openTreePlus();
+                dTree.init();
+                dTree.bindBrowserEvent();
             }
 
             return dTree;
@@ -4402,25 +4761,17 @@ layui.define(['jquery','layer','form'], function(exports) {
             } else {
                 dTree = DTrees[id];
                 if(typeof dTree === 'object'){
-                    dTree.reloadSetting(options);
-                    dTree.selectSetting(options);
-                    dTree.initTreePlus();
-                    dTree.openTreePlus();
-                    dTree.initNodeParam();
-                    dTree.init();
                     dTree.unbindBrowserEvent();
-                    dTree.bindBrowserEvent();
-                } else {
-                    // 创建树
-                    dTree = new DTree(options);
-                    dTree.selectSetting(options);
-                    // 添加到树数组中去
-                    DTrees[id] = dTree;
-                    dTree.initTreePlus();
-                    dTree.openTreePlus();
-                    dTree.init();
-                    dTree.bindBrowserEvent();
                 }
+                // 创建下拉树
+                dTree = new DTree(options);
+                dTree.selectSetting();
+                // 添加到树数组中去
+                DTrees[id] = dTree;
+                dTree.initTreePlus();
+                dTree.openTreePlus();
+                dTree.init();
+                dTree.bindBrowserEvent();
             }
 
             return dTree;
@@ -4574,7 +4925,7 @@ layui.define(['jquery','layer','form'], function(exports) {
             }
             return dTree.initAllCheck();
         },
-        setSelectValue: function(dTree, selectValue){  // select模式设置输入框选中值
+        selectVal: function(dTree, param){  // select模式设置输入框选中值
             if(typeof dTree === "string"){
                 dTree = DTrees[dTree];
             }
@@ -4582,7 +4933,7 @@ layui.define(['jquery','layer','form'], function(exports) {
                 layer.msg("方法获取失败，请检查ID或对象传递是否正确",{icon:2});
                 return ;
             }
-            return dTree.setSelectValue(selectValue);	// select模式设置输入框选中值
+            return dTree.selectVal(param);	// select模式设置输入框选中值
         },
         escape: function(html){  // 字符串格式化
             return event.escape(html);

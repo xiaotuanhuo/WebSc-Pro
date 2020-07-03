@@ -26,6 +26,8 @@ public interface OrganizationMapper {
 	@DataAuth(authCode = "getOrgForAddEidtUser")
     List<WebScOrganization> selectOrgForAddEidtUser();
 	
+	List<WebScOrganization> selectAllTree();
+	
 	int insert(WebScOrganization wso);
 	
 	int updateByPrimaryKey(WebScOrganization wso);

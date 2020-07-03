@@ -46,4 +46,8 @@ public class OrganizationService {
 	public int updateByPrimaryKey(WebScOrganization wso) {
 		return organizationMapper.updateByPrimaryKey(wso);
 	}
+	
+	public List<WebScOrganization> selectAllOrgTree() {
+		return organizationMapper.selectAllTree();
+	}
 }

@@ -43,6 +43,12 @@ public class OrganizationController {
     	return new PageResultBean<>(wsoList.size(), wsoList);
     }
     
+    @GetMapping("/tree")
+    @ResponseBody
+    public ResultBean tree() {
+    	return ResultBean.success(organizationService.selectAllOrgTree());
+    }
+    
     @OperationLog("获取医疗机构根节点列表")
     @GetMapping("/addEditUser/list")
     @ResponseBody

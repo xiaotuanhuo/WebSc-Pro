@@ -15,6 +15,20 @@
         <result column="area" jdbcType="VARCHAR" property="area"/>
     </resultMap>
     
+    <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScOrganization">
+    	<id column="org_id" jdbcType="VARCHAR" property="orgId"/>
+        <result column="org_pid" jdbcType="VARCHAR" property="orgPid"/>
+        <result column="org_name" jdbcType="INTEGER" property="orgName"/>
+        <result column="org_address" jdbcType="INTEGER" property="orgAddress"/>
+        <result column="org_tel" jdbcType="TIMESTAMP" property="orgTel"/>
+        <result column="leader_name" jdbcType="TIMESTAMP" property="leaderName"/>
+        <result column="leader_tel" jdbcType="TIMESTAMP" property="leaderTel"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+        <collection property="children" ofType="sc.system.model.WebScOrganization" select="selectAllTree" column="{org_pid = org_id}"/>
+    </resultMap>
+    
     <sql id="Base_Column_List">
         org_id,
 		org_pid,
@@ -72,5 +86,21 @@
         select
         <include refid="Base_Column_List"></include>
         from WSC_ORGANIZATION
+    </select>
+    
+    <select id="selectAllTree" resultMap="TreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_ORGANIZATION
+        <where>
+            <choose>
+                <when test="org_pid!=null">
+                    and org_pid = #{org_pid}
+                </when>
+                <otherwise>
+                    and org_pid = '0'
+                </otherwise>
+            </choose>
+        </where>
     </select>
 </mapper>

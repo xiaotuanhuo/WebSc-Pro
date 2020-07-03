@@ -12,7 +12,7 @@
     <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/animate.min.css}">
-    <link rel="stylesheet" th:href="@{/lib/layui/extend/formSelects-v4.css}" />
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/dtree.css}" />
 </head>
 
 <body>
@@ -86,10 +86,10 @@
 								<div id="role" class="xm-select-demo"></div>
 							</div>
 						</div>
-						<div id="orgDiv" class="layui-form-item" style="display: none;">
-							<label for="organization" class="layui-form-label">所属机构</label>
+						<div id="organziation" class="layui-form-item" style="display: none;">
+							<label for="orgTree" class="layui-form-label">机构</label>
 							<div class="layui-input-block">
-								<div id="organization" class="xm-select-demo"></div>
+								<ul id="orgTree" class="dtree" data-id="0" data-value="请选择机构"></ul>
 							</div>
 						</div>
 						<!-- <div id="districtDiv" class="layui-form-item" style="display: none;">
@@ -135,7 +135,7 @@
     <script th:src="@{/js/common.js}"></script>
 
     <script>
-    	var userProvince = $('')
+    	var firstRender = true;
     
 		layui.config({
 			base: '/lib/layui/extend/'
@@ -181,13 +181,13 @@
 					var isAdd = data.isAdd;
 					if (isAdd && arr.length != 0 && (arr[0].roleId == 4 || arr[0].roleId == 5 || arr[0].roleId == 6)) {
 						// 选择医生集团角色时加载医生集团组织
-						loadDept();
+						loadOrg("dept/tree");
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
 						// 选择医疗机构角色时加载医疗机构组织
-						loadOrganization();
+						loadOrg("organization/tree");
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 3) {
 						// 选择卫监局角色时加载卫监局组织
-						loadBureau();
+						loadOrg("bureau/tree");
 					} else {
 						$('#orgDiv').hide();
 					}
@@ -208,111 +208,32 @@
 				}
 			});
 			
-			// 医疗集团加载
-			var loadDept = function() {
-				var deptKit = xmSelect.render({
-					el: '#organization',
-					radio: true,
-					clickClose: true,
-					repeat: true,
-					model: {
-						label: {
-							type: 'block',
-							block: {
-								//最大显示数量, 0:不限制
-								showCount: 0,
-								//是否显示删除图标
-								showIcon: false
-							}
-						}
-					},
-					prop: {
-						name: 'orgName',
-						value: 'orgId'
-					},
-					on: function(data) {
-						//arr:  当前已选中的数据
-						var arr = data.arr;
-						//change, 此次选择变化的数据,数组
-						var change = data.change;
-						//isAdd, 此次操作是新增还是删除
-						var isAdd = data.isAdd;
-						if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
-							loadOrganization();
-						} else {
-							$('#orgDiv').hide();
-						}
-						console.log(data);
-					}
-				});
-				
-				$.ajax({
-					url: "/dept/addEditUser/list",
-					type: "GET",
-					dataType: "json",
-					success:function(response) {
-						var data = response.data;
-						orgKit.update({
-							data: data,
-							autoRow: true
-						})
-					}
-				});
-				
-				$('#orgDiv').show();
-			};
-			
-			var loadOrganization = function() {
-				var orgKit = xmSelect.render({
-					el: '#organization',
-					radio: true,
-					clickClose: true,
-					repeat: true,
-					model: {
-						label: {
-							type: 'block',
-							block: {
-								//最大显示数量, 0:不限制
-								showCount: 0,
-								//是否显示删除图标
-								showIcon: false
-							}
-						}
-					},
-					prop: {
-						name: 'orgName',
-						value: 'orgId'
-					},
-					on: function(data) {
-						//arr:  当前已选中的数据
-						var arr = data.arr;
-						//change, 此次选择变化的数据,数组
-						var change = data.change;
-						//isAdd, 此次操作是新增还是删除
-						var isAdd = data.isAdd;
-						if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
-							loadOrganization();
-						} else {
-							$('#orgDiv').hide();
-						}
-						console.log(data);
-					}
-				});
-				
-				$.ajax({
-					url: "/organization/addEditUser/list",
-					type: "GET",
-					dataType: "json",
-					success:function(response) {
-						var data = response.data;
-						orgKit.update({
-							data: data,
-							autoRow: true
-						})
-					}
-				});
-				
-				$('#orgDiv').show();
+			var loadOrg = function(dataUrl) {
+				if (firstRender) {
+					dtree.renderSelect({
+						elem: '#orgTree',
+						url: dataUrl,
+						method: 'GET',
+						dataStyle: 'layuiStyle',
+		                width: '100%',
+		                ficon: ['1', '-1'],
+		                icon: ['-1', '2'],
+		                menubar: true,
+						response: {
+							statusCode: 0,
+							message: 'msg',
+							treeId: 'id',
+							title: 'name'
+		                }
+					});
+					firstRender = false;
+					$('#organziation').show();
+				} else {
+					dtree.reload('orgTree', {
+						url: dataUrl,
+						method: 'GET'
+					});
+				}
 			};
         });
     </script>
