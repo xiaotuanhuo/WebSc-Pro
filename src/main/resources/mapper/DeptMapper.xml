@@ -40,19 +40,19 @@
 		area
     </sql>
 
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from WSC_DEPT
         where dept_id = #{deptId,jdbcType=VARCHAR}
     </select>
 
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
         delete from WSC_DEPT
         where dept_id = #{deptId,jdbcType=VARCHAR}
     </delete>
 
-    <insert id="insert" keyColumn="dept_id" keyProperty="deptId" parameterType="sc.system.model.WebScDept"
+    <insert id="insert" parameterType="sc.system.model.WebScDept"
             useGeneratedKeys="true">
         insert into WSC_DEPT (dept_id, dept_name, parent_id, order_num, create_time, modify_time)
         values (#{deptId,jdbcType=VARCHAR}, #{deptName,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, #{orderNum,jdbcType=INTEGER},
@@ -71,11 +71,11 @@
         select
         <include refid="Base_Column_List"/>
         from WSC_DEPT
-        where parent_id = #{VARCHAR}
+        where parent_id = #{parentId}
         order by order_num
     </select>
 
-    <select id="selectChildrenIDByPrimaryKey" resultType="java.lang.Integer">
+    <select id="selectChildrenIDByPrimaryKey" resultType="java.lang.String">
         select dept_id
         from WSC_DEPT
         where parent_id = #{deptId, jdbcType=VARCHAR}
@@ -115,5 +115,5 @@
         </where>
         order by order_num
     </select>
-
+    
 </mapper>

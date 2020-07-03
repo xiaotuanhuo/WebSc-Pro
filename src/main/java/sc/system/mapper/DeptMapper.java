@@ -10,19 +10,19 @@ import java.util.List;
 @Mapper
 public interface DeptMapper {
 
-    int deleteByPrimaryKey(Integer deptId);
+    int deleteByPrimaryKey(String deptId);
 
     int insert(WebScDept dept);
 
-    WebScDept selectByPrimaryKey(Integer deptId);
+    WebScDept selectByPrimaryKey(String deptId);
 
     int updateByPrimaryKey(WebScDept dept);
 
-    List<WebScDept> selectByParentId(@Param("parentId") Integer parentId);
+    List<WebScDept> selectByParentId(@Param("parentId") String parentId);
 
-    List<WebScDept> selectAllTree();
+    List<WebScDept> selectAllTree(@Param("parent_id") String parentId);
 
-    List<Integer> selectChildrenIDByPrimaryKey(@Param("deptId") Integer deptId);
+    List<String> selectChildrenIDByPrimaryKey(@Param("deptId") String deptId);
 
     int selectMaxOrderNum();
 

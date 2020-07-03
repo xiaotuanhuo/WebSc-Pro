@@ -21,7 +21,7 @@ public class DeptService {
         return dept;
     }
 
-    public int deleteByPrimaryKey(Integer deptId) {
+    public int deleteByPrimaryKey(String deptId) {
         return deptMapper.deleteByPrimaryKey(deptId);
     }
 
@@ -30,7 +30,7 @@ public class DeptService {
         return dept;
     }
 
-    public WebScDept selectByPrimaryKey(Integer deptId) {
+    public WebScDept selectByPrimaryKey(String deptId) {
         return deptMapper.selectByPrimaryKey(deptId);
     }
 
@@ -38,10 +38,10 @@ public class DeptService {
     /**
      * 删除当前部门及子部门.
      */
-    public void deleteCascadeByID(Integer deptId) {
+    public void deleteCascadeByID(String deptId) {
 
-        List<Integer> childIDList = deptMapper.selectChildrenIDByPrimaryKey(deptId);
-        for (Integer childId : childIDList) {
+        List<String> childIDList = deptMapper.selectChildrenIDByPrimaryKey(deptId);
+        for (String childId : childIDList) {
             deleteCascadeByID(childId);
         }
 
@@ -51,22 +51,22 @@ public class DeptService {
     /**
      * 根据父 ID 查询部门
      */
-    public List<WebScDept> selectByParentId(Integer parentId) {
+    public List<WebScDept> selectByParentId(String parentId) {
         return deptMapper.selectByParentId(parentId);
     }
 
     /**
      * 查找所有的部门的树形结构
      */
-    public List<WebScDept> selectAllDeptTree() {
-        return deptMapper.selectAllTree();
+    public List<WebScDept> selectAllDeptTree(String roleTypeId) {
+        return deptMapper.selectAllTree(roleTypeId);
     }
 
     /**
      * 获取所有菜单并添加一个根节点 (树形结构)
      */
     public List<WebScDept> selectAllDeptTreeAndRoot() {
-        List<WebScDept> deptList = selectAllDeptTree();
+        List<WebScDept> deptList = selectAllDeptTree(null);
         WebScDept root = new WebScDept();
         root.setDeptId("0");
         root.setDeptName("根部门");

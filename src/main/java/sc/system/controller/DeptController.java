@@ -31,7 +31,7 @@ public class DeptController {
     @OperationLog("获取部门列表")
     @GetMapping("/list")
     @ResponseBody
-    public ResultBean getList(@RequestParam(required = false) Integer parentId) {
+    public ResultBean getList(@RequestParam(required = false) String parentId) {
         List<WebScDept> deptList = deptService.selectByParentId(parentId);
         return ResultBean.success(deptList);
     }
@@ -44,8 +44,8 @@ public class DeptController {
 
     @GetMapping("/tree")
     @ResponseBody
-    public ResultBean tree() {
-        return ResultBean.success(deptService.selectAllDeptTree());
+    public ResultBean tree(@RequestParam(value="roleTypeId") String roleTypeId) {
+        return ResultBean.success(deptService.selectAllDeptTree(roleTypeId));
     }
 
     @GetMapping
@@ -63,7 +63,7 @@ public class DeptController {
     @OperationLog("删除部门")
     @DeleteMapping("/{deptId}")
     @ResponseBody
-    public ResultBean delete(@PathVariable("deptId") Integer deptId) {
+    public ResultBean delete(@PathVariable("deptId") String deptId) {
         deptService.deleteCascadeByID(deptId);
         return ResultBean.success();
     }
@@ -77,7 +77,7 @@ public class DeptController {
     }
 
     @GetMapping("/{deptId}")
-    public String update(@PathVariable("deptId") Integer deptId, Model model) {
+    public String update(@PathVariable("deptId") String deptId, Model model) {
         WebScDept dept = deptService.selectByPrimaryKey(deptId);
         model.addAttribute("dept", dept);
         return "dept/dept-add";
