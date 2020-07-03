@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * 医疗集团控制器
+ * @author aisino
+ *
+ */
 @Controller
 @RequestMapping("/dept")
 public class DeptController {

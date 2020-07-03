@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+// 医疗集团dao
 @Mapper
 public interface DeptMapper {
 

@@ -3,7 +3,7 @@
 <mapper namespace="sc.system.mapper.DeptMapper">
 
     <resultMap id="BaseResultMap" type="sc.system.model.WebScDept">
-        <id column="dept_id" jdbcType="INTEGER" property="deptId"/>
+        <id column="dept_id" jdbcType="VARCHAR" property="deptId"/>
         <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
         <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
         <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
@@ -16,7 +16,7 @@
 
 
     <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScDept">
-        <id column="dept_id" jdbcType="INTEGER" property="deptId"/>
+        <id column="dept_id" jdbcType="VARCHAR" property="deptId"/>
         <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
         <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
         <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
@@ -44,41 +44,41 @@
         select
         <include refid="Base_Column_List"/>
         from WSC_DEPT
-        where dept_id = #{deptId,jdbcType=INTEGER}
+        where dept_id = #{deptId,jdbcType=VARCHAR}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete from WSC_DEPT
-        where dept_id = #{deptId,jdbcType=INTEGER}
+        where dept_id = #{deptId,jdbcType=VARCHAR}
     </delete>
 
     <insert id="insert" keyColumn="dept_id" keyProperty="deptId" parameterType="sc.system.model.WebScDept"
             useGeneratedKeys="true">
-        insert into WSC_DEPT (dept_name, parent_id, order_num, create_time, modify_time)
-        values (#{deptName,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, #{orderNum,jdbcType=INTEGER},
+        insert into WSC_DEPT (dept_id, dept_name, parent_id, order_num, create_time, modify_time)
+        values (#{deptId,jdbcType=VARCHAR}, #{deptName,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, #{orderNum,jdbcType=INTEGER},
         		#{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP})
     </insert>
 
     <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScDept">
         update WSC_DEPT
         set dept_name = #{deptName,jdbcType=VARCHAR},
-        	parent_id = #{parentId,jdbcType=INTEGER},
+        	parent_id = #{parentId,jdbcType=VARCHAR},
         	order_num = #{orderNum,jdbcType=INTEGER}
-        where dept_id = #{deptId,jdbcType=INTEGER}
+        where dept_id = #{deptId,jdbcType=VARCHAR}
     </update>
 
     <select id="selectByParentId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from WSC_DEPT
-        where parent_id = #{parentId}
+        where parent_id = #{VARCHAR}
         order by order_num
     </select>
 
     <select id="selectChildrenIDByPrimaryKey" resultType="java.lang.Integer">
         select dept_id
         from WSC_DEPT
-        where parent_id = #{deptId, jdbcType=INTEGER}
+        where parent_id = #{deptId, jdbcType=VARCHAR}
     </select>
 
     <select id="selectMaxOrderNum" resultType="int">
@@ -109,7 +109,7 @@
                     and parent_id = #{parent_id}
                 </when>
                 <otherwise>
-                    and parent_id = 0
+                    and parent_id = '0'
                 </otherwise>
             </choose>
         </where>

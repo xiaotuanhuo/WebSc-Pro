@@ -68,7 +68,7 @@ public class DeptService {
     public List<WebScDept> selectAllDeptTreeAndRoot() {
         List<WebScDept> deptList = selectAllDeptTree();
         WebScDept root = new WebScDept();
-        root.setDeptId(0);
+        root.setDeptId("0");
         root.setDeptName("根部门");
         root.setChildren(deptList);
         List<WebScDept> rootList = new ArrayList<>();

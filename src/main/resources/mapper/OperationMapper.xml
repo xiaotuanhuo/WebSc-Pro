@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sc.system.mapper.OperationMapper" >
+  <resultMap id="BaseResultMap" type="sc.system.model.WebScOperation" >
+    <id column="operationtype_id" property="operationtypeId" jdbcType="VARCHAR" />
+    <result column="operationtype_name" property="operationtypeName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    operationtype_id, operationtype_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSC_OPERATIONTYPE
+    where operationtype_id = #{operationtypeId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSC_OPERATIONTYPE
+    order by operationtype_id asc
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from WSC_OPERATIONTYPE
+    where operationtype_id = #{operationtypeId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="sc.system.model.WebScOperation" >
+    insert into WSC_OPERATIONTYPE (operationtype_id, operationtype_name
+      )
+    values (#{operationtypeId,jdbcType=VARCHAR}, #{operationtypeName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="sc.system.model.WebScOperation" >
+    insert into WSC_OPERATIONTYPE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="operationtypeId != null" >
+        operationtype_id,
+      </if>
+      <if test="operationtypeName != null" >
+        operationtype_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="operationtypeId != null" >
+        #{operationtypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="operationtypeName != null" >
+        #{operationtypeName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="sc.system.model.WebScOperation" >
+    update WSC_OPERATIONTYPE
+    <set >
+      <if test="operationtypeName != null" >
+        operationtype_name = #{operationtypeName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where operationtype_id = #{operationtypeId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScOperation" >
+    update WSC_OPERATIONTYPE
+    set operationtype_name = #{operationtypeName,jdbcType=VARCHAR}
+    where operationtype_id = #{operationtypeId,jdbcType=VARCHAR}
+  </update>
+</mapper>
