@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="UTF-8">
+    <title>订单管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.min.css}">
+    <link rel="stylesheet" th:href="@{/iconfont/iconfont.css}">
+</head>
+
+<body>
+
+    <div class="page-loading">
+        <div class="rubik-loader"></div>
+    </div>
+
+    <div class="z-body animated fadeIn">
+<!--        <form id="ReleaseForm" action="" method="post" class="layui-form" style="text-align: left !important;"> -->
+<!--         	<div class="layui-form-item"> -->
+<!--         		<div class="layui-row"> -->
+<!--         			<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
+<!-- 				   		<label for="loginName" class="layui-form-label">姓名</label> -->
+<!-- 	                    <div class="layui-input-inline"> -->
+<!-- 	                        <input type="text" name="userName" autocomplete="off" id="userName" class="layui-input"> -->
+<!-- 	                    </div> -->
+<!-- 				    </div> -->
+<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
+<!-- 	            		<label for=phone class="layui-form-label">手机</label> -->
+<!-- 	                    <div class="layui-input-inline"> -->
+<!-- 	                        <input type="text" name="phone" autocomplete="off" id="phone" class="layui-input"> -->
+<!-- 	                    </div> -->
+<!-- 	            	</div> -->
+<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
+<!-- 	            		<label for="status" class="layui-form-label">机构</label> -->
+<!-- 	                    <div class="layui-input-inline"> -->
+<!-- 	                        <select name="status" id="status"> -->
+<!-- 	                            <option value="">请选择</option> -->
+<!-- 	                            <option value="1">正常</option> -->
+<!-- 	                            <option value="0">锁定</option> -->
+<!-- 	                        </select> -->
+<!-- 	                    </div> -->
+<!-- 	            	</div> -->
+<!-- 	            </div> -->
+<!-- 	            <div class="layui-row"> -->
+<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
+<!-- 				   		<label for="loginName" class="layui-form-label">姓名</label> -->
+<!-- 	                    <div class="layui-input-inline"> -->
+<!-- 	                        <input type="text" name="userName" autocomplete="off" id="userName" class="layui-input"> -->
+<!-- 	                    </div> -->
+<!-- 				    </div> -->
+<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
+<!-- 	            		<label for=phone class="layui-form-label">手机</label> -->
+<!-- 	                    <div class="layui-input-inline"> -->
+<!-- 	                        <input type="text" name="phone" autocomplete="off" id="phone" class="layui-input"> -->
+<!-- 	                    </div> -->
+<!-- 	            	</div> -->
+<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" align="right" style="padding-right:10px"> -->
+<!-- 	            	 	<button lay-submit="" lay-filter="search" class="layui-btn layui-btn-sm layui-btn-primary table-action"> -->
+<!-- 	                        <i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i> -->
+<!-- 	                    </button> -->
+<!-- 	            	</div> -->
+<!-- 	            </div> -->
+<!--             </div> -->
+<!--         </form> -->
+		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin-top: -20px;text-align: right !important;">
+				<ul class="layui-tab-title">
+					<li class="layui-this">待审核</li>
+				    <li>待分配</li>
+				</ul>
+			<div class="layui-tab-content" style="height: 50px;">
+		    	<div class="layui-tab-item layui-show">
+<!-- 		    		<button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon">查询</i></button> -->
+<!-- 		    		<button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon">刷新</i></button> -->
+		    		<table class="layui-hide" id="doc-table-0"></table>
+		    	</div>
+		    	<div class="layui-tab-item">
+		    		<table class="layui-hide" id="doc-table-1"></table>
+		    	</div>
+		    	<div class="layui-tab-item">内容3</div>
+		    	<div class="layui-tab-item">内容4</div>
+		    	<div class="layui-tab-item">内容5</div>
+		  	</div>
+		</div>
+    </div>
+
+    <script type="text/html" id="sh-column-toolbar">
+        <shiro:hasPermission name="user:examine">
+            <a lay-event="examine">
+                <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="确认订单"></i>
+            </a>
+			<a lay-event="remove">
+                <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="取消订单"></i>
+            </a>
+        </shiro:hasPermission>
+
+        <shiro:lacksPermission  name="user:update,user:reset,user:delete">
+            <i class="zadmin-icon zadmin-icon-wuquanxian zadmin-oper-area zadmin-red"></i>无权限
+        </shiro:lacksPermission>
+    </script>
+    
+    <script type="text/html" id="fp-column-toolbar">
+        <shiro:hasPermission name="user:distribution">
+            <a lay-event="distribution">
+                <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="分配订单"></i>
+            </a>
+			<a lay-event="remove">
+                <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="取消订单"></i>
+            </a>
+        </shiro:hasPermission>
+
+        <shiro:lacksPermission  name="user:update,user:reset,user:delete">
+            <i class="zadmin-icon zadmin-icon-wuquanxian zadmin-oper-area zadmin-red"></i>无权限
+        </shiro:lacksPermission>
+    </script>
+
+
+    <script type="text/html" id="statusTpl">
+		{{ d.status == '1' ? '正常' : '锁定' }}
+    </script>
+    
+    <script type="text/html" id="patienttypeTpl">
+		{{# if(d.patientAge <= 16) { }}
+ 		  <span>儿童</span>
+	    {{# } else if(d.patientAge <= 60) { }}  
+		  <span>青年</span>
+	    {{# } else{ }}  
+		  <span>老人</span>
+	    {{# }}}  
+    </script>
+    
+    <script type="text/html" id="sexTpl">
+		{{ d.patientSex == '0' ? '女' : '男' }}
+    </script>
+
+    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+
+    <script>
+    /*<![CDATA[*/
+        layui.config({
+            base: '/lib/layui/extend/'
+        }).use(['table', 'element', 'form', 'tablePlug'], function () {
+            var table = layui.table;
+            var $ = layui.$;
+            var form = layui.form;
+            var tablePlug = layui.tablePlug;
+
+            tablePlug.smartReload.enable(true);
+
+            table.render({
+                elem: '#doc-table-0'
+                , url: '/doc/list'
+                , where: {state: '0'}
+                , page: true
+                , smartReloadModel: true
+                , cols: [
+                    [
+                        {type: 'numbers', title: '序号', align: 'center', width:'5%'}
+                        ,{field: 'documentId', title: 'ID', align: 'center',sort: true, hide: true}
+                        , {field: 'patientName', title: '病人姓名', align: 'center',sort: true}
+                        , {field: 'patientAge', title: '病人年龄', align: 'center',sort: true}
+                        , {field: 'patientSex', title: '病人性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true}
+                        , {field: 'patienttypeId', title: '病人类型', templet: '#patienttypeTpl', align: 'center',sort: true}
+                        , {field: 'operativeName', title: '手术名称', align: 'center',sort: true}
+                        , {field: 'anestheticName', title: '麻醉方法', align: 'center',sort: true}
+                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#sh-column-toolbar'}
+                    ]
+                ]
+            });
+            
+            table.render({
+                elem: '#doc-table-1'
+                , url: '/doc/list'
+                , where: {state: '1'}
+                , page: true
+                , smartReloadModel: true
+                , cols: [
+                    [
+                        {type: 'numbers', title: '序号', align: 'center', width:'5%'}
+                        ,{field: 'documentId', title: 'ID', align: 'center',sort: true, hide: true}
+                        , {field: 'patientName', title: '病人姓名', align: 'center',sort: true}
+                        , {field: 'patientAge', title: '病人年龄', align: 'center',sort: true}
+                        , {field: 'patientSex', title: '病人性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true}
+                        , {field: 'patienttypeId', title: '病人类型', templet: '#patienttypeTpl', align: 'center',sort: true}
+                        , {field: 'operativeName', title: '手术名称', align: 'center',sort: true}
+                        , {field: 'anestheticName', title: '麻醉方法', align: 'center',sort: true}
+                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#fp-column-toolbar'}
+                    ]
+                ]
+            });
+            
+            table.on('tool', function (obj) {
+                var data = obj.data;
+                var event = obj.event;
+                if (event === 'examine') {
+                	layer.open({
+                		content: '/doc/examine?documentId=' + data.documentId,
+                     	title: "订单信息",
+                     	area: ['100%', '100%'],
+                     	type: 2,
+                     	maxmin: true,
+                     	shadeClose: true,
+                     	end: function () {
+                         	table.reload('doc-table-0');
+                     	}
+                 	});
+                }else if(event === 'distribution'){
+                	layer.open({
+                		content: '/doc/distribution?documentId=' + data.documentId,
+                     	title: "订单信息",
+                     	area: ['100%', '100%'],
+                     	type: 2,
+                     	maxmin: true,
+                     	shadeClose: true,
+                     	end: function () {
+                         	table.reload('doc-table-1');
+                     	}
+                 	});
+                }
+            });
+            
+            
+
+//             // 工具条点击事件
+//             table.on('toolbar', function (obj) {
+//                 var data = obj.data;
+//                 var event = obj.event;
+
+//                 if (event === 'add') {
+//                     add();
+//                 }
+//             });
+
+//             // 行点击事件 重置密码
+//             table.on('tool', function (obj) {
+//                 var data = obj.data;
+//                 var event = obj.event;
+//                 if (event === 'edit') {
+//                     edit(data.userid);
+//                 } else if (event === 'reset') {
+//                     layer.open({
+//                         content: '/user/' + data.userid + "/reset",
+//                         title: "重置密码",
+//                         area: ['500px', '200px'],
+//                         type: 2,
+//                         maxmin: true,
+//                         shadeClose: true,
+//                         end: function () {
+//                             table.reload('user-table');
+//                         }
+//                     });
+//                 } else if (event === 'del') {
+//                     del(obj);
+//                 }
+//             });
+
+//             function disableDone(data) {
+//                 parent.layer.msg("禁用成功", {icon: 6});
+//             }
+
+//             function enableDone(data) {
+//                 parent.layer.msg("激活成功", {icon: 6});
+//             }
+
+            function add() {
+                layer.open({
+                    content: "/user",
+                    title: "新增用户",
+                    area: ['100%', '100%'],
+                    type: 2,
+                    shadeClose: true,
+                    end: function () {
+                        table.reload('user-table');
+                    }
+                });
+            }
+
+            function del(obj) {
+                layer.confirm("确定删除用户吗?", {icon: 3, title: '提示'},
+                    function (index) {//确定回调
+                        var id = obj.data.userid;
+                        $.post('/user/' + id, {_method: "DELETE"}, function (data) {
+                            layer.close(index);
+                            handlerResult(data, deleteDone);
+                        });
+                    }, function (index) {//取消回调
+                        layer.close(index);
+                    }
+                );
+            }
+
+            function deleteDone(data) {
+                parent.layer.msg("删除成功", {icon: 6});
+                table.reload('user-table');
+            }
+
+            function edit(id) {
+                layer.open({
+                    content: '/user/' + id,
+                    title: "编辑",
+                    area: ['100%', '100%'],
+                    type: 2,
+                    maxmin: true,
+                    shadeClose: true,
+                    end: function () {
+                        table.reload('user-table');
+                    }
+                });
+            }
+
+            form.on('submit(search)', function (form) {
+                table.reload('user-table', {
+                    where: form.field
+                });
+                return false;
+            });
+
+        });
+	/*]]>*/
+    </script>
+</body>
+
+</html>
