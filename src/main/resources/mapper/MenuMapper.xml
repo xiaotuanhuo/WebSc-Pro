@@ -139,11 +139,9 @@
                         WSC_MENU.icon
         from WSC_USER,
              WSC_ROLE,
-             WSC_USER_ROLE,
              WSC_MENU,
              WSC_ROLE_MENU
-        where WSC_USER.user_id = WSC_USER_ROLE.user_id
-          and WSC_ROLE.role_id = WSC_USER_ROLE.role_id
+        where WSC_USER.role_id = WSC_ROLE.role_id
           and WSC_ROLE.role_id = WSC_ROLE_MENU.role_id
           and WSC_MENU.menu_id = WSC_ROLE_MENU.menu_id
           and WSC_USER.login_name = #{loginname}
