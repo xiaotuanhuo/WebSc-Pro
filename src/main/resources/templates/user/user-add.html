@@ -20,23 +20,25 @@
 		<span id="userProvince" style="display: none;"><shiro:principal property="province"/></span>
 		<span id="userCity" style="display: none;"><shiro:principal property="city"/></span>
 		<span id="userArea" style="display: none;"><shiro:principal property="area"/></span>
+		<span id="roleId" style="display: none;"><shiro:principal property="roleId"/></span>
+		<span id="roleTypeId" style="display: none;"><shiro:principal property="roleTypeId"/></span>
 		<form action="" method="post" class="layui-form layui-form-pane">
 			<div class="layui-form-item">
 				<div class="layui-row">
 					<div class="layui-col-xs12 layui-col-sm8 layui-col-md9">
 						<div class="layui-form-item">
-							<label for="loginname" class="layui-form-label">登陆名</label>
+							<label for="loginName" class="layui-form-label">登陆名</label>
 							<div class="layui-input-block">
-								<input type="text" id="loginname" name="loginname"
-									th:value="${user?.loginname}" lay-verify="required"
+								<input type="text" id="loginName" name="loginName"
+									th:value="${user?.loginName}" lay-verify="required"
 									lay-vertype="tips" autocomplete="off" class="layui-input">
 							</div>
 						</div>
 						<!-- 编辑时不显示密码框 -->
 						<div th:if="${user == null}" class="layui-form-item">
-							<label for="password" class="layui-form-label">密码</label>
+							<label for="loginPwd" class="layui-form-label">密码</label>
 							<div class="layui-input-block">
-								<input type="password" id="password" name="password"
+								<input type="loginPwd" id="loginPwd" name="loginPwd"
 									lay-verify="required" lay-vertype="tips" autocomplete="off"
 									class="layui-input">
 							</div>
@@ -92,6 +94,18 @@
 								<ul id="orgTree" class="dtree" data-id="0" data-value="请选择机构"></ul>
 							</div>
 						</div>
+						<div id="patientDiv" class="layui-form-item" style = "display: none;">
+							<label for="patientType" class="layui-form-label">病人类型</label>
+							<div class="layui-input-block">
+								<div id="patientType" class="xm-select-demo"></div>
+							</div>
+						</div>
+						<div id="operationDiv" class="layui-form-item" style = "display: none;">
+							<label for="operationType" class="layui-form-label">手术类型</label>
+							<div class="layui-input-block">
+								<div id="operationType" class="xm-select-demo"></div>
+							</div>
+						</div>
 						<!-- <div id="districtDiv" class="layui-form-item" style="display: none;">
 							<div class="layui-inline">
 								<label for="province" class="layui-form-label">区域</label>
@@ -119,9 +133,10 @@
 			<div class="layui-form-item">
 				<div class="layui-input-block"
 					style="margin-left: 0; text-align: center;">
-					<input type="hidden" id="deptid" name="deptid"
-						th:value="${user?.deptid}"> <input type="hidden"
-						id="userid" name="userid" th:value="${user?.userid}">
+					<input type="hidden" id="orgId" name="orgId" th:value="${user?.roleTypeId}">
+					<input type="hidden" id="province" name="province" th:value="${user?.province}">
+					<input type="hidden" id="city" name="city" th:value="${user?.city}">
+					<input type="hidden" id="area" name="area" th:value="${user?.area}">
 					<button th:text="${user}?'修改':'增加'"
 						class="layui-btn layui-btn-normal btn-w100" lay-submit=""
 						data-th-lay-filter="${user}?'edit':'add'"></button>
@@ -129,14 +144,14 @@
 			</div>
 		</form>
 	</div>
-
+	
 	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
     <script th:src="@{/lib/layui/layui.js}"></script>
     <script th:src="@{/js/common.js}"></script>
-
-    <script>
-    	var firstRender = true;
     
+    <script>
+    	// 是否是第一次渲染，是：渲染；否：数据重载
+    	var firstRender = true;
 		layui.config({
 			base: '/lib/layui/extend/'
 		}).extend({
@@ -152,6 +167,7 @@
 			$("input[name='sex'][value='" + sex + "']").attr('checked',true);
 			form.render();
 			
+			// 角色组件
 			var roleKit = xmSelect.render({
 				el: '#role',
 				radio: true,
@@ -179,24 +195,49 @@
 					var change = data.change;
 					//isAdd, 此次操作是新增还是删除
 					var isAdd = data.isAdd;
-					if (isAdd && arr.length != 0 && (arr[0].roleId == 4 || arr[0].roleId == 5 || arr[0].roleId == 6)) {
-						// 选择医生集团角色时加载医生集团组织
-						loadOrg("dept/tree");
-					} else if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
-						// 选择医疗机构角色时加载医疗机构组织
-						loadOrg("organization/tree");
+					if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
+						// 选择医疗机构管理员角色时加载当前区划及下属医疗机构组织
+						//loadOrg("/organization/sub/tree");
+						//loadOrg("/framework/cdo/tree/root");
+						//loadOrg("/framework/tree/root");
+						loadOrg("/organization/tree");
+						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 3) {
-						// 选择卫监局角色时加载卫监局组织
-						loadOrg("bureau/tree");
+						// 选择卫监局角色时加载当前区划及下属卫监局组织
+						loadOrg("/bureau/tree");
+						hideForDoctor();
+					} else if (isAdd && arr.length != 0 && (arr[0].roleId == 4)) {
+						// 选择区域管理员角色时加载当前区划下属医疗集团组织
+						loadOrg("/dept/sub/tree/" + $('#roleTypeId').text());
+						hideForDoctor();
+					} else if (isAdd && arr.length != 0 && arr[0].roleId == 5) {
+						// 选择医生角色时加载当前用户所属组织及其下属组织
+						loadOrg("/dept/tree/" + $('#roleTypeId').text());
+						showForDoctor();
+					} else if (isAdd && arr.length != 0 && arr[0].roleId == 6) {
+						// 选择护士角色时加载当前用户所属组织及其下属组织
+						loadOrg("/dept/tree/" + $('#roleTypeId').text());
+						hideForDoctor();
+					} else if (isAdd && arr.length != 0 && arr[0].roleId == 8) {
+						// 选择区域订单录入员角色时加载当前区划机器下属医疗机构组织
+						//loadOrg("/organization/sub/tree");
+						//loadOrg("/framework/cdo/tree/root");
+						loadOrg("/dept/tree/" + $('#roleTypeId').text());
+						hideForDoctor();
+					} else if (isAdd && arr.length != 0 && arr[0].roleId == 9) {
+						// 选择医疗机构订单录入员角色时加载当前用户下属医疗机构组织
+						loadOrg("/framework/tree/root");
+						hideForDoctor();
 					} else {
 						$('#orgDiv').hide();
+						hideForDoctor();
 					}
-					console.log(data);
 				}
 			});
 			
+			// 根据当前用户角色加载可操作角色列表
 			$.ajax({
-				url: "/role/addEditUser/list",
+				url: "/role/list/" + $('#roleId').text(),
 				type: "GET",
 				dataType: "json",
 				success:function(response) {
@@ -208,6 +249,7 @@
 				}
 			});
 			
+			// 根据所选角色及当前用户的可操作范围加载机构列表
 			var loadOrg = function(dataUrl) {
 				if (firstRender) {
 					dtree.renderSelect({
@@ -215,15 +257,16 @@
 						url: dataUrl,
 						method: 'GET',
 						dataStyle: 'layuiStyle',
-		                width: '100%',
-		                ficon: ['1', '-1'],
-		                icon: ['-1', '2'],
-		                menubar: true,
+						width: '100%',
+						ficon: ['1', '-1'],
+						icon: ['-1', '2'],
+						menubar: true,
+						record: true,
 						response: {
 							statusCode: 0,
-							message: 'msg',
 							treeId: 'id',
-							title: 'name'
+							title: 'name',
+							parentId: 'parentId'
 		                }
 					});
 					firstRender = false;
@@ -235,6 +278,86 @@
 					});
 				}
 			};
+			
+			dtree.on("node('orgTree')" ,function(obj) {
+				console.log(obj.param.recordData.city.length);
+				console.log(obj.param.recordData.area.length);
+				if (obj.param.recordData.area.length != undefined) {
+					$("#area").val(obj.param.recordData.area);
+				}
+				if (obj.param.recordData.city.length != undefined) {
+					$("#city").val(obj.param.recordData.city);
+				}
+				if (obj.param.recordData.province.length != undefined) {
+					$("#province").val(obj.param.recordData.province);
+				}
+                $("#orgId").val(obj.param.nodeId);
+            });
+			
+			// 病人类型
+			var patientKit = xmSelect.render({
+				el: '#patientType',
+				data: [
+					{name: '儿童', value: 1},
+					{name: '青年', value: 2},
+					{name: '老年', value: 3},
+				]
+			});
+			
+			// 手术类型
+			var operationKit = xmSelect.render({
+				el: '#operationType',
+				prop: {
+					name: 'operationtypeName',
+					value: 'operationtypeId'
+				}
+			});
+			
+			// 加载手术类型列表
+			$.ajax({
+				url: "/operation/list",
+				type: "GET",
+				dataType: "json",
+				success:function(response) {
+					var data = response.data;
+					operationKit.update({
+						data: data,
+						autoRow: true
+					})
+				}
+			});
+			
+			// 选择医生角色时显示的控件
+			var showForDoctor = function() {
+				$('#patientDiv').show();
+				$('#operationDiv').show();
+			};
+			
+			// 选择非医生角色时情况并隐藏控件
+			var hideForDoctor = function() {
+				patientKit.setValue([]);
+				operationKit.setValue([]);
+				$('#patientDiv').hide();
+				$('#operationDiv').hide();
+			}
+			
+			//监听提交
+			form.on('submit(add)', function (form) {
+				form.field.roleId = roleKit.getValue('valueStr');
+				form.field.roleTypeId = $('#orgId').val();
+				if (roleKit.getValue('valueStr') === '5') {	// 医生
+					form.field.patientType = patientKit.getValue('valueStr');
+					form.field.operationType = operationKit.getValue("valueStr");
+				}
+				$.post('/user', form.field, function (result) {
+					handlerResult(result, addDone);
+				});
+				return false;
+            });
+			
+			function addDone(data) {
+				layer.msg("添加成功", {icon: 6});
+            }
         });
     </script>
 </body>
