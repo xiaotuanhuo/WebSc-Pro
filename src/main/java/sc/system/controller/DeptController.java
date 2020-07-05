@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * 医疗集团控制器
+ * 
  * @author aisino
  *
  */
@@ -20,75 +21,29 @@ import java.util.List;
 @RequestMapping("/dept")
 public class DeptController {
 
-    @Resource
-    private DeptService deptService;
+	@Resource
+	private DeptService deptService;
 
-    @GetMapping("/index")
-    public String index() {
-        return "dept/dept-list";
-    }
-
-    @OperationLog("获取部门列表")
-    @GetMapping("/list")
-    @ResponseBody
-    public ResultBean getList(@RequestParam(required = false) String parentId) {
-        List<WebScDept> deptList = deptService.selectByParentId(parentId);
-        return ResultBean.success(deptList);
-    }
-
-    @GetMapping("/tree/root")
-    @ResponseBody
-    public ResultBean treeAndRoot() {
-        return ResultBean.success(deptService.selectAllDeptTreeAndRoot());
-    }
-
-    @GetMapping("/tree")
-    @ResponseBody
-    public ResultBean tree(@RequestParam(value="roleTypeId") String roleTypeId) {
-        return ResultBean.success(deptService.selectAllDeptTree(roleTypeId));
-    }
-
-    @GetMapping
-    public String add() {
-        return "dept/dept-add";
-    }
-
-    @OperationLog("新增部门")
-    @PostMapping
-    @ResponseBody
-    public ResultBean add(WebScDept dept) {
-        return ResultBean.success(deptService.insert(dept));
-    }
-
-    @OperationLog("删除部门")
-    @DeleteMapping("/{deptId}")
-    @ResponseBody
-    public ResultBean delete(@PathVariable("deptId") String deptId) {
-        deptService.deleteCascadeByID(deptId);
-        return ResultBean.success();
-    }
-
-    @OperationLog("修改部门")
-    @PutMapping
-    @ResponseBody
-    public ResultBean update(WebScDept dept) {
-        deptService.updateByPrimaryKey(dept);
-        return ResultBean.success();
-    }
-
-    @GetMapping("/{deptId}")
-    public String update(@PathVariable("deptId") String deptId, Model model) {
-        WebScDept dept = deptService.selectByPrimaryKey(deptId);
-        model.addAttribute("dept", dept);
-        return "dept/dept-add";
-    }
-
-    @OperationLog("调整部门排序")
-    @PostMapping("/swap")
-    @ResponseBody
-    public ResultBean swapSort(Integer currentId, Integer swapId) {
-        deptService.swapSort(currentId, swapId);
-        return ResultBean.success();
-    }
+	/**
+	 * 查询当前节点及子节点
+	 * @param parentId
+	 * @return
+	 */
+	@GetMapping("/tree/{deptId}")
+	@ResponseBody
+	public ResultBean tree(@PathVariable("deptId") String deptId) {
+		return ResultBean.success(deptService.selectTree(deptId));
+	}
+	
+	/**
+	 * 查询子节点
+	 * @param parentId
+	 * @return
+	 */
+	@GetMapping("/sub/tree/{parentId}")
+	@ResponseBody
+	public ResultBean subTree(@PathVariable("parentId") String parentId) {
+		return ResultBean.success(deptService.selectSubTree(parentId));
+	}
 
 }

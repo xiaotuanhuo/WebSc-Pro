@@ -1,5 +1,6 @@
 package sc.system.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -7,6 +8,8 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import sc.common.constants.DataAuth;
+import sc.common.constants.RoleEnum;
 import sc.common.shiro.realm.LoginNameRealm;
 import sc.system.mapper.RoleMapper;
 import sc.system.mapper.RoleMenuMapper;
@@ -46,9 +49,15 @@ public class RoleService {
     public List<WebScRole> selectAll() {
         return roleMapper.selectAll();
     }
-
-    public List<WebScRole> getRolesForAddEidtUser() {
-        return roleMapper.selectRolesForAddEidtUser();
+    
+    /**
+     * 根据当前用户角色获取可操作角色列表
+     * @param roleId
+     * @return
+     */
+    public List<WebScRole> getRolesBytUserRole(Integer roleId) {
+    	List<Integer> params = DataAuth.getRoleList(roleId);
+        return roleMapper.selectRolesByUser(params);
     }
     
     public List<WebScRole> selectAllByQuery(WebScRole roleQuery) {

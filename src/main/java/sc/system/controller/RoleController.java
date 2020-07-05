@@ -2,6 +2,7 @@ package sc.system.controller;
 
 import com.github.pagehelper.PageInfo;
 import sc.common.annotation.OperationLog;
+import sc.common.constants.RoleEnum;
 import sc.common.util.PageResultBean;
 import sc.common.util.ResultBean;
 import sc.system.model.WebScRole;
@@ -26,10 +27,10 @@ public class RoleController {
     }
 
     @OperationLog("新增或编辑用户时获取可选择角色")
-    @GetMapping("/addEditUser/list")
+    @GetMapping("/list/{roleId}")
     @ResponseBody
-    public ResultBean getRolesForAddEidtUser() {
-    	return ResultBean.success(roleService.getRolesForAddEidtUser());
+    public ResultBean getRolesForUser(@PathVariable("roleId") Integer roleId) {
+    	return ResultBean.success(roleService.getRolesBytUserRole(roleId));
     }
     
     @OperationLog("查询角色列表")

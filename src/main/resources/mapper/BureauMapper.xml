@@ -16,7 +16,7 @@
     <result column="status" property="status" jdbcType="VARCHAR" />
   </resultMap>
   
-  <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScBureau">
+    <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScBureau">
     <id column="bureau_id" property="bureauId" jdbcType="VARCHAR" />
     <result column="bureau_pid" property="bureauPid" jdbcType="VARCHAR" />
     <result column="bureau_name" property="bureauName" jdbcType="VARCHAR" />
@@ -29,7 +29,7 @@
     <result column="area" property="area" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="VARCHAR" />
-        <collection property="children" ofType="sc.system.model.WebScBureau" select="selectAllTree" column="{bureau_pid = bureau_id}"/>
+        <collection property="children" ofType="sc.system.model.WebScBureau" select="selectSubTree" column="{bureau_pid = bureau_id}"/>
     </resultMap>
     
   <sql id="Base_Column_List" >
@@ -191,20 +191,50 @@
       status = #{status,jdbcType=VARCHAR}
     where bureau_id = #{bureauId,jdbcType=VARCHAR}
   </update>
-  
-  <select id="selectAllTree" resultMap="TreeBaseResultMap">
+    
+    <!-- // 查询当前节点及其所有子节点
+		 // 该方法查询当前节点
+		 // resultMap="TreeBaseResultMap1111"递归查询子节点 -->
+    <select id="selectAllTree" resultMap="TreeBaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from WSC_BUREAU
+        from WSC_BUREAU wb
+        <where>
+            <choose>
+               	<when test="city_code != null and city_code != ''">
+               		AND wb.city = #{city_code} AND wb.area is null
+               	</when>
+               	<otherwise>
+               		<choose>
+               			<when test="province_code != null and province_code != ''">
+	                		AND wb.province = #{province_code} AND wb.city is null
+	                	</when>
+	                	<otherwise>
+	                		AND wb.province is null
+	                	</otherwise>
+               		</choose>
+               	</otherwise>
+            </choose>
+        </where>
+        order by bureau_id
+    </select>
+    
+    <!-- // 查询当前节点所有子节点
+		 // resultMap="TreeBaseResultMap"递归查询子节点 -->
+	<select id="selectSubTree" resultMap="TreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_BUREAU wb
         <where>
             <choose>
                 <when test="bureau_pid!=null">
-                    and bureau_pid = #{bureau_pid}
+                    and wb.bureau_pid = #{bureau_pid}
                 </when>
                 <otherwise>
-                    and bureau_pid = '0'
+                    and wb.bureau_pid = '0'
                 </otherwise>
             </choose>
         </where>
+        order by bureau_id
     </select>
 </mapper>

@@ -2,6 +2,11 @@ package sc.system.model;
 
 import java.util.Date;
 
+/**
+ * 操作按钮实体bean
+ * @author aisino
+ *
+ */
 public class WebScOperator {
     /**
      * 菜单 ID

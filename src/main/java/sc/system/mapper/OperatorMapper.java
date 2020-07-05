@@ -6,6 +6,11 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 操作按钮dao
+ * @author aisino
+ *
+ */
 @Mapper
 public interface OperatorMapper {
     int deleteByPrimaryKey(Integer operatorId);

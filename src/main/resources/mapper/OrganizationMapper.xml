@@ -26,7 +26,7 @@
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
         <result column="area" jdbcType="VARCHAR" property="area"/>
-        <collection property="children" ofType="sc.system.model.WebScOrganization" select="selectAllTree" column="{org_pid = org_id}"/>
+        <collection property="children" ofType="sc.system.model.WebScOrganization" select="selectSubTree" column="{org_pid = org_id}"/>
     </resultMap>
     
     <sql id="Base_Column_List">
@@ -46,7 +46,7 @@
         select
         <include refid="Base_Column_List"/>
         from WSC_ORGANIZATION
-        where 1 = 1
+        where org_id = #{orgId,jdbcType=VARCHAR}
         
     </select>
     
@@ -82,25 +82,57 @@
         where org_id = #{orgId,jdbcType=VARCHAR}
     </update>
     
-    <select id="selectOrgForAddEidtUser" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"></include>
-        from WSC_ORGANIZATION
-    </select>
-    
+	<!-- // 查询当前节点及其所有子节点
+		 // 该方法查询当前节点
+		 // resultMap="TreeBaseResultMap1111"递归查询子节点 -->
     <select id="selectAllTree" resultMap="TreeBaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from WSC_ORGANIZATION
+        from WSC_ORGANIZATION wo
         <where>
             <choose>
-                <when test="org_pid!=null">
-                    and org_pid = #{org_pid}
+                <when test="org_id!=null">
+                    and wo.org_id = #{org_id}
                 </when>
                 <otherwise>
-                    and org_pid = '0'
+                	<choose>
+                		<when test="city_code != null and city_code != ''">
+                			AND wo.city = #{city_code} AND wo.area is null
+                		</when>
+                		<otherwise>
+                			<choose>
+                				<when test="province_code != null and province_code != ''">
+		                			AND wo.province = #{province_code} AND wo.city is null
+		                		</when>
+		                		<otherwise>
+		                			AND wo.province is null
+		                		</otherwise>
+                			</choose>
+                		</otherwise>
+                	</choose>
                 </otherwise>
             </choose>
         </where>
+        order by org_id
     </select>
-</mapper>
+    
+    <!-- // 查询当前节点的子节点
+		 // resultMap="TreeBaseResultMap1111"递归查询子节点 -->
+	<select id="selectSubTree" resultMap="TreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_ORGANIZATION wo
+        <where>
+            <choose>
+                <when test="org_pid!=null">
+                    and wo.org_pid = #{org_pid}
+                </when>
+                <otherwise>
+                    and wo.org_pid = '0'
+                </otherwise>
+            </choose>
+        </where>
+        order by org_id
+    </select>
+    
+	</mapper>

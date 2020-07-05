@@ -4,6 +4,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 手术类型实体bean
+ * @author aisino
+ *
+ */
 public class WebScOrganization {
 	
 	@JsonProperty("id")

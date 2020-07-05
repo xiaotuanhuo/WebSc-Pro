@@ -14,7 +14,6 @@
         <result column="area" jdbcType="VARCHAR" property="area"/>
     </resultMap>
 
-
     <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScDept">
         <id column="dept_id" jdbcType="VARCHAR" property="deptId"/>
         <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
@@ -25,7 +24,7 @@
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
         <result column="area" jdbcType="VARCHAR" property="area"/>
-        <collection property="children" ofType="sc.system.model.WebScDept" select="selectAllTree" column="{parent_id = dept_id}"/>
+        <collection property="children" ofType="sc.system.model.WebScDept" select="selectSubTree" column="{parent_id = dept_id}"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -99,21 +98,43 @@
             next.`order_num` = per.`order_num`
     </update>
 
-    <select id="selectAllTree" resultMap="TreeBaseResultMap">
+	<!-- // 查询当前节点及其所有子节点
+		 // 该方法查询当前节点
+		 // resultMap="TreeBaseResultMap"递归查询子节点 -->
+	<select id="selectTree" resultMap="TreeBaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from WSC_DEPT
+        from WSC_DEPT wd
         <where>
             <choose>
-                <when test="parent_id!=null">
-                    and parent_id = #{parent_id}
+                <when test="dept_id!=null">
+                    and wd.dept_id = #{dept_id}
                 </when>
                 <otherwise>
-                    and parent_id = '0'
+                    and wd.parent_id = '0'
                 </otherwise>
             </choose>
         </where>
-        order by order_num
+        order by dept_id
+    </select>
+    
+    <!-- // 查询当前节点所有子节点
+		 // resultMap="TreeBaseResultMap"递归查询子节点 -->
+    <select id="selectSubTree" resultMap="TreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_DEPT wd
+        <where>
+            <choose>
+                <when test="parent_id!=null">
+                    and wd.parent_id = #{parent_id}
+                </when>
+                <otherwise>
+                    and wd.parent_id = '0'
+                </otherwise>
+            </choose>
+        </where>
+        order by dept_id
     </select>
     
 </mapper>

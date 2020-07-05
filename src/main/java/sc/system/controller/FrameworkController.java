@@ -1,13 +1,19 @@
 package sc.system.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
+
 import sc.common.util.ResultBean;
+import sc.system.model.vo.CDO;
 import sc.system.service.FrameworkService;
 
 /**
@@ -30,9 +36,11 @@ public class FrameworkController {
         return "framework/cdo-list";
     }
 	
-	@GetMapping("/cdo/tree/root")
+	@GetMapping("/tree/root")
 	@ResponseBody
-	public ResultBean treeAndRoot() {
-		return ResultBean.success(frameworkService.selectCdoTreeAndRoot());
+	public ResultBean tree() {
+//		List<CDO> cdos = frameworkService.selectCdoTreeAndRoot();
+//		String aa = JSONObject.toJSONString(cdos);
+		return ResultBean.success(frameworkService.selectOrganizationTree());
 	}
 }

@@ -71,4 +71,22 @@
         <include refid="Base_Column_List"></include>
         from WSC_ROLE
     </select>
+    
+    <select id="selectRolesByUser" resultMap="BaseResultMap">
+	    select role_id, role_name from WSC_ROLE wr 
+	    <where>
+	        <choose>
+				<when test="list != null and list.size() > 0">
+					AND wr.role_id in 
+					<foreach  item="item" collection="list" index="index"  open="(" separator="," close=")">
+						#{item}
+					</foreach>	
+				</when>
+				<otherwise>
+					<!-- list为空时，使其恒不等，即查询结果为空 -->
+					AND 1 = 2
+				</otherwise>
+			</choose>
+	    </where>
+	</select>
 </mapper>
