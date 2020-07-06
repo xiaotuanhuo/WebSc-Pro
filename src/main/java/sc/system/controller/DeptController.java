@@ -23,7 +23,18 @@ public class DeptController {
 
 	@Resource
 	private DeptService deptService;
-
+	
+	/**
+	 * 查询当前节点及子节点
+	 * @param parentId
+	 * @return
+	 */
+	@GetMapping("/tree/root")
+	@ResponseBody
+	public ResultBean rootTree() {
+		return ResultBean.success(deptService.selectRootTree());
+	}
+	
 	/**
 	 * 查询当前节点及子节点
 	 * @param parentId

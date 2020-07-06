@@ -106,26 +106,6 @@
 								<div id="operationType" class="xm-select-demo"></div>
 							</div>
 						</div>
-						<!-- <div id="districtDiv" class="layui-form-item" style="display: none;">
-							<div class="layui-inline">
-								<label for="province" class="layui-form-label">区域</label>
-								<div class="layui-inline">
-									<select name="province" lay-filter="province" class="province">
-										<option value="">请选择省</option>
-									</select>
-								</div>
-								<div class="layui-inline">
-									<select name="city" lay-filter="city" disabled>
-										<option value="">请选择市</option>
-									</select>
-								</div>
-								<div id="areaDiv" class="layui-inline" style="display: none;">
-									<select name="area" lay-filter="area" disabled>
-										<option value="">请选择县/区</option>
-									</select>
-								</div>
-							</div>
-						</div> -->
 					</div>
 				</div>
 			</div>
@@ -156,13 +136,12 @@
 			base: '/lib/layui/extend/'
 		}).extend({
 			xmSelect: 'xm-Select'
-		}).use(['form', 'layer', 'xmSelect', 'dtree', 'address'], function () {
+		}).use(['form', 'layer', 'xmSelect', 'dtree'], function () {
 			$ = layui.jquery;
 			var form = layui.form,
 				layer = layui.layer,
 				xmSelect = layui.xmSelect,
-				dtree = layui.dtree,
-				address = layui.address();
+				dtree = layui.dtree;
 			var sex = [[${user?.sex} + '']];
 			$("input[name='sex'][value='" + sex + "']").attr('checked',true);
 			form.render();
@@ -197,36 +176,35 @@
 					var isAdd = data.isAdd;
 					if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
 						// 选择医疗机构管理员角色时加载当前区划及下属医疗机构组织
-						//loadOrg("/organization/sub/tree");
-						//loadOrg("/framework/cdo/tree/root");
-						//loadOrg("/framework/tree/root");
-						loadOrg("/organization/tree");
+						loadOrg('/organization/tree');
 						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 3) {
 						// 选择卫监局角色时加载当前区划及下属卫监局组织
-						loadOrg("/bureau/tree");
+						loadOrg('/bureau/tree');
 						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && (arr[0].roleId == 4)) {
 						// 选择区域管理员角色时加载当前区划下属医疗集团组织
-						loadOrg("/dept/sub/tree/" + $('#roleTypeId').text());
+						loadOrg('/dept/sub/tree/' + $('#roleTypeId').text());
 						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 5) {
 						// 选择医生角色时加载当前用户所属组织及其下属组织
-						loadOrg("/dept/tree/" + $('#roleTypeId').text());
+						loadOrg('/dept/tree/' + $('#roleTypeId').text());
 						showForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 6) {
 						// 选择护士角色时加载当前用户所属组织及其下属组织
-						loadOrg("/dept/tree/" + $('#roleTypeId').text());
+						loadOrg('/dept/tree/' + $('#roleTypeId').text());
+						hideForDoctor();
+					} else if (isAdd && arr.length != 0 && arr[0].roleId == 7) {
+						// 选择超级管理员时加载医疗集团根节点
+						loadOrg('/dept/tree/root');
 						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 8) {
 						// 选择区域订单录入员角色时加载当前区划机器下属医疗机构组织
-						//loadOrg("/organization/sub/tree");
-						//loadOrg("/framework/cdo/tree/root");
-						loadOrg("/dept/tree/" + $('#roleTypeId').text());
+						loadOrg('/dept/tree/' + $('#roleTypeId').text());
 						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 9) {
 						// 选择医疗机构订单录入员角色时加载当前用户下属医疗机构组织
-						loadOrg("/framework/tree/root");
+						loadOrg('/framework/tree/root');
 						hideForDoctor();
 					} else {
 						$('#orgDiv').hide();
@@ -237,9 +215,9 @@
 			
 			// 根据当前用户角色加载可操作角色列表
 			$.ajax({
-				url: "/role/list/" + $('#roleId').text(),
-				type: "GET",
-				dataType: "json",
+				url: '/role/list/' + $('#roleId').text(),
+				type: 'GET',
+				dataType: 'json',
 				success:function(response) {
 					var data = response.data;
 					roleKit.update({
@@ -283,15 +261,15 @@
 				console.log(obj.param.recordData.city.length);
 				console.log(obj.param.recordData.area.length);
 				if (obj.param.recordData.area.length != undefined) {
-					$("#area").val(obj.param.recordData.area);
+					$('#area').val(obj.param.recordData.area);
 				}
 				if (obj.param.recordData.city.length != undefined) {
-					$("#city").val(obj.param.recordData.city);
+					$('#city').val(obj.param.recordData.city);
 				}
 				if (obj.param.recordData.province.length != undefined) {
-					$("#province").val(obj.param.recordData.province);
+					$('#province').val(obj.param.recordData.province);
 				}
-                $("#orgId").val(obj.param.nodeId);
+                $('#orgId').val(obj.param.nodeId);
             });
 			
 			// 病人类型
@@ -315,9 +293,9 @@
 			
 			// 加载手术类型列表
 			$.ajax({
-				url: "/operation/list",
-				type: "GET",
-				dataType: "json",
+				url: '/operation/list',
+				type: 'GET',
+				dataType: 'json',
 				success:function(response) {
 					var data = response.data;
 					operationKit.update({
@@ -347,7 +325,7 @@
 				form.field.roleTypeId = $('#orgId').val();
 				if (roleKit.getValue('valueStr') === '5') {	// 医生
 					form.field.patientType = patientKit.getValue('valueStr');
-					form.field.operationType = operationKit.getValue("valueStr");
+					form.field.operationType = operationKit.getValue('valueStr');
 				}
 				$.post('/user', form.field, function (result) {
 					handlerResult(result, addDone);
@@ -356,7 +334,7 @@
             });
 			
 			function addDone(data) {
-				layer.msg("添加成功", {icon: 6});
+				layer.msg('添加成功', {icon: 6});
             }
         });
     </script>

@@ -20,6 +20,10 @@ public class WebScOrganization {
 	@JsonProperty("parentId")
 	private String orgPid;
 	
+	private String rootId;
+	private String credentials;
+	private int leaf;
+	
 	private String orgAddress;
 	private String orgTel;
 	private String leaderName;
@@ -55,6 +59,30 @@ public class WebScOrganization {
 	
 	public void setOrgPid(String orgPid) {
 		this.orgPid = orgPid;
+	}
+	
+	public String getRootId() {
+		return rootId;
+	}
+	
+	public void setRootId(String rootId) {
+		this.rootId = rootId;
+	}
+	
+	public String getCredentials() {
+		return credentials;
+	}
+	
+	public void setCredentials(String credentials) {
+		this.credentials = credentials;
+	}
+	
+	public int getLeaf() {
+		return leaf;
+	}
+	
+	public void setLeaf(int leaf) {
+		this.leaf = leaf;
 	}
 	
 	public String getOrgAddress() {

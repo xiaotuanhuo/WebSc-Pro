@@ -5,6 +5,9 @@
 	<resultMap id="BaseResultMap" type="sc.system.model.WebScOrganization">
 	<id column="org_id" jdbcType="VARCHAR" property="orgId"/>
         <result column="org_pid" jdbcType="VARCHAR" property="orgPid"/>
+        <result column="root_id" jdbcType="VARCHAR" property="rootId"/>
+        <result column="credentials" jdbcType="VARCHAR" property="credentials"/>
+        <result column="leaf" jdbcType="INTEGER" property="leaf"/>
         <result column="org_name" jdbcType="INTEGER" property="orgName"/>
         <result column="org_address" jdbcType="INTEGER" property="orgAddress"/>
         <result column="org_tel" jdbcType="TIMESTAMP" property="orgTel"/>
@@ -18,6 +21,9 @@
     <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScOrganization">
     	<id column="org_id" jdbcType="VARCHAR" property="orgId"/>
         <result column="org_pid" jdbcType="VARCHAR" property="orgPid"/>
+        <result column="root_id" jdbcType="VARCHAR" property="rootId"/>
+        <result column="credentials" jdbcType="VARCHAR" property="credentials"/>
+        <result column="leaf" jdbcType="INTEGER" property="leaf"/>
         <result column="org_name" jdbcType="INTEGER" property="orgName"/>
         <result column="org_address" jdbcType="INTEGER" property="orgAddress"/>
         <result column="org_tel" jdbcType="TIMESTAMP" property="orgTel"/>
@@ -32,6 +38,9 @@
     <sql id="Base_Column_List">
         org_id,
 		org_pid,
+		root_id,
+		credentials,
+		leaf,
 		org_name,
 		org_address,
 		org_tel,
@@ -53,7 +62,14 @@
     <select id="getList" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from WSC_ORGANIZATION where org_pid != '0'
+        from WSC_ORGANIZATION where leaf = 1
+    </select>
+    
+    <select id="selectRoot" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_ORGANIZATION where org_pid = '0'
+        order by org_id
     </select>
     
     <select id="selectAll" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
@@ -63,8 +79,8 @@
     </select>
     
     <insert id="insert" parameterType="sc.system.model.WebScOrganization" >
-        insert into WSC_ORGANIZATION (org_id, org_pid, org_name, org_address, org_tel, leader_name, leader_tel, province, city, area)
-        values (#{orgId,jdbcType=VARCHAR}, #{orgPid,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, #{orgAddress,jdbcType=VARCHAR}, #{orgTel,jdbcType=VARCHAR},
+        insert into WSC_ORGANIZATION (org_id, org_pid, root_id, credentials, leaf, org_name, org_address, org_tel, leader_name, leader_tel, province, city, area)
+        values (#{orgId,jdbcType=VARCHAR}, #{orgPid,jdbcType=VARCHAR}, #{rootId,jdbcType=VARCHAR}, #{credentials,jdbcType=VARCHAR}, #{leaf,jdbcType=INTEGER}, #{orgName,jdbcType=VARCHAR}, #{orgAddress,jdbcType=VARCHAR}, #{orgTel,jdbcType=VARCHAR},
         		#{leaderName,jdbcType=VARCHAR},#{leaderTel,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{area,jdbcType=VARCHAR})
     </insert>
     
@@ -92,7 +108,7 @@
         <where>
             <choose>
                 <when test="org_id!=null">
-                    and wo.org_id = #{org_id}
+                    AND wo.org_id = #{org_id}
                 </when>
                 <otherwise>
                 	<choose>
@@ -135,4 +151,29 @@
         order by org_id
     </select>
     
+    <select id="selectByParentIdAndDistrict" resultMap="TreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_ORGANIZATION wo
+        <where>
+        	wo.org_pid = #{org_pid} and wo.province = #{province_code}
+            <choose>
+                <when test="city_code != null and city_code != ''">
+					AND wo.city = #{city_code}
+					<choose>
+						<when test="area_code != null and area_code != ''">
+							AND wo.area = #{area_code} AND wo.leaf = 0
+						</when>
+						<otherwise>
+							AND wo.area is null
+						</otherwise>
+					</choose>
+				</when>
+				<otherwise>
+					AND wo.city is null
+				</otherwise>
+            </choose>
+        </where>
+        order by org_id
+    </select>
 	</mapper>

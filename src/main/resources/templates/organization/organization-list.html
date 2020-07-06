@@ -110,8 +110,8 @@
 				cols: [
 					[
 						{type: 'numbers', title: '序号', width:'5%'},
-						{field: 'userId', title: 'ID', hide: true},
-						{field: 'orgName', title: '机构名称', sort: true},
+						{field: 'id', title: 'ID', hide: true},
+						{field: 'name', title: '机构名称', sort: true},
 						{field: 'provinceName', title: '省', sort: true},
 						{field: 'cityName', title: '市', sort: true},
 						{field: 'areaName', title: '区', sort: true},
@@ -121,19 +121,19 @@
 			});
 			
 			// 工具条点击事件
-			treeGrid.on('toolbar', function (obj) {
+			table.on('toolbar', function (obj) {
 				var data = obj.data;
 				var event = obj.event;
 				if (event === 'add') {
 					add();
 				}
-			});
+            });
 			
 			function add() {
 				layer.open({
 					content: "/organization",
 					title: "新增医疗机构",
-					area: ['45%', '80%'],
+					area: ['100%', '100%'],
 					type: 2,
 					shadeClose: true,
 					end: function () {

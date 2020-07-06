@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import sc.common.annotation.OperationLog;
@@ -42,6 +41,13 @@ public class OrganizationController {
 		// 数据查询
 		List<WebScOrganization> wsoList = organizationService.getList(wso);
 		return new PageResultBean<>(wsoList.size(), wsoList);
+	}
+	
+	@OperationLog("获取所有医疗机构根节点")
+    @GetMapping("/root")
+    @ResponseBody
+	public ResultBean getRoot() {
+		return ResultBean.success(organizationService.getRoot());
 	}
 	
 	/**

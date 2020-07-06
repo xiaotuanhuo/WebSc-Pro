@@ -2,10 +2,7 @@ package sc.system.service;
 
 import sc.system.mapper.DeptMapper;
 import sc.system.model.WebScDept;
-import sc.system.model.WebScUser;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,6 +16,15 @@ public class DeptService {
 
 	@Resource
 	private DeptMapper deptMapper;
+	
+	/**
+	 * 查询医疗集团根节点
+	 * @return
+	 */
+	public List<WebScDept> selectRootTree() {
+		// 医疗集团根节点的父节点默认：0
+		return deptMapper.selectByParentId("0");
+	}
 	
 	public List<WebScDept> selectTree(String deptId) {
 //		Subject subject = SecurityUtils.getSubject();
