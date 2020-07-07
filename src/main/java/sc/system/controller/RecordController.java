@@ -115,4 +115,36 @@ public class RecordController {
 		
 		return rBean;
 	}
+	
+	@GetMapping(value = "getDoctors")
+	@ResponseBody
+	public ResultBean getDoctors() {
+		ResultBean rBean = null;
+		try {
+			
+			rBean = ResultBean.success(recordService.getDoctorsService());
+			
+		} catch (Exception e) {
+			logger.error("获取医生列表失败，"+e.getMessage());
+			rBean = ResultBean.error("获取医生列表失败，"+e.getMessage());
+		}
+		
+		return rBean;
+	}
+	
+	@GetMapping(value = "getOrgs")
+	@ResponseBody
+	public ResultBean getOrgs() {
+		ResultBean rBean = null;
+		try {
+			
+			rBean = ResultBean.success(recordService.getOrgsService());
+			
+		} catch (Exception e) {
+			logger.error("获取医疗机构列表失败，"+e.getMessage());
+			rBean = ResultBean.error("获取医疗机构列表失败，"+e.getMessage());
+		}
+		
+		return rBean;
+	}
 }

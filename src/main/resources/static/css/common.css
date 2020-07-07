@@ -73,11 +73,11 @@
 }
 
 .login-main {
-    position: fixed;
+    /* position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
-    left: 0;
+    left: 0; */
     width: 300px;
     margin: 0 auto;
 }
@@ -166,6 +166,9 @@
 .zadmin-right {
     float: right;
 }
+
+/*下拉列表高度*/
+.layui-form-select dl { max-height:200px; }
 
 
 /*.layui-form-item .layui-input-inline{

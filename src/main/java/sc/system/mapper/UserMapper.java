@@ -3,12 +3,22 @@ package sc.system.mapper;
 import sc.system.model.WebScUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 import java.util.Set;
 
 @Mapper
 public interface UserMapper {
+	
+	/**
+	 * 获取指定区域的医生
+	 * @param cityPre 区域编码，包括province和city
+	 * @return
+	 */
+	@Select("SELECT * FROM WSC_USER WHERE role_id='5' AND city LIKE CONCAT(#{cityPre},'%')")
+	List<WebScUser> selectDoctorsByQy(@Param("cityPre") String cityPre);
+	
     int deleteByPrimaryKey(Integer userid);
 
     int insert(WebScUser user);

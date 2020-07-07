@@ -6,12 +6,13 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import sc.common.annotation.DataAuth;
-import sc.system.model.WebScDept;
 import sc.system.model.WebScOrganization;
 
 @Mapper
 public interface OrganizationMapper {
+	
+	@Select("SELECT org_name FROM WSC_ORGANIZATION WHERE area LIKE CONCAT(#{cityPre},'%')")
+	List<String> selectOrgsByQy(@Param("cityPre") String cityPre);
 
 	@Select("SELECT * FROM WSC_ORGANIZATION WHERE org_name=#{orgName}")
 	WebScOrganization selectWebScOrganization(@Param("orgName") String orgName);

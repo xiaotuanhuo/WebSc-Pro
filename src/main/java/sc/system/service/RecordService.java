@@ -212,5 +212,38 @@ public class RecordService {
 		
 		return "医生备案信息删除成功";
 	}
-
+	
+	/**
+	 * 获取某城市下的所有医生
+	 * @return
+	 */
+	public List<WebScUser> getDoctorsService(){
+		
+		String cityPre = "";
+		WebScUser user = ShiroUtil.getCurrentUser();
+		if (!StringUtil.isEmpty(user.getCity())) {
+			cityPre = user.getCity();
+		}else {
+			cityPre = user.getProvince();
+		}
+		
+		return userMapper.selectDoctorsByQy(cityPre);
+	}
+	
+	/**
+	 * 获取某城市下的所有医疗机构
+	 * @return
+	 */
+	public List<String> getOrgsService(){
+		
+		String cityPre = "";
+		WebScUser user = ShiroUtil.getCurrentUser();
+		if (!StringUtil.isEmpty(user.getCity())) {
+			cityPre = user.getCity();
+		}else {
+			cityPre = user.getProvince();
+		}
+		
+		return organizationMapper.selectOrgsByQy(cityPre);
+	}
 }

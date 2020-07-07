@@ -135,7 +135,9 @@
 	                						'<div class="layui-inline">'+
 	                    						'<label class="layui-form-label" style="width:100px;">医生姓名</label>'+
 	                    						'<div class="layui-input-inline">'+
-	                        						'<input id="doctorName" name="doctorName" value="'+data.doctorName+'" lay-verify="required" class="layui-input" type="text" placeholder="医生姓名"/>'+
+	                        						'<select id="doctorName" name="doctorName" lay-verify="required" lay-search lay-filter="doctorFilter">'+
+	                        							'<option value="'+data.doctorName+'_'+data.doctorPhone+'">'+data.doctorName+'</option>'+
+	                        						'</select>'+
 	                    						'</div>'+
 	                						'</div>'+
 	            						'</div>'+
@@ -143,7 +145,9 @@
 	                						'<div class="layui-inline">'+
 	                    						'<label class="layui-form-label" style="width:100px;">医疗机构</label>'+
 	                    						'<div class="layui-input-inline">'+
-	                        						'<input id="orgName" name="orgName" value="'+data.orgName+'" lay-verify="required" class="layui-input" type="text" placeholder="医疗机构"/>'+
+		                    						'<select id="orgName" name="orgName" lay-verify="required" lay-search>'+
+		                    							'<option value="'+data.orgName+'">'+data.orgName+'</option>'+
+			    		    						'</select>'+
 	                    						'</div>'+
 	                						'</div>'+
 	            						'</div>'+
@@ -171,7 +175,7 @@
 		            						'<div class="layui-inline">'+
 		                						'<label class="layui-form-label" style="width:110px;">医生手机号</label>'+
 							                    '<div class="layui-input-inline">'+
-							                        '<input id="doctorPhone" name="doctorPhone" value="'+data.doctorPhone+'" lay-verify="phone" class="layui-input" type="text" placeholder="医生手机号"/>'+
+							                        '<input id="doctorPhone" name="doctorPhone" value="'+data.doctorPhone+'" lay-verify="phone" class="layui-input" type="text" placeholder="医生手机号" disabled/>'+
 							                    '</div>'+
 		            						'</div>'+
 		        						'</div>'+
@@ -186,23 +190,49 @@
         						'</div>';
 	  	    	
         		layerIndex = layer.open({
-	  	    	  type: 1, 
-	  	    	  title: '编辑',
-	  	    	  offset: 't',
-    			  area: ['650px', '400px'],
-	  	    	  content: editContent
+	  	    		type: 1, 
+	  	    		title: '编辑',
+	  	    		offset: 't',
+    				area: ['650px', '400px'],
+	  	    		content: editContent
 	  	    	});
 	  	    	
-	  	      //备案时间
-	      	  laydate.render({
-	      	    elem: '#recordDate'
-	      	    ,type: 'date'
-	      	  });
-	      	  //截止时间
-	      	  laydate.render({
-	      	    elem: '#endDate'
-	      	    ,type: 'date'
-	      	  });
+	  	    	//备案时间
+	      		laydate.render({
+	      	  		elem: '#recordDate'
+	      	  		,type: 'date'
+	      	  	});
+				//截止时间
+				laydate.render({
+					elem: '#endDate'
+					,type: 'date'
+				});
+				//获取该区域医生列表
+				$.get("/record/getDoctors",function(resData,status){
+				    if(resData.code == 0){
+				    	$.each(resData.data, function(index,value){
+				    		if(data.doctorPhone != value.loginName){
+				    			$("#doctorName").append("<option value='"+value.userName+"_"+value.loginName+"'>"+value.userName+"</option>");
+				    		}
+				    	});
+				    }else{
+				    	layer.alert(resData.msg);
+				    }
+				    form.render('select');
+				});
+				//获取医疗机构列表
+				$.get("/record/getOrgs",function(resData,status){
+				    if(resData.code == 0){
+				    	$.each(resData.data, function(index,value){
+				    		if(data.orgName != value){
+				    			$("#orgName").append("<option value='"+value+"'>"+value+"</option>");
+				    		}
+				    	});
+				    }else{
+				    	layer.alert(resData.msg);
+				    }
+				    form.render('select');
+				});
 	  	    }else if(obj.event === 'delete'){
 	  	    	$.ajax({
 					type: "POST",
@@ -234,6 +264,8 @@
 	  	  
 	  	  //record编辑
 	  	  form.on('submit(updRecordForm)', function(data){
+	  		var name = data.field.doctorName.split('_');
+	  		data.field.doctorName = name[0];
 	  		$.ajax({
 				type: "POST",
 		        dataType: "json",
@@ -273,7 +305,9 @@
 							'<div class="layui-inline">'+
 	    						'<label class="layui-form-label" style="width:100px;">医生姓名</label>'+
 	    						'<div class="layui-input-inline">'+
-	        						'<input id="doctorName" name="doctorName" lay-verify="required" class="layui-input" type="text" placeholder="医生姓名"/>'+
+	    						'<select id="doctorName" name="doctorName" lay-verify="required" lay-search lay-filter="doctorFilter">'+
+	    							'<option value="">请选择</option>'+
+	    						'</select>'+
 	    						'</div>'+
 							'</div>'+
 						'</div>'+
@@ -281,7 +315,9 @@
 							'<div class="layui-inline">'+
 	    						'<label class="layui-form-label" style="width:100px;">医疗机构</label>'+
 	    						'<div class="layui-input-inline">'+
-	        						'<input id="orgName" name="orgName" lay-verify="required" class="layui-input" type="text" placeholder="医疗机构"/>'+
+		    						'<select id="orgName" name="orgName" lay-verify="required" lay-search>'+
+		    							'<option value="">请选择</option>'+
+		    						'</select>'+
 	    						'</div>'+
 							'</div>'+
 						'</div>'+
@@ -309,7 +345,7 @@
 							'<div class="layui-inline">'+
 	    						'<label class="layui-form-label" style="width:110px;">医生手机号</label>'+
 			                    '<div class="layui-input-inline">'+
-			                        '<input id="doctorPhone" name="doctorPhone" lay-verify="phone" class="layui-input" type="text" placeholder="医生手机号"/>'+
+			                        '<input id="doctorPhone" name="doctorPhone" lay-verify="phone" class="layui-input" type="text" placeholder="医生手机号" disabled/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
@@ -342,9 +378,29 @@
 					,type: 'date'
 				});
 				
-				//获取医生信息
+				//获取该区域医生列表
+				$.get("/record/getDoctors",function(resData,status){
+				    if(resData.code == 0){
+				    	$.each(resData.data, function(index,value){
+				    		$("#doctorName").append("<option value='"+value.userName+"_"+value.loginName+"'>"+value.userName+"</option>");
+				    	});
+				    }else{
+				    	layer.alert(resData.msg);
+				    }
+				    form.render('select');
+				});
 				
-				//获取机构信息
+				//获取医疗机构列表
+				$.get("/record/getOrgs",function(resData,status){
+				    if(resData.code == 0){
+				    	$.each(resData.data, function(index,value){
+				    		$("#orgName").append("<option value='"+value+"'>"+value+"</option>");
+				    	});
+				    }else{
+				    	layer.alert(resData.msg);
+				    }
+				    form.render('select');
+				});
 				
 	  	      	break;
 	  	      case 'import':
@@ -426,6 +482,8 @@
 	  	  });
 	  	  //record增加
 	  	  form.on('submit(addRecordForm)', function(data){
+	  		 var name = data.field.doctorName.split('_');
+	  		 data.field.doctorName = name[0];
 	  		 $.ajax({
 				type: "POST",
 		        dataType: "json",
@@ -454,6 +512,11 @@
 			 	}
 		   });
 	  	  });
+	  	  
+		  form.on('select(doctorFilter)', function(data){
+			var val = data.value.split('_');
+		    $("#doctorPhone").val(val[1]);
+		  });
 	  	});
     </script>
 </body>
