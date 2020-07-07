@@ -78,16 +78,21 @@
     right: 0;
     bottom: 0;
     left: 0; */
-    width: 300px;
-    margin: 0 auto;
+    width: 350px;
+    height:400px;
+    margin: 100px auto;
+    border: 6px solid #e7f3fe;
+    border-radius:5px;
+    padding: 25px;
+    vertical-align: middle;
 }
 
 .login-main header {
-    margin-top: 150px;
+    margin-top: 50px;
     height: 35px;
     line-height: 35px;
-    font-size: 30px;
-    font-weight: 100;
+    font-size: 24px;
+    font-weight: 80;
     text-align: center;
 }
 
