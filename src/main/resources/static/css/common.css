@@ -85,6 +85,8 @@
     border-radius:5px;
     padding: 25px;
     vertical-align: middle;
+    background-color: #fff;
+    opacity:0.95;
 }
 
 .login-main header {
