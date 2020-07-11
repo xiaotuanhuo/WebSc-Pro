@@ -3,7 +3,7 @@ package sc.system.model;
 import java.util.Date;
 
 public class WebScCalendar {
-    private Integer calendarId;
+    private String calendarId;
 
     private Integer userId;
 
@@ -15,11 +15,11 @@ public class WebScCalendar {
 
     private String memo;
 
-    public Integer getCalendarId() {
+    public String getCalendarId() {
         return calendarId;
     }
 
-    public void setCalendarId(Integer calendarId) {
+    public void setCalendarId(String calendarId) {
         this.calendarId = calendarId;
     }
 

@@ -1,5 +1,6 @@
 package sc.system.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,8 +17,10 @@ import sc.common.util.PageResultBean;
 import sc.common.util.ShiroUtil;
 import sc.common.util.StringUtil;
 import sc.system.mapper.WebScCalendarMapper;
+import sc.system.model.WebScCalendar;
 import sc.system.model.WebScCalendarAid;
 import sc.system.model.WebScUser;
+import sc.system.model.vo.CalendarEventVO;
 
 @Service
 public class CalendarService {
@@ -59,6 +62,72 @@ public class CalendarService {
 		prb.setData(webScCalendarAids);
 		
 		return prb;
+	}
+	
+	public List<CalendarEventVO> getDoctorCalendarEventsService(){
+		
+		WebScUser user = ShiroUtil.getCurrentUser();
+		List<WebScCalendar> calendars = webScCalendarMapper.selectCalendarsByDoctor(user.getUserId());
+		
+		List<CalendarEventVO> calendarEventVOs = new ArrayList<CalendarEventVO>();
+		for (WebScCalendar webScCalendar : calendars) {
+			CalendarEventVO calendarEventVO = new CalendarEventVO();
+			calendarEventVO.setId(webScCalendar.getCalendarId()+"");
+			calendarEventVO.setTitle(webScCalendar.getTitle());
+			calendarEventVO.setStart(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", 
+					webScCalendar.getStartTime()));
+			calendarEventVO.setEnd(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", 
+					webScCalendar.getEndTime()));
+			
+			DayPeriodEnum dayPeriodEnum = DayPeriodEnum.getvalueOf(
+					DateUtils.getHour(webScCalendar.getStartTime())
+					+"-"+
+					DateUtils.getHour(webScCalendar.getEndTime())
+			);
+			calendarEventVO.setAllDay(
+					dayPeriodEnum.getValue().equals(DayPeriodEnum.ALLDAY.getValue()) ? true : false);
+			
+			calendarEventVOs.add(calendarEventVO);
+		}
+		
+		return calendarEventVOs;
+	}
+	
+	public String addCalendarService(CalendarEventVO calendarEventVO){
+		
+		WebScCalendar calendar = new WebScCalendar();
+		calendar.setCalendarId(calendarEventVO.getId());
+		calendar.setTitle(calendarEventVO.getTitle());
+		calendar.setStartTime(DateUtils.parseDate(calendarEventVO.getStart()));
+		calendar.setEndTime(DateUtils.parseDate(calendarEventVO.getEnd()));
+		WebScUser user = ShiroUtil.getCurrentUser();
+		calendar.setUserId(user.getUserId());
+		
+		webScCalendarMapper.insert(calendar);
+		
+		return "备休记录添加成功";
+	}
+	
+	public String updCalendarService(CalendarEventVO calendarEventVO){
+		
+		WebScCalendar calendar = new WebScCalendar();
+		calendar.setCalendarId(calendarEventVO.getId());
+		calendar.setTitle(calendarEventVO.getTitle());
+		calendar.setStartTime(DateUtils.parseDate(calendarEventVO.getStart()));
+		calendar.setEndTime(DateUtils.parseDate(calendarEventVO.getEnd()));
+		WebScUser user = ShiroUtil.getCurrentUser();
+		calendar.setUserId(user.getUserId());
+		
+		webScCalendarMapper.updateByPrimaryKey(calendar);
+		
+		return "备休记录修改成功";
+	}
+	
+	public String delCalendarService(String calendarId){
+		
+		webScCalendarMapper.deleteByPrimaryKey(calendarId);
+		
+		return "备休记录删除成功";
 	}
 
 }

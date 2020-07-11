@@ -1,5 +1,5 @@
 layui.config({
-    base: "/lib/layui/extend/",
+    base: "/lib/layui/extend/"
 }).use(["zadmin", "tabRightMenu"], function () {
     var zadmin = layui.zadmin;
     var tabRightMenu = layui.tabRightMenu;
@@ -8,7 +8,7 @@ layui.config({
     tabRightMenu.render({
         filter: "lay-tab",
         pintabIDs: ["home"],
-        width: 110,
+        width: 110
     });
 
     setTimeout(function() {
@@ -105,4 +105,18 @@ function getQueryString(name) {
     var r = window.location.search.substr(1).match(reg);
     if (r != null) return unescape(r[2]);
     return null;
+}
+
+/**
+ * 生成随机字符串，默认32位，可自定义长度
+ */
+function randomString(len){
+	len = len || 32;
+	var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; /*默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1*/
+	var maxPos = $chars.length;
+	var res = '';
+	for(i=0;i<len;i++){
+		res += $chars.charAt(Math.floor(Math.random()*maxPos))
+	}
+	return res;
 }
