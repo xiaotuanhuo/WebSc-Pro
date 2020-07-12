@@ -20,7 +20,8 @@ public interface BureauMapper {
      * @param bureauId
      * @return
      */
-	List<WebScBureau> selectAllTree(@Param("province_code") String privince, @Param("city_code") String city);
+	List<WebScBureau> selectTree(@Param("province_code") String privince, @Param("city_code") String city,
+			@Param("area_code") String area);
 	
 	int updateByPrimaryKeySelective(WebScBureau record);
 	

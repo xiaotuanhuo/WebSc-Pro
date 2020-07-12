@@ -1,5 +1,6 @@
 package sc.common.shiro.realm;
 
+import sc.common.constants.RoleEnum;
 import sc.common.shiro.ShiroActionProperties;
 import sc.common.util.ShiroUtil;
 import sc.system.model.WebScUser;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -45,22 +47,42 @@ public class LoginNameRealm extends AuthorizingRealm {
         return token instanceof UsernamePasswordToken;
     }
 
-    @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        log.info("从数据库获取权限信息");
-        WebScUser user = (WebScUser) principals.getPrimaryPrincipal();
+//    @Override
+//    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+//        log.info("从数据库获取权限信息");
+//        WebScUser user = (WebScUser) principals.getPrimaryPrincipal();
+//
+//        String loginnanme = user.getLoginName();
+//
+//        Set<String> roles = userService.selectRoleNameByLoginName(loginnanme);
+//        Set<String> perms = userService.selectPermsByLoginName(loginnanme);
+//
+//        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+//        authorizationInfo.setRoles(roles);
+//        authorizationInfo.setStringPermissions(perms);
+//        return authorizationInfo;
+//    }
 
-        String loginnanme = user.getLoginName();
-
-        Set<String> roles = userService.selectRoleNameByLoginName(loginnanme);
-        Set<String> perms = userService.selectPermsByLoginName(loginnanme);
-
-        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        authorizationInfo.setRoles(roles);
-        authorizationInfo.setStringPermissions(perms);
-        return authorizationInfo;
-    }
-
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+		log.info("从数据库获取权限信息");
+		WebScUser user = (WebScUser) principals.getPrimaryPrincipal();
+		
+		String loginnanme = user.getLoginName();
+		
+		// 由角色名称修改为角色标识
+//		Set<String> roles = userService.selectRoleNameByLoginName(loginnanme);
+		Set<String> roles = new HashSet<String>();
+		roles.add(RoleEnum.valueOf(Integer.parseInt(user.getRoleId())).getType());
+		
+		Set<String> perms = userService.selectPermsByLoginName(loginnanme);
+		
+		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+		authorizationInfo.setRoles(roles);
+		authorizationInfo.setStringPermissions(perms);
+		return authorizationInfo;
+	}
+    
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         log.info("从数据库获取认证信息");

@@ -24,6 +24,14 @@ public class WebScDept implements Serializable {
 	// 上级医疗集团id
 	private String parentId;
 	
+	private String deptAddress;
+	
+	private String deptTel;
+	
+	private String leaderName;
+	
+	private String leaderTel;
+	
 	// 排序
 	private Integer orderNum;
 	
@@ -39,8 +47,11 @@ public class WebScDept implements Serializable {
 	private List<WebScDept> children;
 	
 	private String province;
+	private String provinceName;
 	private String city;
-	private String area;
+	private String cityName;
+	
+	private String operator;
 	
 	public String getDeptId() {
 		return deptId;
@@ -64,6 +75,38 @@ public class WebScDept implements Serializable {
 	
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
+	}
+	
+	public String getDeptAddress() {
+		return deptAddress;
+	}
+	
+	public void setDeptAddress(String deptAddress) {
+		this.deptAddress = deptAddress;
+	}
+
+	public String getDeptTel() {
+		return deptTel;
+	}
+	
+	public void setDeptTel(String deptTel) {
+		this.deptTel = deptTel;
+	}
+	
+	public String getLeaderName() {
+		return leaderName;
+	}
+	
+	public void setLeaderName(String leaderName) {
+		this.leaderName = leaderName;
+	}
+	
+	public String getLeaderTel() {
+		return leaderTel;
+	}
+	
+	public void setLeaderTel(String leaderTel) {
+		this.leaderTel = leaderTel;
 	}
 	
 	public Integer getOrderNum() {
@@ -98,11 +141,19 @@ public class WebScDept implements Serializable {
 		this.children = children;
 	}
 	
+	public String getOperator() {
+		return operator;
+	}
+	
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+	
 	@Override
 	public String toString() {
 		return "Dept{" + "deptId=" + deptId + ", deptName='" + deptName + '\'' + ", parentId=" + parentId
 				+ ", orderNum=" + orderNum + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", children="
-				+ children + ", province=" + province + ", city=" + city + ", area=" + area + '}';
+				+ children + ", province=" + province + ", city=" + city + '}';
 	}
 	
 	public String getProvince() {
@@ -113,6 +164,14 @@ public class WebScDept implements Serializable {
 		this.province = province;
 	}
 	
+	public String getProvinceName() {
+		return provinceName;
+	}
+	
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+	
 	public String getCity() {
 		return city;
 	}
@@ -121,12 +180,12 @@ public class WebScDept implements Serializable {
 		this.city = city;
 	}
 	
-	public String getArea() {
-		return area;
+	public String getCityName() {
+		return cityName;
 	}
 	
-	public void setArea(String area) {
-		this.area = area;
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
 	}
 	
 }

@@ -95,8 +95,8 @@
         select menu_id,
                parent_id,
                concat(menu_name, (select if(count(*) = 0, '', concat('(', count(*), ')'))
-                                  from S_OPERATOR
-                                  where S_OPERATOR.menu_id = WSC_MENU.menu_id)) as menu_name,
+                                  from WSC_OPERATOR
+                                  where WSC_OPERATOR.menu_id = WSC_MENU.menu_id)) as menu_name,
                url,
                perms,
                order_num,

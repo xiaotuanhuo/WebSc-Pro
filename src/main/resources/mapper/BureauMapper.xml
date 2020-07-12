@@ -195,25 +195,32 @@
     <!-- // 查询当前节点及其所有子节点
 		 // 该方法查询当前节点
 		 // resultMap="TreeBaseResultMap1111"递归查询子节点 -->
-    <select id="selectAllTree" resultMap="TreeBaseResultMap">
+    <select id="selectTree" resultMap="TreeBaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from WSC_BUREAU wb
         <where>
             <choose>
-               	<when test="city_code != null and city_code != ''">
-               		AND wb.city = #{city_code} AND wb.area is null
-               	</when>
-               	<otherwise>
-               		<choose>
-               			<when test="province_code != null and province_code != ''">
-	                		AND wb.province = #{province_code} AND wb.city is null
-	                	</when>
-	                	<otherwise>
-	                		AND wb.province is null
-	                	</otherwise>
-               		</choose>
-               	</otherwise>
+            	<when test="area_code != null and area_code != ''">
+            		AND wb.area = #{area_code}
+            	</when>
+            	<otherwise>
+            		<choose>
+            			<when test="city_code != null and city_code != ''">
+		               		AND wb.city = #{city_code} AND wb.area is null
+		               	</when>
+		               	<otherwise>
+		               		<choose>
+		               			<when test="province_code != null and province_code != ''">
+			                		AND wb.province = #{province_code} AND wb.city is null
+			                	</when>
+			                	<otherwise>
+			                		AND wb.province is null
+			                	</otherwise>
+		               		</choose>
+		               	</otherwise>
+            		</choose>
+            	</otherwise>
             </choose>
         </where>
         order by bureau_id

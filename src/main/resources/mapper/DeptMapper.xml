@@ -6,15 +6,34 @@
         <id column="dept_id" jdbcType="VARCHAR" property="deptId"/>
         <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
         <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="dept_address" jdbcType="VARCHAR" property="deptAddress"/>
+        <result column="dept_tel" jdbcType="VARCHAR" property="deptTel"/>
+        <result column="leader_name" jdbcType="VARCHAR" property="leaderName"/>
+        <result column="leader_tel" jdbcType="VARCHAR" property="leaderTel"/>
         <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
-        <result column="area" jdbcType="VARCHAR" property="area"/>
     </resultMap>
 
     <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScDept">
+        <id column="dept_id" jdbcType="VARCHAR" property="deptId"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="dept_address" jdbcType="VARCHAR" property="deptAddress"/>
+        <result column="dept_tel" jdbcType="VARCHAR" property="deptTel"/>
+        <result column="leader_name" jdbcType="VARCHAR" property="leaderName"/>
+        <result column="leader_tel" jdbcType="VARCHAR" property="leaderTel"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <collection property="children" ofType="sc.system.model.WebScDept" select="selectSubTree" column="{parent_id = dept_id}"/>
+    </resultMap>
+    
+    <resultMap id="UnleafTreeBaseResultMap" type="sc.system.model.WebScDept">
         <id column="dept_id" jdbcType="VARCHAR" property="deptId"/>
         <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
         <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
@@ -23,20 +42,22 @@
         <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
-        <result column="area" jdbcType="VARCHAR" property="area"/>
-        <collection property="children" ofType="sc.system.model.WebScDept" select="selectSubTree" column="{parent_id = dept_id}"/>
+        <collection property="children" ofType="sc.system.model.WebScDept" select="selectUnleafSubTree" column="{parent_id = dept_id}"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         dept_id,
 		dept_name,
 		parent_id,
+		dept_address,
+		dept_tel,
+		leader_name,
+		leader_tel,
 		order_num,
 		create_time,
 		modify_time,
 		province,
-		city,
-		area
+		city
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -44,6 +65,30 @@
         <include refid="Base_Column_List"/>
         from WSC_DEPT
         where dept_id = #{deptId,jdbcType=VARCHAR}
+    </select>
+    
+    <!-- 根据父节点及区划查询是否已存在医疗集团 -->
+    <select id="selectByParentIdAndDistrict" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_DEPT
+        <where>
+        	<choose>
+        		<when test='parent_id == "0"'>
+        			AND parent_id = '0'
+        		</when>
+        		<otherwise>
+        			<choose>
+        				<when test="city_code != null and city_code != ''">
+        					AND parent_id = #{parent_id} AND province = #{province_code} and city = #{city_code}
+        				</when>
+        				<otherwise>
+        					AND parent_id = #{parent_id} AND province = #{province_code} and city is null
+        				</otherwise>
+        			</choose>
+        		</otherwise>
+        	</choose>
+        </where>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
@@ -53,9 +98,20 @@
 
     <insert id="insert" parameterType="sc.system.model.WebScDept"
             useGeneratedKeys="true">
-        insert into WSC_DEPT (dept_id, dept_name, parent_id, order_num, create_time, modify_time)
-        values (#{deptId,jdbcType=VARCHAR}, #{deptName,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, #{orderNum,jdbcType=INTEGER},
-        		#{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP})
+	insert into WSC_DEPT (dept_id, dept_name, parent_id, dept_address,
+	dept_tel, leader_name, leader_tel, province, city, order_num,
+	create_time, modify_time)
+	values (#{deptId,jdbcType=VARCHAR},
+	#{deptName,jdbcType=VARCHAR},
+	#{parentId,jdbcType=INTEGER},
+	#{deptAddress,jdbcType=VARCHAR},
+	#{deptTel,jdbcType=VARCHAR},
+	#{leaderName,jdbcType=VARCHAR},
+	#{leaderTel,jdbcType=VARCHAR},
+	#{province,jdbcType=INTEGER}, #{city,jdbcType=INTEGER},
+	#{orderNum,jdbcType=INTEGER},
+	#{createTime,jdbcType=TIMESTAMP},
+	#{modifyTime,jdbcType=TIMESTAMP})
     </insert>
 
     <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScDept">
@@ -71,7 +127,7 @@
         <include refid="Base_Column_List"/>
         from WSC_DEPT
         where parent_id = #{parentId}
-        order by order_num
+        order by dept_id
     </select>
 
     <select id="selectChildrenIDByPrimaryKey" resultType="java.lang.String">
@@ -107,7 +163,7 @@
         from WSC_DEPT wd
         <where>
             <choose>
-                <when test="dept_id!=null">
+                <when test="dept_id != null and dept_id != ''">
                     and wd.dept_id = #{dept_id}
                 </when>
                 <otherwise>
@@ -126,8 +182,49 @@
         from WSC_DEPT wd
         <where>
             <choose>
-                <when test="parent_id!=null">
+                <when test="parent_id != null and parent_id != ''">
                     and wd.parent_id = #{parent_id}
+                </when>
+                <otherwise>
+                    and wd.parent_id = '0'
+                </otherwise>
+            </choose>
+        </where>
+        order by dept_id
+    </select>
+    
+    <!-- // 查询当前非叶子节点及其所有非叶子子节点
+    	 // 非叶子节点：city == null
+		 // 该方法查询当前节点
+		 // resultMap="UnleafTreeBaseResultMap"递归查询子节点 -->
+	<select id="selectUnleafTree" resultMap="UnleafTreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_DEPT wd
+        <where>
+            <choose>
+                <when test="dept_id != null and dept_id != ''">
+                    and wd.dept_id = #{dept_id} and wd.city is null
+                </when>
+                <otherwise>
+                    and wd.parent_id = '0'
+                </otherwise>
+            </choose>
+        </where>
+        order by dept_id
+    </select>
+    
+    <!-- // 查询当前节点所有非叶子子节点
+    	 // 非叶子节点：city == null
+		 // resultMap="UnleafTreeBaseResultMap"递归查询子节点 -->
+    <select id="selectUnleafSubTree" resultMap="UnleafTreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_DEPT wd
+        <where>
+            <choose>
+                <when test="parent_id != null and parent_id != ''">
+                    and wd.parent_id = #{parent_id} and wd.city is null
                 </when>
                 <otherwise>
                     and wd.parent_id = '0'

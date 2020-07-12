@@ -112,6 +112,14 @@ public class WebExceptionHandler {
         }
         return generateErrorInfo(ResultBean.FAIL, "用户名已存在");
     }
+    
+    @ExceptionHandler
+    public String lockedAccount(DuplicateDistrictException e) {
+        if (log.isDebugEnabled()) {
+            log.debug("当前行政区划下已存在机构");
+        }
+        return generateErrorInfo(ResultBean.FAIL, "当前行政区划下已存在机构");
+    }
 
     @ExceptionHandler
     public String missingRequestParameter(MissingServletRequestParameterException e) {

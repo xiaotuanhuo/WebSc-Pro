@@ -31,7 +31,28 @@ public class OrganizationService {
 	private District district;
 	
 	public List<WebScOrganization> getList(WebScOrganization wso) {
-		List<WebScOrganization> wsoList = organizationMapper.getList(wso);
+		Subject subject = SecurityUtils.getSubject();
+		WebScUser user = (WebScUser) subject.getPrincipal();
+		List<WebScOrganization> wsoList = new ArrayList<>();
+		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
+			case XTGLY:
+			case CJGLY:
+			case QYGLY:
+				wsoList = organizationMapper.selectListByAuthData(null, false, user.getProvince(), user.getCity(), user.getArea(), wso);
+				break;
+			case WJJGLY:
+				wsoList = organizationMapper.selectListByAuthData(null, true, user.getProvince(), user.getCity(), user.getArea(), wso);
+				break;
+			case YLJGGLY:
+				// 查询当前用户的医疗机构根节点
+				WebScOrganization userOrganization = organizationMapper.selectByPrimaryKey(user.getRoleTypeId());
+				String rootId = userOrganization.getRootId();
+				wsoList = organizationMapper.selectListByAuthData(rootId, false, user.getProvince(), user.getCity(), user.getArea(), wso);
+				break;
+			default:
+				break;
+		}
+		
 		if (wsoList.size() != 0) {
 			for (WebScOrganization webScOrganization : wsoList) {
 				webScOrganization.setProvinceName(district.getDistrictMap().get(webScOrganization.getProvince()).getName());
@@ -51,17 +72,44 @@ public class OrganizationService {
 		Subject subject = SecurityUtils.getSubject();
 		WebScUser user = (WebScUser) subject.getPrincipal();
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
+			case XTGLY:
 			case CJGLY:
 			case QYGLY:
-				organizations = organizationMapper.selectAllTree(null, user.getProvince(), user.getCity());
+				organizations = organizationMapper.selectAllTree(null, user.getProvince(), user.getCity(), user.getArea());
+				break;
+			case WJJGLY:
+				organizations = organizationMapper.selectAllTree(null, user.getProvince(), user.getCity(), user.getArea());
+				organizations = getTreeOfCredentials(organizations);
 				break;
 			case YLJGGLY:
-				organizations = organizationMapper.selectAllTree(user.getRoleTypeId(), user.getProvince(), user.getCity());
+				organizations = organizationMapper.selectAllTree(user.getRoleTypeId(), user.getProvince(), user.getCity(), user.getArea());
 				break;
 			default:
 				break;
 		}
 		return organizations;
+	}
+	
+	/**
+	 * 删除没有麻醉资质的医疗机构
+	 * @param orgs
+	 * @return
+	 */
+	private static List<WebScOrganization> getTreeOfCredentials(List<WebScOrganization> orgs) {
+		for (int i = 0; i < orgs.size(); i++) {
+			if (orgs.get(i).getChildren().size() > 0) {
+				// 递归调用
+				getTreeOfCredentials(orgs.get(i).getChildren());
+			}
+			// 无麻醉资质的叶子节点移除
+			// 当前节点的子节点全部移除时，移除该节点
+			if ((orgs.get(i).getLeaf() == 1 && orgs.get(i).getCredentials().equals("0"))
+					|| (orgs.get(i).getLeaf() == 0 && orgs.get(i).getChildren().size() == 0)) {
+				orgs.remove(i);
+				i--;	// 节点移除后
+			}
+		}
+		return orgs;
 	}
 	
 	public int insert(WebScOrganization wso) {
@@ -95,20 +143,23 @@ public class OrganizationService {
 		if (districtWso == null) {
 			provinceWso.setOrgId(wso.getRootId() + province);
 			provinceWso.setOrgPid(parentId);
-			provinceWso.setOrgName(district.getDistrictMap().get(province).getName() + "_" + wso.getOrgName());
+			provinceWso.setRootId(wso.getRootId());
+			provinceWso.setOrgName(district.getDistrictMap().get(province).getName() + "_" + wso.getRootName());
 			provinceWso.setProvince(province);
 			provinceWso.setLeaf(0);
 			
 			cityWso.setOrgId(wso.getRootId() + city);
 			cityWso.setOrgPid(provinceWso.getOrgId());
-			cityWso.setOrgName(district.getDistrictMap().get(city).getName() + "_" + wso.getOrgName());
+			cityWso.setRootId(wso.getRootId());
+			cityWso.setOrgName(district.getDistrictMap().get(city).getName() + "_" + wso.getRootName());
 			cityWso.setProvince(province);
 			cityWso.setCity(city);
 			cityWso.setLeaf(0);
 			
 			areaWso.setOrgId(wso.getRootId() + area);
 			areaWso.setOrgPid(cityWso.getOrgId());
-			areaWso.setOrgName(district.getDistrictMap().get(area).getName() + "_" + wso.getOrgName());
+			areaWso.setRootId(wso.getRootId());
+			areaWso.setOrgName(district.getDistrictMap().get(area).getName() + "_" + wso.getRootName());
 			areaWso.setProvince(province);
 			areaWso.setCity(city);
 			areaWso.setArea(area);
@@ -123,6 +174,10 @@ public class OrganizationService {
 			leafWso.setArea(area);
 			leafWso.setLeaf(1);
 			leafWso.setCredentials(wso.getCredentials());
+			leafWso.setOrgAddress(wso.getOrgAddress());
+			leafWso.setOrgTel(wso.getOrgTel());
+			leafWso.setLeaderName(wso.getLeaderName());
+			leafWso.setLeaderTel(wso.getLeaderTel());
 			
 			organizationMapper.insert(provinceWso);
 			organizationMapper.insert(cityWso);
@@ -136,14 +191,16 @@ public class OrganizationService {
 			if (districtWso == null) {
 				cityWso.setOrgId(wso.getRootId() + city);
 				cityWso.setOrgPid(parentId);
-				cityWso.setOrgName(district.getDistrictMap().get(city).getName() + "_" + wso.getOrgName());
+				cityWso.setRootId(wso.getRootId());
+				cityWso.setOrgName(district.getDistrictMap().get(city).getName() + "_" + wso.getRootName());
 				cityWso.setProvince(province);
 				cityWso.setCity(city);
 				cityWso.setLeaf(0);
 				
 				areaWso.setOrgId(wso.getRootId() + area);
 				areaWso.setOrgPid(cityWso.getOrgId());
-				areaWso.setOrgName(district.getDistrictMap().get(area).getName() + "_" + wso.getOrgName());
+				areaWso.setRootId(wso.getRootId());
+				areaWso.setOrgName(district.getDistrictMap().get(area).getName() + "_" + wso.getRootName());
 				areaWso.setProvince(province);
 				areaWso.setCity(city);
 				areaWso.setArea(area);
@@ -158,6 +215,10 @@ public class OrganizationService {
 				leafWso.setArea(area);
 				leafWso.setLeaf(1);
 				leafWso.setCredentials(wso.getCredentials());
+				leafWso.setOrgAddress(wso.getOrgAddress());
+				leafWso.setOrgTel(wso.getOrgTel());
+				leafWso.setLeaderName(wso.getLeaderName());
+				leafWso.setLeaderTel(wso.getLeaderTel());
 				
 				organizationMapper.insert(cityWso);
 				organizationMapper.insert(areaWso);
@@ -170,7 +231,8 @@ public class OrganizationService {
 				if (districtWso == null) {
 					areaWso.setOrgId(wso.getRootId() + area);
 					areaWso.setOrgPid(parentId);
-					areaWso.setOrgName(district.getDistrictMap().get(area).getName() + "_" + wso.getOrgName());
+					areaWso.setRootId(wso.getRootId());
+					areaWso.setOrgName(district.getDistrictMap().get(area).getName() + "_" + wso.getRootName());
 					areaWso.setProvince(province);
 					areaWso.setCity(city);
 					areaWso.setArea(area);
@@ -185,6 +247,10 @@ public class OrganizationService {
 					leafWso.setArea(area);
 					leafWso.setLeaf(1);
 					leafWso.setCredentials(wso.getCredentials());
+					leafWso.setOrgAddress(wso.getOrgAddress());
+					leafWso.setOrgTel(wso.getOrgTel());
+					leafWso.setLeaderName(wso.getLeaderName());
+					leafWso.setLeaderTel(wso.getLeaderTel());
 					
 					organizationMapper.insert(areaWso);
 					organizationMapper.insert(leafWso);
@@ -198,6 +264,10 @@ public class OrganizationService {
 					leafWso.setArea(area);
 					leafWso.setLeaf(1);
 					leafWso.setCredentials(wso.getCredentials());
+					leafWso.setOrgAddress(wso.getOrgAddress());
+					leafWso.setOrgTel(wso.getOrgTel());
+					leafWso.setLeaderName(wso.getLeaderName());
+					leafWso.setLeaderTel(wso.getLeaderTel());
 					
 					organizationMapper.insert(leafWso);
 				}

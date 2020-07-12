@@ -22,40 +22,21 @@
 	<div class="z-body animated fadeIn">
 		<form class="layui-form zadmin-search-area input">
 			<div class="layui-form-item">
-				<div class="layui-row">
-					<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
-						<label for="userName" class="layui-form-label">姓名</label>
-						<div class="layui-input-inline">
-							<input type="text" name="userName" autocomplete="off"
-								id="userName" class="layui-input">
-						</div>
+				<div class="layui-inline">
+					<label for="userName" class="layui-form-label">姓名</label>
+					<div class="layui-input-inline">
+						<input type="text" name="userName" autocomplete="off"
+							id="userName" class="layui-input">
 					</div>
-					<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
-						<label for=phone class="layui-form-label">手机</label>
-						<div class="layui-input-inline">
-							<input type="text" name="phone" autocomplete="off" id="phone"
-								class="layui-input">
-						</div>
+					<label for=phone class="layui-form-label">手机</label>
+					<div class="layui-input-inline">
+						<input type="text" name="phone" autocomplete="off" id="phone"
+							class="layui-input">
 					</div>
-				</div>
-				<div class="layui-row">
-					<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
-						<label for="status" class="layui-form-label">状态</label>
-						<div class="layui-input-inline">
-							<select name="status" id="status">
-								<option value="">请选择</option>
-								<option value="1">正常</option>
-								<option value="0">锁定</option>
-							</select>
-						</div>
-					</div>
-					<div class="layui-col-xs12 layui-col-sm6 layui-col-md4"
-						align="right" style="padding-right: 10px">
-						<button lay-submit="" lay-filter="search"
-							class="layui-btn layui-btn-sm layui-btn-primary table-action">
-							<i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i>
-						</button>
-					</div>
+					<button lay-submit="" lay-filter="search"
+						class="layui-btn layui-btn-sm layui-btn-primary table-action">
+						<i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i>
+					</button>
 				</div>
 			</div>
 		</form>
@@ -127,7 +108,7 @@
 				smartReloadModel: true,
 				cols: [
 					[
-                        {type: 'numbers', title: '序号', align: 'center', width:'5%'},
+						{type: 'numbers', title: '序号', align: 'center', width:'5%'},
 						{field: 'userId', title: 'ID', align: 'center',sort: true, hide: true},
 						{field: 'userName', title: '姓名', align: 'center',sort: true},
 						{field: 'sex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true},
@@ -176,7 +157,7 @@
 				layer.open({
 					content: "/user",
 					title: "新增用户",
-					area: ['100%', '100%'],
+					area: ['70%', '80%'],
 					type: 2,
 					maxmin: true,
 					shadeClose: true,

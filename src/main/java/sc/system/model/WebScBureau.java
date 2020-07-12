@@ -13,16 +13,22 @@ public class WebScBureau {
 	@JsonProperty("name")
 	private String bureauName;
 	
+	@JsonProperty("parentId")
 	private String bureauPid;
+	
 	private String bureauAddress;
 	private String bureauTel;
 	private String leaderName;
 	private String leaderTel;
 	private String province;
+	private String provinceName;
 	private String city;
+	private String cityName;
 	private String area;
+	private String areaName;
 	private Date createDate;
 	private String status;
+	private String operator;
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private List<WebScBureau> children;
@@ -91,6 +97,14 @@ public class WebScBureau {
 		this.province = province == null ? null : province.trim();
 	}
 	
+	public String getProvinceName() {
+		return provinceName;
+	}
+	
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+	
 	public String getCity() {
 		return city;
 	}
@@ -99,12 +113,28 @@ public class WebScBureau {
 		this.city = city == null ? null : city.trim();
 	}
 	
+	public String getCityName() {
+		return cityName;
+	}
+	
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+	
 	public String getArea() {
 		return area;
 	}
 	
 	public void setArea(String area) {
 		this.area = area == null ? null : area.trim();
+	}
+	
+	public String getAreaName() {
+		return areaName;
+	}
+	
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
 	}
 	
 	public Date getCreateDate() {
@@ -129,6 +159,14 @@ public class WebScBureau {
 	
 	public void setChildren(List<WebScBureau> children) {
 		this.children = children;
+	}
+	
+	public String getOperator() {
+		return operator;
+	}
+	
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 	
 }

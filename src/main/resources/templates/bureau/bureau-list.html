@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>部门管理</title>
+    <title>卫监局管理</title>
     <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}"/>
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/animate.min.css}">
@@ -41,27 +41,27 @@
 				<div class="layui-row layui-col-space15">
 					<div class="layui-col-md3">
 						<div class="layui-card">
-							<div class="layui-card-header">医疗集团结构</div>
+							<div class="layui-card-header">行政区划</div>
 							<div class="layui-card-body" id="toolbarDiv">
-								<ul id="deptTree" class="dtree" data-id="0"></ul>
+								<ul id="bureauTree" class="bureau" data-id="0"></ul>
 							</div>
 						</div>
 					</div>
 					<div class="layui-col-md9">
 						<div class="layui-card">
-							<div class="layui-card-header" id="card-header">医疗集团列表</div>
+							<div class="layui-card-header" id="card-header">卫监局列表</div>
 							<div class="layui-card-body">
 								<div class="animated fadeIn">
-									<label for="deptName" class="layui-form-label">名称</label>
+									<label for="bureauName" class="layui-form-label">名称</label>
 									<div class="layui-inline">
-										<input type="text" id="deptName" name="deptName" autocomplete="off"
+										<input type="text" id="bureauName" name="bureauName" autocomplete="off"
 											class="layui-input">
 									</div>
 									<button id="search"
 										class="layui-btn layui-btn-sm layui-btn-primary table-action">
 										<i class="zadmin-icon zadmin-icon-search"></i>
 									</button>
-									<table class="layui-hide" id="deptTable" lay-filter="test"></table>
+									<table class="layui-hide" id="bureauTable" lay-filter="test"></table>
 								</div>
 							</div>
 						</div>
@@ -71,7 +71,7 @@
 		</div>
 	</div>
 	<script type="text/html" id="toolbar">
-		<shiro:hasPermission name="dept:add">
+		<shiro:hasPermission name="bureau:add">
 			<button type="button" id="addDept" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">
 				<i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area"></i>
                 新增
@@ -116,17 +116,16 @@
 		var userCity = $('#userCity').text() == 'null' ? null : $('#userCity').text();
 		var userArea = $('#userArea').text() == 'null' ? null : $('#userArea').text();
 		var roleTypeId = $('#roleTypeId').text() == 'null' ? null : $('#roleTypeId').text();
-		var treeId = 'deptTree';
-		var tableId = 'deptTable';
+		var treeId = 'bureauTree';
+		var tableId = 'bureauTable';
 		var parentDeptId = 0;
-		var sortNo = 0;
 		
 		// 获取有没有删除, 更新, 和新增的权限.
 		var hasDeptDelete = false;
 		var hasDeptUpdate = false;
 		var hasDeptAdd = false;
 		
-		$.get('/security/hasPermission/dept:update', function (data) {
+		/* $.get('/security/hasPermission/dept:update', function (data) {
 			hasDeptUpdate = data.data;
 		});
 		$.get('/security/hasPermission/dept:delete', function (data) {
@@ -134,7 +133,7 @@
 		});
 		$.get('/security/hasPermission/dept:add', function (data) {
 			hasDeptAdd = data.data;
-		});
+		}); */
 		
 		layui.config({
 			base: '/lib/layui/extend/'
@@ -152,7 +151,7 @@
 			
 			var DTree = dtree.render({
 				elem: "#" + treeId,
-				url: '/dept/tree',
+				url: '/bureau/tree',
 				dataStyle: "layuiStyle",
 				initLevel: 2,   // 初始打开节点级别
 				method: "GET",
@@ -166,9 +165,9 @@
 			});
 			
 			var treeTable = tableTree.render({
-				elem: '#deptTable',
+				elem: '#' + tableId,
 				id:'tableTree',
-				url: '/dept/tree',
+				url: '/bureau/tree',
 				height: 'full-150',
 				toolbar: '#toolbar', 	//开启头部工具栏，并为其绑定左侧模板
 				treeConfig:{ //表格树所需配置
@@ -182,9 +181,10 @@
 					[
 						{field:'id', hide:true},
 						{field:'parentId', hide:true},
-					    {field:'name', title: '名称', width:'40%'},
-						{field:'provinceName', title:'省', width:'20%'},
-						{field:'cityName', title:'市', width:'20%'},
+					    {field:'name', title: '名称', width:'35%'},
+						{field:'provinceName', title:'省', width:'15%'},
+						{field:'cityName', title:'市', width:'15%'},
+						{field:'areaName', title:'区/县', width:'15%'},
 						{field:'operator', title:'操作', align:'center', width:'20%'}
 					]
 				],
@@ -194,11 +194,11 @@
 				}
 			});
 			
-			dtree.on("node('deptTree')", function (obj) {
-				table.reload('dept-table', {
+			dtree.on("node('bureauTree')", function (obj) {
+				table.reload('bureau-table', {
 					where: {
 						parentId: obj.param.nodeId
-					}
+				}
 				});
 				parentDeptId = obj.param.nodeId;
 				$("#card-header").html("[" + obj.param.context + "]的子部门");
@@ -217,11 +217,11 @@
 			table.on('tool()', function (obj) {
 				var data = obj.data;
 				var event = obj.event;
-				var deptId = '';
+				var bureauId = '';
 				if (event.indexOf('detail') == 0) {
-					deptId = event.substr(6);
+					bureauId = event.substr(6);
 					layer.open({
-						content: "/dept/detail/" + deptId,
+						content: "/bureau/detail/" + bureauId,
 						title: "详细信息",
 						area: ['70%', '80%'],
 						type: 2,
@@ -229,9 +229,9 @@
 						shadeClose: true
 					});
 				} else if (event.indexOf('edit') == 0) {
-					deptId = event.substr(4);
+					bureauId = event.substr(4);
 				} else if (event.indexOf('del') == 0) {
-					deptId = event.substr(3);
+					bureauId = event.substr(3);
 				}
 			});
 			
@@ -245,7 +245,7 @@
 			
             function add() {
                 layer.open({
-                    content: "/dept?parentId=" + parentDeptId,
+                    content: "/bureau?parentId=" + parentDeptId,
                     title: "添加子节点",
                     area: ['70%', '80%'],
                     type: 2,
@@ -256,20 +256,11 @@
                     }
                 });
             };
-
-            function swapSort(currentId, swapId) {
-                $.post('/dept/swap', {currentId: currentId, swapId: swapId}, function (data) {
-                    layer.msg("交换成功");
-                    handlerResult(data, function () {
-                        refresh();
-                    });
-                });
-            };
-
+            
             function del(id) {
                 layer.confirm("你确定删除数据吗？如果存在下级节点则一并删除！", {icon: 3, title: '提示'},
                     function (index) {
-                        $.post('/dept/' + id, {_method: "DELETE"}, function (data) {
+                        $.post('/bureau/' + id, {_method: "DELETE"}, function (data) {
                             layer.close(index);
                             handlerResult(data, function () {
                                 refresh();
@@ -288,7 +279,7 @@
             
             function edit(id) {
                 layer.open({
-                    content: '/dept/' + id,
+                    content: '/bureau/' + id,
                     title: "编辑",
                     area: ['40%', '85%'],
                     type: 2,

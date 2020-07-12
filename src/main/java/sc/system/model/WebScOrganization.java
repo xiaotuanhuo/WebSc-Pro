@@ -21,6 +21,7 @@ public class WebScOrganization {
 	private String orgPid;
 	
 	private String rootId;
+	private String rootName;
 	private String credentials;
 	private int leaf;
 	
@@ -67,6 +68,14 @@ public class WebScOrganization {
 	
 	public void setRootId(String rootId) {
 		this.rootId = rootId;
+	}
+	
+	public String getRootName() {
+		return rootName;
+	}
+	
+	public void setRootName(String rootName) {
+		this.rootName = rootName;
 	}
 	
 	public String getCredentials() {
