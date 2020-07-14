@@ -17,11 +17,11 @@
 
 <body>
 	<div class="z-body animated fadeIn">
-		<span id="userProvince" style="display: none;"><shiro:principal property="province"/></span>
-		<span id="userCity" style="display: none;"><shiro:principal property="city"/></span>
-		<span id="userArea" style="display: none;"><shiro:principal property="area"/></span>
-		<span id="roleId" style="display: none;"><shiro:principal property="roleId"/></span>
-		<span id="roleTypeId" style="display: none;"><shiro:principal property="roleTypeId"/></span>
+		<span id="currentUserProvince" style="display: none;"><shiro:principal property="province"/></span>
+		<span id="currentUserCity" style="display: none;"><shiro:principal property="city"/></span>
+		<span id="currentUserArea" style="display: none;"><shiro:principal property="area"/></span>
+		<span id="currentRoleId" style="display: none;"><shiro:principal property="roleId"/></span>
+		<span id="currentRoleTypeId" style="display: none;"><shiro:principal property="roleTypeId"/></span>
 		<form action="" method="post" class="layui-form layui-form-pane">
 			<div class="layui-form-item">
 				<label for="loginName" class="layui-form-label">登陆名</label>
@@ -46,7 +46,7 @@
 				<label for="userName" class="layui-form-label">姓名</label>
 				<div class="layui-input-block">
 					<input type="text" id="userName" name="userName"
-						th:value="${user?.username}" lay-verify="required"
+						th:value="${user?.userName}" lay-verify="required"
 						lay-vertype="tips" autocomplete="off" class="layui-input">
 				</div>
 			</div>
@@ -58,7 +58,7 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label for="userName" class="layui-form-label">年龄</label>
+				<label for="age" class="layui-form-label">年龄</label>
 				<div class="layui-input-block">
 					<input type="text" id="age" name="age" th:value="${user?.age}"
 						lay-verify="required" lay-vertype="tips" autocomplete="off"
@@ -109,7 +109,10 @@
 			<div class="layui-form-item">
 				<div class="layui-input-block"
 					style="margin-left: 0; text-align: center;">
-					<input type="hidden" id="orgId" name="orgId" th:value="${user?.roleTypeId}">
+					<input type="hidden" id="roleId" name="roleId" th:value="${user?.roleId}">
+					<input type="hidden" id="roleTypeId" name="roleTypeId" th:value="${user?.roleTypeId}">
+					<input type="hidden" id="patients" name="patients" th:value="${user?.patientType}">
+					<input type="hidden" id="operations" name="operations" th:value="${user?.operationType}">
 					<input type="hidden" id="province" name="province" th:value="${user?.province}">
 					<input type="hidden" id="city" name="city" th:value="${user?.city}">
 					<input type="hidden" id="area" name="area" th:value="${user?.area}">
@@ -128,6 +131,16 @@
     <script>
     	// 是否是第一次渲染，是：渲染；否：数据重载
     	var firstRender = true;
+		var isEdit = $('#loginName').val() == '' ? false : true;	// 用于判断当前是新增还是编辑
+		var patientArray;
+		var operationArray;
+		if (isEdit) {
+			console.log(11);
+			var patients = $('#patients').val();
+			var operations = $('#operations').val();
+			patientArray = patients.split(',');
+			operationArray = operations.split(',');
+		}
 		layui.config({
 			base: '/lib/layui/extend/'
 		}).extend({
@@ -163,6 +176,7 @@
 					name: 'roleName',
 					value: 'roleId'
 				},
+				initValue: isEdit ? [$('#roleId').val()] : null,
 				on: function(data) {
 					//arr:  当前已选中的数据
 					var arr = data.arr;
@@ -180,7 +194,7 @@
 						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && (arr[0].roleId == 4)) {
 						// 选择区域管理员角色时加载当前区划下属医疗集团组织
-						loadTree('/dept/subTree/' + $('#roleTypeId').text());
+						loadTree('/dept/subTree/' + $('#currentRoleTypeId').text());
 						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 5) {
 						// 选择医生角色时加载当前用户所属组织及其下属组织
@@ -241,7 +255,10 @@
 							treeId: 'id',
 							title: 'name',
 							parentId: 'parentId'
-		                }
+		                },
+						done: function() {
+							dtree.selectVal("orgTree", isEdit ? $('#roleTypeId').val() : null);
+						}
 					});
 					firstRender = false;
 					$('#organziation').show();
@@ -269,6 +286,7 @@
 			// 病人类型
 			var patientKit = xmSelect.render({
 				el: '#patientType',
+				initValue: isEdit ? patientArray : null,
 				data: [
 					{name: '儿童', value: 1},
 					{name: '青年', value: 2},
@@ -279,6 +297,7 @@
 			// 手术类型
 			var operationKit = xmSelect.render({
 				el: '#operationType',
+				initValue: isEdit ? operationArray : null,
 				prop: {
 					name: 'operationtypeName',
 					value: 'operationtypeId'

@@ -10,7 +10,6 @@ layui.define(['form'],function(exports) {
 		var citys;
 		layui.jquery.get("/lib/layui/json/address.json", function (data) {
 			var index = 0;
-			console.log(112);
 			if (provinceCode != null) {
 				for (var i = 0; i < data.length; i++) {
 					if (data[i].code == provinceCode) {

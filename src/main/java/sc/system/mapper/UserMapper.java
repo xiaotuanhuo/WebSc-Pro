@@ -1,6 +1,8 @@
 package sc.system.mapper;
 
 import sc.system.model.WebScUser;
+import sc.system.model.vo.UserVO;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -53,6 +55,13 @@ public interface UserMapper {
     List<WebScUser> selectAllWithGroup(WebScUser userQuery);
 
     /**
+     * 根据用户角色区划查询列表
+     * @param user
+     * @return
+     */
+    List<WebScUser> selectWithRoleAndDist(@Param("user") UserVO user);
+    
+    /**
      * 更改用户的状态为某项值
      */
     int updateStatusByPrimaryKey(@Param("id") Integer id, @Param("status") int status);
@@ -95,7 +104,7 @@ public interface UserMapper {
      */
     Set<String> selectOperatorPermsByLoginName(@Param("loginname") String loginname);
 
-    int updatePasswordByUserId(@Param("userid") Integer userid, @Param("password") String password, @Param("salt") String salt);
+    int updatePasswordByUserId(@Param("userId") Integer userId, @Param("password") String password, @Param("salt") String salt);
 
     int activeUserByUserId(Integer userid);
 

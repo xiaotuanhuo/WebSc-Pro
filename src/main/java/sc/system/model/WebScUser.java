@@ -36,6 +36,8 @@ public class WebScUser implements Serializable {
 	
 	private String roleId;
 	
+	private String roleName;
+	
 	private String roleTypeId;
 	
 	private String roleTypeName;
@@ -178,6 +180,14 @@ public class WebScUser implements Serializable {
 
 	public String getRoleId() {
 		return roleId;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
 	}
 
 	public void setRoleId(String roleId) {

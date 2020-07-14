@@ -292,8 +292,8 @@
 
     <update id="updatePasswordByUserId">
         update WSC_USER
-        set login_pwd = #{loginPwd},
-            salt     = #{salt}
+        set login_pwd = #{password},
+            salt = #{salt}
         where user_id = #{userId}
     </update>
 
@@ -323,10 +323,144 @@
             <if test="phone != null and phone != ''">
                 AND u.phone like CONCAT(#{phone}, '%')
             </if>
-            <if test="status != null and status != ''">
-                AND u.status = #{status}
-            </if>
         </where>
+    </select>
+    
+    <!-- 根据当前用户角色及所属区划查询用户列表 -->
+    <select id="selectWithRoleAndDist" resultMap="BaseResultMap">
+    	select da.user_id,
+    			da.user_id,
+				da.user_name,
+				da.login_name,
+				da.sex,
+				da.age,
+				da.phone,
+				da.email,
+				da.status,
+               	da.role_name
+    	from 
+	    	(select u.user_id,
+					u.user_name,
+					u.login_name,
+					u.sex,
+					u.age,
+					u.phone,
+					u.email,
+					u.status,
+	               	r.role_name
+	        from WSC_USER u
+	    	left join WSC_ROLE r on u.role_id = r.role_id
+	    	<where>
+	    		<choose>
+	    			<!-- 系统管理员 查看所有 -->
+	    			<when test="user.role != null and user.role == 'xtgly'">
+	    				AND 1 = 1
+	    			</when>
+	    			<otherwise>
+	    				<choose>
+	    					<!-- 超级管理员查看 除系统管理员及其他超级管理员之外的用户 -->
+	    					<when test="user.role != null and user.role == 'cjgly'">
+	    						AND u.user_id = #{user.userId}
+	    						OR (u.role_id not in (#{user.adminRoleId,jdbcType=VARCHAR}, #{user.superRoleId,jdbcType=VARCHAR}))
+	    					</when>
+	    					<otherwise>
+	    						<choose>
+	    							<!-- 区域管理员 查询自己 同级区划及其下属的卫监局管理员 医疗机构管理员 区域订单录入员 医疗机构订单录入员 下级区划的区域管理员 -->
+	    							<!-- 区域管理员的行政区划必有省级，最多到市级 -->
+	    							<when test="user.role != null and user.role == 'qygly'">
+	    								AND u.user_id = #{user.userId}
+	    								<choose>
+	    									<when test="user.city != null and user.city != ''">
+	    										OR (u.role_id != #{user.deptRoleId} AND u.city = #{user.city})
+	    									</when>
+	    									<otherwise>
+	    										OR (u.role_id != #{user.deptRoleId} AND u.province = #{user.province})
+	    										OR u.role_id = #{user.deptRoleId} AND u.city = #{user.city}
+	    									</otherwise>
+	    								</choose>
+	    							</when>
+	    							<otherwise>
+	    								<choose>
+	    									<!-- 医疗机构管理员 查询自己 同级及其下属医疗机构订单录入员 下级医疗机构管理员-->
+	    									<when test="user.role != null and user.role == 'yljggly'">
+	    										AND u.user_id = #{user.userId}
+	    										<choose>
+	    											<when test="user.area != null and user.area != ''">
+	    												OR (u.role_id = #{user.orgDocRoleId} AND u.area = #{user.area})
+	    											</when>
+	    											<otherwise>
+	    												<choose>
+	    													<when test="user.city != null and user.city != ''">
+	    														OR (u.role_id = #{user.orgDocRoleId} AND u.city = #{user.city})
+	    														OR (u.role_id = #{user.organizationRoleId} AND u.city = #{user.city} AND u.area is not null)
+	    													</when>
+	    													<otherwise>
+	    														<choose>
+	    															<when test="user.province != null and user.province != ''">
+	    																OR (u.role_id = #{user.orgDocRoleId} AND u.province = #{user.province})
+	    																OR (u.role_id = #{user.organizationRoleId} AND u.province = #{user.province} AND u.city is not null)
+	    															</when>
+	    															<otherwise>
+	    																OR (u.role_id = #{user.orgDocRoleId})
+	    																OR (u.role_id = #{user.organizationRoleId} AND u.province is not null)
+	    															</otherwise>
+	    														</choose>
+	    													</otherwise>
+	    												</choose>
+	    											</otherwise>
+	    										</choose>
+	    									</when>
+	    									<otherwise>
+	    										<choose>
+	    											<!-- 卫监局管理员 查询自己及其下属卫监局管理员 -->
+	    											<when test="user.role != null and user.role == 'wjjgly'">
+	    												AND u.user_id = #{user.userId}
+	    												<choose>
+	    													<when test="user.area != null and user.area != ''">
+	    														AND 1 = 1
+	    													</when>
+	    													<otherwise>
+	    														<choose>
+	    															<when test="user.city != null and user.city != ''">
+	    																OR (u.role_id = #{user.bureauRoleId} AND u.city = #{user.city} AND u.area is not null)
+	    															</when>
+	    															<otherwise>
+	    																<choose>
+	    																	<when test="user.province != null and user.province != ''">
+	    																		OR (u.role_id = #{user.bureauRoleId} AND u.province = #{user.province} AND u.city is not null)
+	    																	</when>
+	    																	<otherwise>
+	    																		OR (u.role_id = #{user.bureauRoleId} AND u.province is not null)
+	    																	</otherwise>
+	    																</choose>
+	    															</otherwise>
+	    														</choose>
+	    													</otherwise>
+	    												</choose>
+	    											</when>
+	    											<otherwise>
+	    												<!-- 恒不成立 -->
+	    												AND 1 = 2
+	    											</otherwise>
+	    										</choose>
+	    									</otherwise>
+	    								</choose>
+	    							</otherwise>
+	    						</choose>
+	    					</otherwise>
+	    				</choose>
+	    			</otherwise>
+	    		</choose>
+	    	</where>) AS da
+    	<where>
+    		<!-- 前端查询条件 -->
+    		<if test="user.name != null and user.name != ''">
+				AND da.user_name like CONCAT('%', #{user.name, jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="user.phone != null and user.phone != ''">
+				AND da.phone like CONCAT('%', #{user.phone, jdbcType=VARCHAR}, '%')
+			</if>
+    	</where>
     </select>
 
     <update id="activeUserByUserId">

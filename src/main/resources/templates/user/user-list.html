@@ -47,7 +47,13 @@
 		<shiro:hasPermission name="user:add">
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">
 				<i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area"></i>
-					 新增
+					 新增用户
+			</button>
+		</shiro:hasPermission>
+		<shiro:hasPermission name="user:reset">
+			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="reset">
+				<i class="layui-icon layui-icon-refresh-1 zadmin-oper-area"></i>
+					密码重置
 			</button>
 		</shiro:hasPermission>
 	</script>
@@ -56,12 +62,6 @@
 		<shiro:hasPermission name="user:update">
 			<a lay-event="edit">
 				<i class="zadmin-icon zadmin-icon-edit-square zadmin-oper-area zadmin-blue" title="编辑"></i>
-			</a>
-		</shiro:hasPermission>
-
-		<shiro:hasPermission name="user:reset">
-			<a lay-event="reset">
-				<i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-red" title="密码重置"></i>
 			</a>
 		</shiro:hasPermission>
 
@@ -108,14 +108,13 @@
 				smartReloadModel: true,
 				cols: [
 					[
-						{type: 'numbers', title: '序号', align: 'center', width:'5%'},
-						{field: 'userId', title: 'ID', align: 'center',sort: true, hide: true},
+						{type: 'radio', fixed: 'left'},
+						{field: 'userId', title: 'id', hide: true},
 						{field: 'userName', title: '姓名', align: 'center',sort: true},
-						{field: 'sex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true},
-						{field: 'phone', title: '手机', align: 'center',sort: true},
-						{field: 'groupName', title: '部门', align: 'center',sort: true},
-						{field: 'lastLoginTime', title: '最后登陆时间', align: 'center',sort: true},
-						{field: 'status', title: '状态', templet: "#statusTpl", align: 'center',sort: true},
+						{field: 'sex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center'},
+						{field: 'phone', title: '手机', align: 'center'},
+						{field: 'roleName', title: '角色', align: 'center'},
+						{field: 'status', title: '状态', templet: "#statusTpl", align: 'center'},
 						{title: '操作', fixed: 'right', align: 'center', toolbar: '#column-toolbar'}
 					]
 				]
@@ -123,31 +122,33 @@
 			
 			// 工具条点击事件
 			table.on('toolbar', function (obj) {
-				var data = obj.data;
 				var event = obj.event;
-				if (event === 'add') {
-					add();
+				switch (event) {
+					case 'add':
+						add();
+						break;
+					case 'reset':
+						var checkStatus = table.checkStatus(obj.config.id);
+						var checkData = checkStatus.data;
+						if (checkData.length === 0) {
+							layer.alert('请选择重置用户');
+						} else if (checkData.length > 1) {
+							layer.alert('只能同时重置一个用户');
+						} else {
+							reset(checkData[0].userId);
+						}
+						break;
+					default:
+						break;
 				}
             });
-
+			
 			// 行点击事件 重置密码
 			table.on('tool', function (obj) {
 				var data = obj.data;
 				var event = obj.event;
 				if (event === 'edit') {
-					edit(data.userid);
-				} else if (event === 'reset') {
-					layer.open({
-						content: '/user/' + data.userid + "/reset",
-						title: "重置密码",
-						area: ['500px', '200px'],
-						type: 2,
-						maxmin: true,
-						shadeClose: true,
-						end: function () {
-							table.reload('user-table');
-						}
-					});
+					edit(data.userId);
 				} else if (event === 'del') {
 					del(obj);
 				}
@@ -165,6 +166,20 @@
 						table.reload('user-table');
 					}
 				});
+			}
+			
+			function reset(id) {
+				layer.open({
+					content: '/user/reset/' + id,
+					title: "重置密码",
+					area: ['500px', '300px'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true,
+					end: function () {
+						table.reload('user-table');
+					}
+                });
 			}
 			
 			function del(obj) {
@@ -190,7 +205,7 @@
 				layer.open({
 					content: '/user/' + id,
 					title: "编辑",
-					area: ['100%', '100%'],
+					area: ['70%', '80%'],
 					type: 2,
 					maxmin: true,
 					shadeClose: true,

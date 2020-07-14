@@ -8,17 +8,20 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import sc.common.constants.RoleEnum;
 import sc.common.exception.DuplicateNameException;
 import sc.common.shiro.ShiroActionProperties;
 import sc.common.util.TreeUtil;
@@ -26,7 +29,9 @@ import sc.system.mapper.UserMapper;
 import sc.system.mapper.UserRoleMapper;
 import sc.system.model.WebScMenu;
 import sc.system.model.WebScUser;
+import sc.system.model.vo.UserVO;
 
+import com.alipay.api.domain.UboVO;
 import com.github.pagehelper.PageHelper;
 
 @Service
@@ -54,7 +59,14 @@ public class UserService {
 	
 	public List<WebScUser> selectAllWithGroup(int page, int rows, WebScUser userQuery) {
 		PageHelper.startPage(page, rows);
-		return userMapper.selectAllWithGroup(userQuery);
+		Subject subject = SecurityUtils.getSubject();
+		WebScUser user = (WebScUser) subject.getPrincipal();
+		UserVO uvo = new UserVO();
+		uvo.setUserId(user.getUserId());
+		uvo.setName(userQuery.getUserName());
+		uvo.setPhone(userQuery.getPhone());
+		uvo.setRole(RoleEnum.valueOf(Integer.parseInt(user.getRoleId())).getType());
+		return userMapper.selectWithRoleAndDist(uvo);
 	}
 	
 	public Integer[] selectRoleIdsById(Integer userId) {

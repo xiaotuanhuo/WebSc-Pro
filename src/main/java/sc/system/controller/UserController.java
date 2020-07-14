@@ -43,16 +43,16 @@ public class UserController {
 	}
 	
     @GetMapping
-    public String add(Model model) {
-        model.addAttribute("roles", roleService.selectAll());
-        return "user/user-add";
-    }
+	public String add(Model model) {
+		return "user/user-add";
+	}
     
 	@GetMapping("/{userId}")
 	public String update(@PathVariable("userId") Integer userId, Model model) {
-		model.addAttribute("roleIds", userService.selectRoleIdsById(userId));
-		model.addAttribute("user", userService.selectOne(userId));
-		model.addAttribute("roles", roleService.selectAll());
+//		model.addAttribute("roleIds", userService.selectRoleIdsById(userId));
+		WebScUser user = userService.selectOne(userId);
+		model.addAttribute("user", user);
+		model.addAttribute("roles", roleService.getRolesBytUserRole(Integer.parseInt(user.getRoleId())));
 		return "user/user-add";
 	}
 	
@@ -94,14 +94,14 @@ public class UserController {
 		return ResultBean.success();
 	}
 	
-	@GetMapping("/{userId}/reset")
+	@GetMapping("/reset/{userId}")
 	public String resetPassword(@PathVariable("userId") Integer userId, Model model) {
 		model.addAttribute("userId", userId);
 		return "user/user-reset-pwd";
 	}
 	
 	@OperationLog("重置密码")
-	@PostMapping("/{userId}/reset")
+	@PostMapping("/reset/{userId}")
 	@ResponseBody
 	public ResultBean resetPassword(@PathVariable("userId") Integer userId, String password) {
 		userService.updatePasswordByUserId(userId, password);

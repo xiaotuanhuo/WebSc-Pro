@@ -198,7 +198,7 @@
 				table.reload('bureau-table', {
 					where: {
 						parentId: obj.param.nodeId
-				}
+					}
 				});
 				parentDeptId = obj.param.nodeId;
 				$("#card-header").html("[" + obj.param.context + "]的子部门");
@@ -236,8 +236,8 @@
 			});
 			
 			$('#search').on('click', function () {
-            	if ($('#deptName').val() != '') {
-            		treeTable.keywordSearch($('#deptName').val()); //关键词搜索树
+            	if ($('#bureauName').val() != '') {
+            		treeTable.keywordSearch($('#bureauName').val()); //关键词搜索树
             	} else {
             		treeTable.reload();
             	}
