@@ -109,6 +109,7 @@
 			<div class="layui-form-item">
 				<div class="layui-input-block"
 					style="margin-left: 0; text-align: center;">
+					<input type="hidden" id="userId" name="userId" th:value="${user?.userId}">
 					<input type="hidden" id="roleId" name="roleId" th:value="${user?.roleId}">
 					<input type="hidden" id="roleTypeId" name="roleTypeId" th:value="${user?.roleTypeId}">
 					<input type="hidden" id="patients" name="patients" th:value="${user?.patientType}">
@@ -134,12 +135,13 @@
 		var isEdit = $('#loginName').val() == '' ? false : true;	// 用于判断当前是新增还是编辑
 		var patientArray;
 		var operationArray;
+		var defaultOrganization = "";
 		if (isEdit) {
-			console.log(11);
 			var patients = $('#patients').val();
 			var operations = $('#operations').val();
 			patientArray = patients.split(',');
 			operationArray = operations.split(',');
+			defaultOrganization = $('#roleTypeId').val();
 		}
 		layui.config({
 			base: '/lib/layui/extend/'
@@ -236,7 +238,6 @@
 					})
 				}
 			});
-			
 			// 根据所选角色及当前用户的可操作范围加载机构树
 			var loadTree = function(dataUrl) {
 				if (firstRender) {
@@ -248,6 +249,7 @@
 						width: '100%',
 						ficon: ['1', '-1'],
 						icon: ['-1', '2'],
+						selectInitVal: defaultOrganization,
 						menubar: true,
 						record: true,
 						response: {
@@ -255,10 +257,7 @@
 							treeId: 'id',
 							title: 'name',
 							parentId: 'parentId'
-		                },
-						done: function() {
-							dtree.selectVal("orgTree", isEdit ? $('#roleTypeId').val() : null);
-						}
+		                }
 					});
 					firstRender = false;
 					$('#organziation').show();
@@ -271,16 +270,16 @@
 			};
 			
 			dtree.on("node('orgTree')" ,function(obj) {
-				if (obj.param.recordData.area.length != undefined) {
+				if (obj.param.recordData.area != undefined && obj.param.recordData.area.length != undefined) {
 					$('#area').val(obj.param.recordData.area);
 				}
-				if (obj.param.recordData.city.length != undefined) {
+				if (obj.param.recordData.city != undefined && obj.param.recordData.city.length != undefined) {
 					$('#city').val(obj.param.recordData.city);
 				}
-				if (obj.param.recordData.province.length != undefined) {
+				if (obj.param.recordData.province != undefined && obj.param.recordData.province.length != undefined) {
 					$('#province').val(obj.param.recordData.province);
 				}
-                $('#orgId').val(obj.param.nodeId);
+                $('#roleTypeId').val(obj.param.nodeId);
             });
 			
 			// 病人类型
@@ -335,7 +334,7 @@
 			//监听提交
 			form.on('submit(add)', function (form) {
 				form.field.roleId = roleKit.getValue('valueStr');
-				form.field.roleTypeId = $('#orgId').val();
+				//form.field.roleTypeId = $('#roleTypeId').val();
 				if (roleKit.getValue('valueStr') === '5') {	// 医生
 					form.field.patientType = patientKit.getValue('valueStr');
 					form.field.operationType = operationKit.getValue('valueStr');
@@ -346,9 +345,23 @@
 				return false;
             });
 			
+			//监听提交
+			form.on('submit(edit)', function (form) {
+				form.field._method = 'PUT';
+				form.field.roleId = roleKit.getValue('valueStr');
+				$.post('/user', form.field, function (result) {
+					handlerResult(result, editDone);
+				});
+				return false;
+			});
+			
 			function addDone(data) {
 				layer.msg('添加成功', {icon: 6});
             }
+			
+			function editDone(data) {
+				layer.msg("修改成功", {icon: 6});
+			}
         });
     </script>
 </body>

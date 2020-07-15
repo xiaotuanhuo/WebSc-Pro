@@ -59,9 +59,8 @@ public class UserController {
 	@OperationLog("编辑角色")
 	@PutMapping
 	@ResponseBody
-	public ResultBean update(@Valid WebScUser user,
-			@RequestParam(value = "role[]", required = false) Integer[] roleIds) {
-		userService.update(user, roleIds);
+	public ResultBean update(@Valid WebScUser user) {
+		userService.update(user);
 		return ResultBean.success();
 	}
 	

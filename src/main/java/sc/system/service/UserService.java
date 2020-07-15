@@ -119,9 +119,8 @@ public class UserService {
 	}
 	
 	@Transactional
-	public boolean update(WebScUser user, Integer[] roleIds) {
+	public boolean update(WebScUser user) {
 		checkLoginNameExistOnUpdate(user);
-		grantRole(user.getUserId(), roleIds);
 		return userMapper.updateByPrimaryKey(user) == 1;
 	}
 	

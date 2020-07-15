@@ -79,7 +79,7 @@ public interface UserMapper {
     /**
      * 统计已经有几个此用户名, 用来检测用户名是否重复 (不包含某用户 ID).
      */
-    int countByLoginNameNotIncludeUserId(@Param("loginname") String loginname, @Param("userid") Integer userid);
+    int countByLoginNameNotIncludeUserId(@Param("loginname") String loginname, @Param("userId") Integer userid);
 
     /**
      * 查询此用户拥有的所有角色的 ID
