@@ -41,6 +41,7 @@ public class WebScDoc implements Serializable {
 	private String hospitalEvaluateMemo;
 	private Integer doctorEvaluate;
 	private String doctorEvaluateMemo;
+	private String orgId;
 	
 	//单据发布者所在省，市，区
 	private String province;
@@ -265,6 +266,12 @@ public class WebScDoc implements Serializable {
 	}
 	public void setAnestheticName(String anestheticName) {
 		this.anestheticName = anestheticName;
+	}
+	public String getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
 	}
 
 }

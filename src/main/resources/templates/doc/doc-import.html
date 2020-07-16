@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>订单导入</title>
+	<link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicon.ico}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon.ico}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</head>
+<body class="z-body">
+	<div id="docImport">
+		<button type="button" class="layui-btn" id="uploadDocList" style="margin-right:10px;"><i class="layui-icon layui-icon-add-1"></i>选择文件</button>
+	  	<button type="button" class="layui-btn" id="uploadDocListAction"><i class="layui-icon layui-icon-upload-drag"></i>开始上传</button>
+		<div class="layui-upload" style="text-align:center;">
+			<div class="layui-upload-list">
+				<table class="layui-table">
+					<thead>
+						<tr><th style="text-align:center;">文件名</th>
+							<th style="text-align:center;">大小</th>
+							<th style="text-align:center;">状态</th>
+						</tr>
+					</thead>
+					<tbody id="docImportList"></tbody>
+				</table>
+			</div>
+	  	</div>
+	</div>
+
+	<script th:src="@{/lib/layui/layui.js}"></script>
+    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+    <script th:inline="javascript">
+    	layui.use(['layer','upload'], function(){
+	  	  var $ = layui.$;
+	  	  var layer = layui.layer;
+	  	  var upload = layui.upload;
+	  	  
+	  	  //文件上传
+  	      var fileIndex;
+  	      var recordListView = $('#docImportList');
+  	  	  var uploadListIns = upload.render({
+  	  	    elem: '#uploadDocList'
+  	  	    ,url: '/doc/importDocs'
+  	  	    ,accept: 'file'
+  	  	    ,exts: 'xlsx|xls'
+  	  	    ,auto: false
+  	  	    ,bindAction: '#uploadDocListAction'
+  	  	    ,choose: function(obj){
+  	  	    	var files = obj.pushFile();
+  	  	    	delete files[fileIndex];
+	  	  	    //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+	  	  	    obj.preview(function(index, file, result){
+	  	  	      fileIndex = index;
+	  	  	      //这里还可以做一些 append 文件列表 DOM 的操作
+		  	  	  var tr = $(['<tr id="upload-'+ index +'">'
+		  	          ,'<td>'+ file.name +'</td>'
+		  	          ,'<td>'+ (file.size/1024).toFixed(1) +'kb</td>'
+		  	          ,'<td>等待导入</td>'
+		  	        ,'</tr>'].join(''));
+	  	  	      
+		  	  	  recordListView.html(tr);
+	  	  	    });
+  	  	    }
+	  	  	,before: function(obj){
+	  	  	  var tr = recordListView.find('tr#upload-'+ fileIndex)
+  	          ,tds = tr.children();
+  	          tds.eq(2).html('<i class="layui-icon layui-icon-loading"></i>');
+	  	    }
+  	  	    ,done: function(res, index, upload){
+	  	  	    if(res.code == 0){ //上传成功
+	  	          var tr = recordListView.find('tr#upload-'+ fileIndex)
+	  	          ,tds = tr.children();
+	  	          tds.eq(2).html('<span style="color: #5FB878;">'+res.msg+'</span>');
+	  	          tds.eq(2).css('text-align','left');
+	  	          return delete this.files[index]; //删除文件队列已经上传成功的文件
+	  	        }else{
+	  	        	var tr = recordListView.find('tr#upload-'+ fileIndex)
+		  	          ,tds = tr.children();
+		  	          tds.eq(2).html('<span style="color: #FF5722;">'+res.msg+'</span>');
+		  	          tds.eq(2).css('text-align','left');
+		  	          return delete this.files[index];
+	  	        }
+  	  	    }
+  	  	    ,error: function(index, upload){
+  	  	      layer.msg('导入失败');
+  	  	    }
+  	  	  });
+	  	});
+    </script>
+</body>
+</html>

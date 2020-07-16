@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import sc.common.annotation.OperationLog;
 import sc.common.util.PageResultBean;
@@ -34,6 +37,7 @@ import com.github.pagehelper.PageInfo;
 @Controller
 @RequestMapping("/doc")
 public class DocController {
+	private static final Logger logger = LoggerFactory.getLogger(DocController.class);
 	
 	@Resource
 	DataController data;
@@ -45,6 +49,11 @@ public class DocController {
 	@GetMapping("/index")
     public String index() {
         return "doc/doc-list";
+    }
+	
+	@GetMapping("/docImport")
+    public String docImport() {
+        return "doc/doc-import";
     }
 	
 	@GetMapping("/release")
@@ -245,6 +254,22 @@ public class DocController {
 		PageInfo<WebScUser> drPageInfo = new PageInfo<>(drList);
         return new PageResultBean<>(drPageInfo.getTotal(), drPageInfo.getList());
 	}
+	
+	@PostMapping(value = "importDocs")
+	@ResponseBody
+	public ResultBean importDocs(@RequestParam("file") MultipartFile file) {
+		ResultBean rBean = null;
+		try {
+			
+			rBean = ResultBean.success(docService.importDocsService(file));
+			
+		} catch (Exception e) {
+			logger.error("订单批量导入失败，"+e.getMessage());
+			rBean = ResultBean.error("订单批量导入失败，"+e.getMessage());
+		}
+		
+		return rBean;
+    }
 	
 }
 

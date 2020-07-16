@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -61,7 +62,12 @@ public class ExcelUtil {
 		Sheet sheet = wb.getSheetAt(0);
 		for (Row row : sheet) {
 			List<Object> cells = new ArrayList<Object>();
-	        for (Cell cell : row) {
+			System.out.println("cell num : "+sheet.getRow(0).getLastCellNum());
+			for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
+				Cell cell = row.getCell(i);
+				if(cell == null) {
+					cell = row.createCell(i, CellType.BLANK);
+				}
 	        	switch (cell.getCellType()) {
 		            case STRING:
 		                cells.add(cell.getRichStringCellValue().getString().trim());

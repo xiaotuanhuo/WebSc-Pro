@@ -173,7 +173,7 @@
 							'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">日程标识</label>'+
 			                    '<div class="layui-input-inline">'+
-			                        '<input id="id" name="id" value="'+randomString(20)+'" lay-verify="required" class="layui-input" type="text" placeholder="日程标识" disabled/>'+
+			                        '<input id="id" name="id" value="'+randomString(20)+'" lay-verify="required" class="layui-input" type="text" placeholder="日程标识" readonly="readonly"/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
@@ -181,7 +181,7 @@
 							'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">日程标题</label>'+
 			                    '<div class="layui-input-inline">'+
-			                        '<input id="title" name="title" value="备休日" lay-verify="required" class="layui-input" type="text" placeholder="日程标题" disabled/>'+
+			                        '<input id="title" name="title" value="备休日" lay-verify="required" class="layui-input" type="text" placeholder="日程标题" readonly="readonly"/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
@@ -200,7 +200,7 @@
 		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search>'+
 		    							'<option value="8-12">上午</option>'+
 		    							'<option value="13-17">下午</option>'+
-		    							'<option value="8-17">全天</option>'+
+		    							'<option value="8-17" selected>全天</option>'+
 		    						'</select>'+
 								'</div>'+
 							'</div>'+
@@ -234,7 +234,7 @@
 							'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">日程标识</label>'+
 			                    '<div class="layui-input-inline">'+
-			                        '<input id="id" name="id" value="'+info.event.id+'" lay-verify="required" class="layui-input" type="text" placeholder="日程标识" disabled/>'+
+			                        '<input id="id" name="id" value="'+info.event.id+'" lay-verify="required" class="layui-input" type="text" placeholder="日程标识" readonly="readonly"/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
@@ -242,7 +242,7 @@
 							'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">日程标题</label>'+
 			                    '<div class="layui-input-inline">'+
-			                        '<input id="title" name="title" value="'+info.event.title+'" lay-verify="required" class="layui-input" type="text" placeholder="日程标题" disabled/>'+
+			                        '<input id="title" name="title" value="'+info.event.title+'" lay-verify="required" class="layui-input" type="text" placeholder="日程标题" readonly="readonly"/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
@@ -250,7 +250,7 @@
 							'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">日程时间</label>'+
 								'<div class="layui-input-inline">'+
-		    						'<input id="calendarDate" name="calendarDate" value="'+dateFormat('yyyy-MM-dd',info.event.start)+'" lay-verify="required" class="layui-input" type="text" placeholder="日程时间" disabled autocomplete="off"/>'+
+		    						'<input id="calendarDate" name="calendarDate" value="'+dateFormat('yyyy-MM-dd',info.event.start)+'" lay-verify="required" class="layui-input" type="text" placeholder="日程时间" readonly="readonly" autocomplete="off"/>'+
 								'</div>'+
 							'</div>'+
 						'</div>'+
@@ -261,7 +261,7 @@
 		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search>'+
 		    							'<option value="8-12">上午</option>'+
 		    							'<option value="13-17">下午</option>'+
-		    							'<option value="8-17">全天</option>'+
+		    							'<option value="8-17" selected>全天</option>'+
 		    						'</select>'+
 								'</div>'+
 							'</div>'+

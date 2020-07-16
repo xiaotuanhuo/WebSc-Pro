@@ -113,7 +113,8 @@
 								apply_user_id,
 								memo,
 								document_state,
-								operate_start_time)
+								operate_start_time,
+								org_id)
 					values(#{documentId,jdbcType=VARCHAR},
 							#{operativeId,jdbcType=VARCHAR},
 							#{anestheticId,jdbcType=VARCHAR},
@@ -131,7 +132,8 @@
 							#{applyUserId,jdbcType=VARCHAR},
 							#{memo,jdbcType=VARCHAR},
 							#{documentState,jdbcType=VARCHAR},
-							#{operateStartTime,jdbcType=VARCHAR})
+							#{operateStartTime,jdbcType=VARCHAR},
+							#{orgId,jdbcType=VARCHAR})
     </insert>
     
     <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScDoc">
