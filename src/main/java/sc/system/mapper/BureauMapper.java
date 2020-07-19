@@ -15,13 +15,15 @@ public interface BureauMapper {
 	
 	WebScBureau selectByPrimaryKey(String bureauId);
 	
+	WebScBureau selectSuperBureau();
+	
 	/**
      * 查询当前节点及其子节点
      * @param bureauId
      * @return
      */
-	List<WebScBureau> selectTree(@Param("province_code") String privince, @Param("city_code") String city,
-			@Param("area_code") String area);
+	List<WebScBureau> selectTree(@Param("bureau_id") String bureau_id, @Param("province_code") String privince,
+			@Param("city_code") String city, @Param("area_code") String area);
 	
 	int updateByPrimaryKeySelective(WebScBureau record);
 	

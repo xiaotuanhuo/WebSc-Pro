@@ -185,7 +185,7 @@
     </select>
     
     <!-- 根据用户角色及区划获取医疗机构列表 -->
-    <select id="selectListByAuthData" resultMap="BaseResultMap">
+    <select id="selectListByAuthData2" resultMap="BaseResultMap">
         select 
         da.org_id,
 		da.org_pid,
@@ -258,7 +258,7 @@
 		        					</choose>
 		        				</when>
 		        				<otherwise>
-		        					AND wo.credentials = '1'AND wo.leaf = 1
+		        					AND wo.credentials = '1' AND wo.leaf = 1
 		        				</otherwise>
 		        			</choose>
         				</when>
@@ -301,5 +301,102 @@
         </where>
         order by da.org_id
     </select>
+    
+    
+    <select id="selectListByAuthData" resultMap="BaseResultMap">
+        select 
+        da.org_id,
+		da.org_pid,
+		da.root_id,
+		da.credentials,
+		da.leaf,
+		da.org_name,
+		da.org_address,
+		da.org_tel,
+		da.leader_name,
+		da.leader_tel,
+		da.province,
+		da.city,
+		da.area
+        
+        from 
+        
+        (select
+        <include refid="Base_Column_List" />
+        from WSC_ORGANIZATION wo
+        <where>
+        	<if test="root_id != null and root_id != ''">
+     			AND wo.root_id = #{root_id}
+     		</if>
+        	<choose>
+        		<when test="bureau">
+        			<choose>
+        				<when test="user_area_code != null and user_area_code != ''">
+      						AND wo.province = #{user_province_code} AND wo.city = #{user_city_code} AND wo.area = #{user_area_code} AND wo.leaf = 1
+      					</when>
+      					<otherwise>
+      						<choose>
+      							<when test="user_city_code != null and user_city_code != ''">
+      								AND wo.province = #{user_province_code} AND wo.city = #{user_city_code} AND wo.leaf = 1
+      							</when>
+      							<otherwise>
+      								<choose>
+      									<when test="user_province_code != null and user_province_code != ''">
+      										AND wo.province = #{user_province_code} AND wo.leaf = 1
+      									</when>
+      									<otherwise>
+      										AND wo.leaf = 1
+      									</otherwise>
+      								</choose>
+      							</otherwise>
+      						</choose>
+      					</otherwise>
+        			</choose>
+        		</when>
+        		<otherwise>
+        			<choose>
+        				<when test="user_area_code != null and user_area_code != ''">
+      						AND wo.province = #{user_province_code} AND wo.city = #{user_city_code} AND wo.area = #{user_area_code} AND wo.leaf = 1 AND wo.credentials = '1'
+      					</when>
+      					<otherwise>
+      						<choose>
+      							<when test="user_city_code != null and user_city_code != ''">
+      								AND wo.province = #{user_province_code} AND wo.city = #{user_city_code} AND wo.leaf = 1 AND wo.credentials = '1'
+      							</when>
+      							<otherwise>
+      								<choose>
+      									<when test="user_province_code != null and user_province_code != ''">
+      										AND wo.province = #{user_province_code} AND wo.leaf = 1 AND wo.credentials = '1'
+      									</when>
+      									<otherwise>
+      										AND wo.leaf = 1 AND wo.credentials = '1'
+      									</otherwise>
+      								</choose>
+      							</otherwise>
+      						</choose>
+      					</otherwise>
+        			</choose>
+        		</otherwise>
+        	</choose>
+        </where>) AS da
+        
+        <where>
+            <if test="wso.orgName != null and wso.orgName != ''">
+                AND da.org_name like CONCAT('%', #{wso.orgName, jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="wso.province != null and wso.province != ''">
+                AND da.province = #{wso.province}
+            </if>
+            <if test="wso.city != null and wso.city != ''">
+                AND da.province = #{wso.city}
+            </if>
+            <if test="wso.area != null and wso.area != ''">
+                AND da.area = #{wso.area}
+            </if>
+        </where>
+        order by da.org_id
+    </select>
+    
+    
     
 </mapper>

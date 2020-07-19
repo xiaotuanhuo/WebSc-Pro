@@ -52,7 +52,9 @@ public class WebScDept implements Serializable {
 	private String cityName;
 	
 	private String operator;
-	
+	private String distName;	// 当前医疗集团行政区划名称
+	private boolean disabled = false;	// 用于前端当前节点是否不可选中，默认fasle：可选中
+
 	public String getDeptId() {
 		return deptId;
 	}
@@ -186,6 +188,22 @@ public class WebScDept implements Serializable {
 	
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
+	}
+	
+	public String getDistName() {
+		return distName;
+	}
+	
+	public void setDistName(String distName) {
+		this.distName = distName;
+	}
+	
+	public boolean isDisabled() {
+		return disabled;
+	}
+	
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 	
 }

@@ -129,6 +129,16 @@
         where parent_id = #{parentId}
         order by dept_id
     </select>
+    
+    <select id="selectSuperDept" resultMap="BaseResultMap">
+        select
+          dept_id,
+		  dept_name,
+		  parent_id
+        from WSC_DEPT
+        where parent_id = '0'
+        limit 1
+    </select>
 
     <select id="selectChildrenIDByPrimaryKey" resultType="java.lang.String">
         select dept_id
@@ -177,6 +187,25 @@
     <!-- // 查询当前节点所有子节点
 		 // resultMap="TreeBaseResultMap"递归查询子节点 -->
     <select id="selectSubTree" resultMap="TreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_DEPT wd
+        <where>
+            <choose>
+                <when test="parent_id != null and parent_id != ''">
+                    and wd.parent_id = #{parent_id}
+                </when>
+                <otherwise>
+                    and wd.parent_id = '0'
+                </otherwise>
+            </choose>
+        </where>
+        order by dept_id
+    </select>
+    
+    <!-- // 查询当前节点所有子节点
+		 // resultMap="TreeBaseResultMap"递归查询子节点 -->
+    <select id="selectSuperTree" resultMap="TreeBaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from WSC_DEPT wd

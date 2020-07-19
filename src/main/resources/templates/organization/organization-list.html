@@ -9,6 +9,8 @@
     <link rel="stylesheet" th:href="@{/css/animate.min.css}">
     <link rel="stylesheet" th:href="@{/iconfont/iconfont.css}">
     <link rel="stylesheet" th:href="@{/lib/layui/extend/eleTree.css}" />
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/dtree.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/font/dtreefont.css}">
 </head>
 
 <style>
@@ -193,28 +195,31 @@
 			
 			dtree.render({
 				elem: "#organziationTree",
-				url: "/organization/tree",
+				url: "/organization/dist/tree",
 				method: 'GET',
 				dataStyle: 'layuiStyle',
+				dataFormat: "list",
 				icon: "-1",
 				initLevel: "2",
 				response: {
 					statusCode: 0,
 					treeId: 'id',
 					title: 'name',
-					parentId: 'parentId'
+					parentId: 'parentId',
+					basicData: "distType"
                 }
 			});
 			
-			/* dtree.on("node('deptTree')", function (obj) {
-				table.reload('dept-table', {
+			dtree.on("node('organziationTree')", function (obj) {
+				table.reload('organization-table', {
 					where: {
-						parentId: obj.param.nodeId
+						organizationId: obj.param.nodeId,
+						distType: obj.param.basicData
 					}
 				});
-				parentDeptId = obj.param.nodeId;
-				$("#card-header").html("[" + obj.param.context + "]的子部门");
-			}); */
+				console.log(111);
+				$("#card-header").html("[" + obj.param.context + "]的子机构");
+			});
 			
 			// 工具条点击事件
 			table.on('toolbar', function (obj) {
@@ -308,7 +313,6 @@
 			}
 			
 			form.on('submit(search)', function (form) {
-				console.log(112);
 				table.reload('organization-table', {
 					where: form.field
 				});

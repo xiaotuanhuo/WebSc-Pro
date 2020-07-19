@@ -9,8 +9,6 @@ import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
 @MapperScan("sc.system.mapper")
-@ComponentScan(basePackages = {
-		"sc" }, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "sc.common.config.exculd.*"))
 public class ShiroActionApplication extends SpringBootServletInitializer {
 
 	@Override

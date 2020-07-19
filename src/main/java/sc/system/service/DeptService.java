@@ -1,11 +1,13 @@
 package sc.system.service;
 
+import sc.common.constants.DistType;
 import sc.common.constants.RoleEnum;
 import sc.common.exception.DuplicateDistrictException;
 import sc.common.util.UUID19;
 import sc.system.mapper.DeptMapper;
 import sc.system.model.WebScDept;
 import sc.system.model.WebScUser;
+import sc.system.model.vo.DistTree;
 import sc.system.model.vo.District;
 
 import org.apache.shiro.SecurityUtils;
@@ -14,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.sun.org.apache.xpath.internal.operations.And;
 
 import javax.annotation.Resource;
 
@@ -119,10 +123,12 @@ public class DeptService {
 	 * @param deptId
 	 * @return
 	 */
-	public List<WebScDept> getTree() {
+	public List<WebScDept> getTree(String deptId) {
 		Subject subject = SecurityUtils.getSubject();
 		WebScUser user = (WebScUser) subject.getPrincipal();
-		List<WebScDept> depts = deptMapper.selectTree(user.getRoleTypeId());
+//		List<WebScDept> depts = deptMapper.selectTree(user.getRoleTypeId());
+		
+		List<WebScDept> depts = deptMapper.selectTree(deptId == null ? user.getRoleTypeId() : deptId);
 		// 前端对表的操作由于插件的缘故，从后台生成操作代码
 		// 其中编辑和删除对系统管理员、超级管理员、区域管理员可见
 		boolean show = false;
@@ -136,6 +142,33 @@ public class DeptService {
 				break;
 		}
 		return getDistName(depts, show);
+	}
+	
+	/**
+	 * 查询当前节点及其子孙节点（树形）
+	 * 用于处理仅city节点可选中
+	 * @param deptId
+	 * @return
+	 */
+	public List<WebScDept> getCityTree() {
+		Subject subject = SecurityUtils.getSubject();
+		WebScUser user = (WebScUser) subject.getPrincipal();
+		List<WebScDept> depts = deptMapper.selectTree(user.getRoleTypeId());
+		return getCityTree(depts);
+	}
+	
+	private List<WebScDept> getCityTree(List<WebScDept> depts) {
+		if (depts.size() > 0) {
+			for (WebScDept dept : depts) {
+				if (dept.getCity() == null || dept.getCity().equals("")) {
+					dept.setDisabled(true);
+				}
+				if (dept.getChildren().size() > 0) {
+					getCityTree(dept.getChildren());
+				}
+			}
+		}
+		return depts;
 	}
 	
 	/**
@@ -201,5 +234,87 @@ public class DeptService {
 			}
 		}
 		return depts;
+	}
+	
+	/**
+	 * 根据当前用户获取带有医疗集团根节点的行政区划（树）
+	 * @return
+	 */
+	public List<DistTree> getDistTree() {
+		Subject subject = SecurityUtils.getSubject();
+		WebScUser user = (WebScUser) subject.getPrincipal();
+		List<DistTree> dists = new ArrayList<DistTree>();
+		WebScDept superDept = deptMapper.selectSuperDept();	// 医疗机构根节点
+		if (superDept == null) {
+			return dists;
+		}
+		List<WebScDept> depts = deptMapper.selectTree(user.getRoleTypeId());
+		if (depts.size() > 0) {
+			DistTree superDist = new DistTree();
+			DistTree provinceDist = new DistTree();
+			switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
+				// 系统管理员 超级管理员添加医疗机构根节点
+				case XTGLY:
+					superDist.setId(superDept.getDeptId());
+					superDist.setParentId(superDept.getParentId());
+					superDist.setName(superDept.getDeptName());
+					superDist.setInstitution(null);
+					dists.add(superDist);
+					break;
+				case CJGLY:
+					superDist.setId(superDept.getDeptId());
+					superDist.setParentId(superDept.getParentId());
+					superDist.setName(superDept.getDeptName());
+					superDist.setInstitution(user.getRoleTypeId());
+					dists.add(superDist);
+					break;
+				case QYGLY:
+					// 区域管理员仅有省属和市属
+					// 市属区域管理员添加以医疗机构根节点为父节点的省级节点
+					if (user.getCity() != null) {
+						provinceDist.setId(user.getProvince());
+						provinceDist.setParentId(superDept.getDeptId());
+						provinceDist.setName(district.getDistrictMap().get(user.getProvince()).getName());
+						provinceDist.setInstitution(user.getRoleTypeId());
+						dists.add(provinceDist);
+					}
+					// 添加医疗机构根节点
+					superDist.setId(superDept.getDeptId());
+					superDist.setParentId(superDept.getParentId());
+					superDist.setName(superDept.getDeptName());
+					superDist.setInstitution(user.getRoleTypeId());
+					dists.add(superDist);
+					break;
+				default:
+					break;
+			}
+			dists = convert(depts, dists);
+		}
+		return dists;
+	}
+	
+	private List<DistTree> convert(List<WebScDept> depts, List<DistTree> dists) {
+		if (depts.size() > 0) {
+			for (WebScDept dept : depts) {
+				DistTree dist = new DistTree();
+				if (dept.getCity() != null) {
+					dist.setId(dept.getCity());
+					dist.setParentId(dept.getProvince());
+					dist.setName(district.getDistrictMap().get(dept.getCity()).getName());
+					dist.setInstitution(dept.getDeptId());
+					dists.add(dist);
+				} else if (dept.getProvince() != null) {
+					dist.setId(dept.getProvince());
+					dist.setParentId(dept.getParentId());
+					dist.setName(district.getDistrictMap().get(dept.getProvince()).getName());
+					dist.setInstitution(dept.getDeptId());
+					dists.add(dist);
+				}
+				if (dept.getChildren().size() > 0) {
+					convert(dept.getChildren(), dists);
+				}
+			}
+		}
+		return dists;
 	}
 }

@@ -43,7 +43,13 @@ public class BureauController {
 	 */
 	@GetMapping("/tree")
 	@ResponseBody
-	public ResultBean tree() {
-		return ResultBean.success(bureauService.getTree());
+	public ResultBean tree(@RequestParam(value = "bureauId", required = false) String bureauId) {
+		return ResultBean.success(bureauService.getTree(bureauId));
+	}
+	
+	@GetMapping("/dist/tree")
+	@ResponseBody
+	public ResultBean distTree() {
+		return ResultBean.success(bureauService.getDistTree());
 	}
 }

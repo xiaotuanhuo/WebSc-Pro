@@ -1,6 +1,5 @@
 package sc.system.mapper;
 
-import sc.common.annotation.DataAuth;
 import sc.system.model.WebScRole;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,9 +19,6 @@ public interface RoleMapper {
 	List<WebScRole> selectAll();
 
 	List<WebScRole> selectAllByQuery(WebScRole roleQuery);
-	
-	@DataAuth(authCode = "getRolesForAddEidtUser")
-    List<WebScRole> selectRolesForAddEidtUser();
 	
 	/**
 	 * 根据当前用户角色返回可操作角色列表

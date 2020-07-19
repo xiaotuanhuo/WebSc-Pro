@@ -65,6 +65,9 @@ public interface OrganizationMapper {
 	 * @param wso		// 前端查询条件
 	 * @return
 	 */
+	List<WebScOrganization> selectListByAuthData2(@Param("root_id") String rootId, @Param("bureau") Boolean isBureau, @Param("user_province_code") String privince,
+			@Param("user_city_code") String city, @Param("user_area_code") String area, @Param("wso") WebScOrganization wso);
+	
 	List<WebScOrganization> selectListByAuthData(@Param("root_id") String rootId, @Param("bureau") Boolean isBureau, @Param("user_province_code") String privince,
 			@Param("user_city_code") String city, @Param("user_area_code") String area, @Param("wso") WebScOrganization wso);
 	

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.poifs.crypt.dsig.DSigRelation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -13,11 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import sc.common.constants.DistType;
 import sc.common.constants.RoleEnum;
 import sc.common.util.UUID19;
 import sc.system.mapper.OrganizationMapper;
 import sc.system.model.WebScOrganization;
 import sc.system.model.WebScUser;
+import sc.system.model.vo.DistTree;
 import sc.system.model.vo.District;
 
 @Service
@@ -30,24 +33,45 @@ public class OrganizationService {
 	@Autowired
 	private District district;
 	
-	public List<WebScOrganization> getList(WebScOrganization wso) {
+	public List<WebScOrganization> getList(WebScOrganization wso, String organizationId, String distType) {
 		Subject subject = SecurityUtils.getSubject();
 		WebScUser user = (WebScUser) subject.getPrincipal();
 		List<WebScOrganization> wsoList = new ArrayList<>();
+		String rootId = null;
+		String userProvince = user.getProvince();
+		String userCity = user.getCity();
+		String userArea = user.getArea();
+		if (organizationId != null) {
+			WebScOrganization organization = organizationMapper.selectByPrimaryKey(organizationId);
+			rootId = organization.getRootId();
+			DistType dt = DistType.valueOf(Integer.parseInt(distType));
+			switch (dt) {
+				case PROVINCE:
+					userProvince = organization.getProvince();
+					break;
+				case CITY:
+					userCity = organization.getCity();
+					break;
+				case COUNTY:
+					userArea = organization.getArea();
+				default:
+					break;
+			}
+		}
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
 			case XTGLY:
 			case CJGLY:
 			case QYGLY:
-				wsoList = organizationMapper.selectListByAuthData(null, false, user.getProvince(), user.getCity(), user.getArea(), wso);
+				wsoList = organizationMapper.selectListByAuthData2(rootId, false, userProvince, userCity, userArea, wso);
 				break;
 			case WJJGLY:
-				wsoList = organizationMapper.selectListByAuthData(null, true, user.getProvince(), user.getCity(), user.getArea(), wso);
+				wsoList = organizationMapper.selectListByAuthData2(rootId, true, userProvince, userCity, userArea, wso);
 				break;
 			case YLJGGLY:
 				// 查询当前用户的医疗机构根节点
 				WebScOrganization userOrganization = organizationMapper.selectByPrimaryKey(user.getRoleTypeId());
-				String rootId = userOrganization.getRootId();
-				wsoList = organizationMapper.selectListByAuthData(rootId, false, user.getProvince(), user.getCity(), user.getArea(), wso);
+				wsoList = organizationMapper.selectListByAuthData2(userOrganization.getRootId(), false, userProvince,
+					userCity, userArea, wso);
 				break;
 			default:
 				break;
@@ -110,6 +134,248 @@ public class OrganizationService {
 			}
 		}
 		return orgs;
+	}
+	
+	public List<DistTree> getDistTree() {
+		List<WebScOrganization> organizations = new ArrayList<WebScOrganization>();
+		Subject subject = SecurityUtils.getSubject();
+		WebScUser user = (WebScUser) subject.getPrincipal();
+		List<DistTree> dists = new ArrayList<DistTree>();
+		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
+			case XTGLY:
+			case CJGLY:
+				organizations = organizationMapper.selectAllTree(null, user.getProvince(), user.getCity(), user.getArea());
+//				superDist.setId("99");
+//				superDist.setParentId("233");	// 虚拟的根节点的父节点
+//				superDist.setName("医疗机构");
+//				dists.add(superDist);
+				dists = convert(organizations, dists);
+				break;
+			case QYGLY:
+				organizations = organizationMapper.selectAllTree(null, user.getProvince(), user.getCity(), user.getArea());
+				if (organizations.size() > 0) {
+					for (WebScOrganization organization : organizations) {
+						DistTree cityDist = new DistTree();		// 市级医疗机构
+						DistTree provinceDist = new DistTree();	// 省级医疗机构
+						DistTree superDist = new DistTree();	// 医疗机构的根节点
+						if (organization.getCity() != null) {
+							cityDist.setId(organization.getOrgId());
+							cityDist.setParentId(organization.getOrgPid());
+							cityDist.setName(district.getDistrictMap().get(organization.getCity()).getName());
+							cityDist.setDistType(DistType.CITY.getCode());
+							
+							provinceDist.setId(organization.getOrgPid());
+							provinceDist.setParentId(organization.getRootId());
+							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setDistType(DistType.CITY.getCode());
+							
+							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
+							superDist.setId(rootOrganization.getOrgId());
+							superDist.setParentId(rootOrganization.getOrgPid());
+							superDist.setName(rootOrganization.getOrgName());
+							superDist.setDistType(DistType.CITY.getCode());
+							
+							dists.add(superDist);
+							dists.add(provinceDist);
+							dists.add(cityDist);
+							dists = convert(organization.getChildren(), dists);
+						} else if (organization.getProvince() != null) {
+							provinceDist.setId(organization.getOrgId());
+							provinceDist.setParentId(organization.getOrgPid());
+							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setDistType(DistType.PROVINCE.getCode());
+							
+							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
+							superDist.setId(rootOrganization.getOrgId());
+							superDist.setParentId(rootOrganization.getOrgPid());
+							superDist.setName(rootOrganization.getOrgName());
+							superDist.setDistType(DistType.PROVINCE.getCode());
+							
+							dists.add(superDist);
+							dists.add(provinceDist);
+							dists = convert(organization.getChildren(), dists);
+						}
+					}
+				}
+				break;
+			case WJJGLY:
+				organizations = organizationMapper.selectAllTree(null, user.getProvince(), user.getCity(), user.getArea());
+				organizations = getTreeOfCredentials(organizations);
+				if (organizations.size() > 0) {
+					for (WebScOrganization organization : organizations) {
+						DistTree areaDist = new DistTree();		// 区/县级医疗机构
+						DistTree cityDist = new DistTree();		// 市级医疗机构
+						DistTree provinceDist = new DistTree();	// 省级医疗机构
+						DistTree superDist = new DistTree();	// 医疗机构的根节点
+						if (organization.getArea() != null) {
+							areaDist.setId(organization.getArea());
+							areaDist.setParentId(organization.getOrgPid());
+							areaDist.setName(district.getDistrictMap().get(organization.getArea()).getName());
+							areaDist.setDistType(DistType.COUNTY.getCode());
+							
+							WebScOrganization cityOrganization = organizationMapper.selectByPrimaryKey(organization.getOrgPid());
+							cityDist.setId(cityOrganization.getOrgId());
+							cityDist.setParentId(cityOrganization.getOrgPid());
+							cityDist.setName(district.getDistrictMap().get(cityOrganization.getCity()).getName());
+							cityDist.setDistType(DistType.COUNTY.getCode());
+							
+							provinceDist.setId(cityOrganization.getOrgPid());
+							provinceDist.setParentId(cityOrganization.getRootId());
+							provinceDist.setName(district.getDistrictMap().get(cityOrganization.getProvince()).getName());
+							provinceDist.setDistType(DistType.COUNTY.getCode());
+							
+							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(cityOrganization.getRootId());
+							superDist.setId(rootOrganization.getOrgId());
+							superDist.setParentId(rootOrganization.getOrgPid());
+							superDist.setName(rootOrganization.getOrgName());
+							superDist.setDistType(DistType.COUNTY.getCode());
+							
+							dists.add(superDist);
+							dists.add(provinceDist);
+							dists.add(cityDist);
+							dists.add(areaDist);
+						} else if (organization.getCity() != null) {
+							cityDist.setId(organization.getOrgId());
+							cityDist.setParentId(organization.getOrgPid());
+							cityDist.setName(district.getDistrictMap().get(organization.getCity()).getName());
+							cityDist.setDistType(DistType.CITY.getCode());
+							
+							provinceDist.setId(organization.getOrgPid());
+							provinceDist.setParentId(organization.getRootId());
+							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setDistType(DistType.CITY.getCode());
+							
+							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
+							superDist.setId(rootOrganization.getOrgId());
+							superDist.setParentId(rootOrganization.getOrgPid());
+							superDist.setName(rootOrganization.getOrgName());
+							superDist.setDistType(DistType.CITY.getCode());
+							
+							dists.add(superDist);
+							dists.add(provinceDist);
+							dists.add(cityDist);
+							dists = convert(organization.getChildren(), dists);
+						} else if (organization.getProvince() != null) {
+							provinceDist.setId(organization.getOrgId());
+							provinceDist.setParentId(organization.getOrgPid());
+							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setDistType(DistType.PROVINCE.getCode());
+							
+							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
+							superDist.setId(rootOrganization.getOrgId());
+							superDist.setParentId(rootOrganization.getOrgPid());
+							superDist.setName(rootOrganization.getOrgName());
+							superDist.setDistType(DistType.PROVINCE.getCode());
+							
+							dists.add(superDist);
+							dists.add(provinceDist);
+							dists = convert(organization.getChildren(), dists);
+						} else {
+							dists = convert(organizations, dists);
+							break;
+						}
+					}
+				}
+				break;
+			case YLJGGLY:
+				organizations = organizationMapper.selectAllTree(user.getRoleTypeId(), user.getProvince(), user.getCity(), user.getArea());
+				if (organizations.size() > 0) {
+					for (WebScOrganization organization : organizations) {
+						DistTree cityDist = new DistTree();		// 市级医疗机构
+						DistTree provinceDist = new DistTree();	// 省级医疗机构
+						DistTree superDist = new DistTree();	// 医疗机构的根节点
+						if (user.getArea() != null) {
+							WebScOrganization cityOrganization = organizationMapper.selectByPrimaryKey(organization.getOrgPid());
+							cityDist.setId(cityOrganization.getOrgId());
+							cityDist.setParentId(cityOrganization.getOrgPid());
+							cityDist.setName(district.getDistrictMap().get(cityOrganization.getCity()).getName());
+							cityDist.setDistType(DistType.COUNTY.getCode());
+							
+							provinceDist.setId(cityOrganization.getOrgPid());
+							provinceDist.setParentId(cityOrganization.getRootId());
+							provinceDist.setName(district.getDistrictMap().get(cityOrganization.getProvince()).getName());
+							provinceDist.setDistType(DistType.COUNTY.getCode());
+							
+							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(cityOrganization.getRootId());
+							superDist.setId(rootOrganization.getOrgId());
+							superDist.setParentId(rootOrganization.getOrgPid());
+							superDist.setName(rootOrganization.getOrgName());
+							superDist.setDistType(DistType.COUNTY.getCode());
+							
+							dists.add(superDist);
+							dists.add(provinceDist);
+							dists.add(cityDist);
+						} else if (user.getCity() != null) {
+							provinceDist.setId(organization.getOrgPid());
+							provinceDist.setParentId(organization.getRootId());
+							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setDistType(DistType.CITY.getCode());
+							
+							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
+							superDist.setId(rootOrganization.getOrgId());
+							superDist.setParentId(rootOrganization.getOrgPid());
+							superDist.setName(rootOrganization.getOrgName());
+							superDist.setDistType(DistType.CITY.getCode());
+							
+							dists.add(superDist);
+							dists.add(provinceDist);
+						} else if (user.getProvince() != null) {
+							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
+							superDist.setId(rootOrganization.getOrgId());
+							superDist.setParentId(rootOrganization.getOrgPid());
+							superDist.setName(rootOrganization.getOrgName());
+							superDist.setDistType(DistType.PROVINCE.getCode());
+							
+							dists.add(superDist);
+						}
+						dists = convert(organizations, dists);
+						break;
+					}
+				}
+				break;
+			default:
+				break;
+		}
+		return dists;
+	}
+	
+	private List<DistTree> convert(List<WebScOrganization> organizations, List<DistTree> dists) {
+		if (organizations.size() > 0) {
+			for (WebScOrganization organization : organizations) {
+				if (organization.getLeaf() != 1) {
+					DistTree dist = new DistTree();
+					if (organization.getArea() != null) {
+						dist.setId(organization.getOrgId());
+						dist.setParentId(organization.getOrgPid());
+						dist.setName(district.getDistrictMap().get(organization.getArea()).getName());
+						dist.setDistType(DistType.COUNTY.getCode());
+						dists.add(dist);
+					} else if (organization.getCity() != null) {
+						dist.setId(organization.getOrgId());
+						dist.setParentId(organization.getOrgPid());
+						dist.setName(district.getDistrictMap().get(organization.getCity()).getName());
+						dist.setDistType(DistType.CITY.getCode());
+						dists.add(dist);
+					} else if (organization.getProvince() != null) {
+						dist.setId(organization.getOrgId());
+						dist.setParentId(organization.getOrgPid());
+						dist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+						dist.setDistType(DistType.PROVINCE.getCode());
+						dists.add(dist);
+					} else {
+						dist.setId(organization.getOrgId());
+						dist.setParentId(organization.getOrgPid());
+						dist.setName(organization.getOrgName());
+						dist.setDistType(DistType.STATE.getCode());
+						dists.add(dist);
+					}
+				}
+				if (organization.getChildren().size() > 0) {
+					convert(organization.getChildren(), dists);
+				}
+			}
+		}
+		return dists;
 	}
 	
 	public int insert(WebScOrganization wso) {

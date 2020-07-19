@@ -658,6 +658,9 @@ layui.define(["laydate","laytpl","table","layer","tableEdit","form"],function(ex
             if(options && options.done){
                 this._done = options.done;
             }
+            if(options && options.where) {
+            	this.config.where = options.where;
+            }
             this.render(this.config);
         }
         /**

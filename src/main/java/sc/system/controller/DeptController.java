@@ -59,8 +59,26 @@ public class DeptController {
 	 */
 	@GetMapping("/tree")
 	@ResponseBody
-	public ResultBean tree() {
-		return ResultBean.success(deptService.getTree());
+	public ResultBean tree(@RequestParam(value = "deptId", required = false) String deptId) {
+		return ResultBean.success(deptService.getTree(deptId));
+	}
+	
+	@GetMapping("/dist/tree")
+	@ResponseBody
+	public ResultBean distTree() {
+		return ResultBean.success(deptService.getDistTree());
+	}
+	
+	/**
+	 * 查询当前节点及子节点
+	 * 仅city节点可选中
+	 * @param parentId
+	 * @return
+	 */
+	@GetMapping("/tree/city")
+	@ResponseBody
+	public ResultBean cityTree() {
+		return ResultBean.success(deptService.getCityTree());
 	}
 	
 	/**

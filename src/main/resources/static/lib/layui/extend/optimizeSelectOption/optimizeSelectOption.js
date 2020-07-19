@@ -25,7 +25,7 @@
     });
   }
 }(function (modelName) {
-  var version = '0.1.9';
+  var version = '0.2.0';
   var $ = layui.$;
   var form = layui.form;
   var layer = layui.layer;
@@ -114,14 +114,9 @@
       }).join(',')
       , function (event) {
         layui.stope(event);
-        // return;
         close();
-        // var titleElem = $(this);
         var triggerElem = $(this);
         var titleElem = triggerElem;
-        // if (!titleElem.parent().hasClass('layui-form-selected') && !titleElem.parent().hasClass('xm-form-select')) {
-        //   return;
-        // }
         var dlElem = typeof options.dlElem === 'function' ? options.dlElem(triggerElem) : titleElem.next();
         // var selectElem = titleElem.parent().prev();
         var selectElem = titleElem.parent().prev();
@@ -136,7 +131,11 @@
           } else {
             topTemp += parseFloat(dlElem.css('top'));
           }
-          // console.log(topTemp, leftTemp);
+          if (topTemp + dlElem.outerHeight() > window.top.innerHeight && !selectupFlag) {
+            // 出现原始的form表单判断向下弹出，但是最终弹出超出窗口下边界的情形的处理
+            selectupFlag = true;
+            topTemp -= (dlElem.outerHeight() + (2 * parseFloat(dlElem.css('top')) - titleElem.outerHeight()));
+          }
           return {
             top: topTemp,
             left: leftTemp

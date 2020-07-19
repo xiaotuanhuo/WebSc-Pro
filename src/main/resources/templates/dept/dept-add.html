@@ -12,6 +12,8 @@
     <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/animate.min.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/dtree.css}" />
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/font/dtreefont.css}">
 </head>
 
 <body>
@@ -32,46 +34,51 @@
 							<label for="deptName" class="layui-form-label">集团名称</label>
 							<div class="layui-input-block">
 								<input type="text" id="deptName" name="deptName"
-									lay-verify="required" lay-vertype="tips" autocomplete="off"
-									placeholder="请输入集团名称" class="layui-input">
+									th:value="${dept?.name}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" placeholder="请输入集团名称"
+									class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
 							<label for="deptAddress" class="layui-form-label">集团地址</label>
 							<div class="layui-input-block">
 								<input type="text" id="deptAddress" name="deptAddress"
-									lay-verify="required" lay-vertype="tips" autocomplete="off"
-									placeholder="请输入集团地址" class="layui-input">
+									th:value="${dept?.deptAddress}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" placeholder="请输入集团地址"
+									class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
 							<label for="deptTel" class="layui-form-label">集团电话</label>
 							<div class="layui-input-block">
 								<input type="text" id="deptTel" name="deptTel"
-									lay-verify="required" lay-vertype="tips" autocomplete="off"
-									placeholder="请输入集团电话" class="layui-input">
+									th:value="${dept?.deptTel}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" placeholder="请输入集团电话"
+									class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
 							<label for="eeptLeader" class="layui-form-label">负责人</label>
 							<div class="layui-input-block">
 								<input type="text" id="eeptLeader" name="eeptLeader"
-									lay-verify="required" lay-vertype="tips" autocomplete="off"
-									placeholder="请输入集团负责人" class="layui-input">
+									th:value="${dept?.leaderName}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" placeholder="请输入集团负责人"
+									class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
 							<label for="leaderTel" class="layui-form-label">负责人电话</label>
 							<div class="layui-input-block">
 								<input type="text" id="leaderTel" name="leaderTel"
-									lay-verify="required" lay-vertype="tips" autocomplete="off"
-									placeholder="请输入负责人电话" class="layui-input">
+									th:value="${dept?.leaderTel}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" placeholder="请输入负责人电话"
+									class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
 							<div class="layui-input-block"
 								style="margin-left: 0; text-align: center;">
-								<!-- 总部默认父节点 -->
+								<!-- 总部默认父节点，新增分部集团时覆盖 -->
 								<input type="hidden" id="parentId" name="parentId" placeholder="0">
 								<button class="layui-btn layui-btn-blue" lay-submit=""
 									data-th-lay-filter="addHead">增加</button>

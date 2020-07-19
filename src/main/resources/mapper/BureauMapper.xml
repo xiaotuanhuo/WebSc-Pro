@@ -42,6 +42,14 @@
     from WSC_BUREAU
     where bureau_id = #{bureauId,jdbcType=VARCHAR}
   </select>
+  
+  <select id="selectSuperBureau" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+      bureau_id, bureau_pid, bureau_name
+    from WSC_BUREAU
+    where bureau_pid = '0' limit 1
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from WSC_BUREAU
     where bureau_id = #{bureauId,jdbcType=VARCHAR}
@@ -201,24 +209,31 @@
         from WSC_BUREAU wb
         <where>
             <choose>
-            	<when test="area_code != null and area_code != ''">
-            		AND wb.area = #{area_code}
+            	<when test="bureau_id != null and bureau_id != ''">
+            		AND wb.bureau_id = #{bureau_id}
             	</when>
             	<otherwise>
             		<choose>
-            			<when test="city_code != null and city_code != ''">
-		               		AND wb.city = #{city_code} AND wb.area is null
-		               	</when>
-		               	<otherwise>
-		               		<choose>
-		               			<when test="province_code != null and province_code != ''">
-			                		AND wb.province = #{province_code} AND wb.city is null
-			                	</when>
-			                	<otherwise>
-			                		AND wb.province is null
-			                	</otherwise>
-		               		</choose>
-		               	</otherwise>
+            			<when test="area_code != null and area_code != ''">
+		            		AND wb.area = #{area_code}
+		            	</when>
+		            	<otherwise>
+		            		<choose>
+		            			<when test="city_code != null and city_code != ''">
+				               		AND wb.city = #{city_code} AND wb.area is null
+				               	</when>
+				               	<otherwise>
+				               		<choose>
+				               			<when test="province_code != null and province_code != ''">
+					                		AND wb.province = #{province_code} AND wb.city is null
+					                	</when>
+					                	<otherwise>
+					                		AND wb.province is null
+					                	</otherwise>
+				               		</choose>
+				               	</otherwise>
+		            		</choose>
+		            	</otherwise>
             		</choose>
             	</otherwise>
             </choose>

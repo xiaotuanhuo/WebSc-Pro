@@ -66,12 +66,6 @@
         from WSC_ROLE
     </select>
     
-    <select id="selectRolesForAddEidtUser" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"></include>
-        from WSC_ROLE
-    </select>
-    
     <select id="selectRolesByUser" resultMap="BaseResultMap">
 	    select role_id, role_name from WSC_ROLE wr 
 	    <where>

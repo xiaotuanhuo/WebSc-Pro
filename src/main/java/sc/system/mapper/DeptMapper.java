@@ -22,6 +22,13 @@ public interface DeptMapper {
 			@Param("city_code") String city);
     
     List<WebScDept> selectByParentId(@Param("parentId") String parentId);
+    
+    /**
+     * 查询出医疗集团根节点
+     * 医疗集团根节点的父节点默认是0 且只有一个医疗集团根节点
+     * @return
+     */
+    WebScDept selectSuperDept();
 
     /**
      * 查询当前节点及其子孙节点（树形）

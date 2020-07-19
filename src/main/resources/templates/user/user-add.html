@@ -13,6 +13,7 @@
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/animate.min.css}">
     <link rel="stylesheet" th:href="@{/lib/layui/extend/dtree.css}" />
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/font/dtreefont.css}">
 </head>
 
 <body>
@@ -200,11 +201,11 @@
 						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 5) {
 						// 选择医生角色时加载当前用户所属组织及其下属组织
-						loadTree('/dept/tree');
+						loadTree('/dept/tree/city');
 						showForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 6) {
 						// 选择护士角色时加载当前用户所属组织及其下属组织
-						loadTree('/dept/tree');
+						loadTree('/dept/tree/city');
 						hideForDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 7) {
 						// 选择超级管理员时加载医疗集团根节点
@@ -227,7 +228,7 @@
 			
 			// 根据当前用户角色加载可操作角色列表
 			$.ajax({
-				url: '/role/list/' + $('#roleId').text(),
+				url: '/role/list/' + $('#currentRoleId').text(),
 				type: 'GET',
 				dataType: 'json',
 				success:function(response) {
@@ -256,7 +257,8 @@
 							statusCode: 0,
 							treeId: 'id',
 							title: 'name',
-							parentId: 'parentId'
+							parentId: 'parentId',
+							disabled: 'disabled'
 		                }
 					});
 					firstRender = false;

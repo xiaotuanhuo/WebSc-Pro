@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import sc.common.annotation.OperationLog;
@@ -37,9 +38,11 @@ public class OrganizationController {
 	@OperationLog("获取医疗机构列表")
 	@GetMapping("/list")
 	@ResponseBody
-	public PageResultBean<WebScOrganization> getList(WebScOrganization wso) {
+	public PageResultBean<WebScOrganization> getList(WebScOrganization wso,
+			@RequestParam(value = "organizationId", required = false) String organizationId,
+			@RequestParam(value = "distType", required = false) String distType) {
 		// 数据查询
-		List<WebScOrganization> wsoList = organizationService.getList(wso);
+		List<WebScOrganization> wsoList = organizationService.getList(wso, organizationId, distType);
 		return new PageResultBean<>(wsoList.size(), wsoList);
 	}
 	
@@ -59,6 +62,12 @@ public class OrganizationController {
 	@ResponseBody
 	public ResultBean tree() {
 		return ResultBean.success(organizationService.selectTree());
+	}
+	
+	@GetMapping("/dist/tree")
+	@ResponseBody
+	public ResultBean distTree() {
+		return ResultBean.success(organizationService.getDistTree());
 	}
 	
 	@OperationLog("新增医疗机构")

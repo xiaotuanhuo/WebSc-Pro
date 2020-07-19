@@ -8,6 +8,8 @@
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/animate.min.css}">
     <link rel="stylesheet" th:href="@{/iconfont/iconfont.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/dtree.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/font/dtreefont.css}">
 </head>
 
 <style>
@@ -152,8 +154,9 @@
 			
 			var DTree = dtree.render({
 				elem: "#" + treeId,
-				url: '/dept/tree',
+				url: '/dept/dist/tree',
 				dataStyle: "layuiStyle",
+				dataFormat: "list",
 				initLevel: 2,   // 初始打开节点级别
 				method: "GET",
 				dot: false,     // 圆点是否显示
@@ -161,10 +164,10 @@
 					statusCode: 0,
 					treeId: "id",
 					parentId: "parentId",
-					title: "name"
+					title: "name",
+					basicData: "institution"
 				}
 			});
-			
 			var treeTable = tableTree.render({
 				elem: '#deptTable',
 				id:'tableTree',
@@ -195,13 +198,13 @@
 			});
 			
 			dtree.on("node('deptTree')", function (obj) {
-				table.reload('dept-table', {
+				treeTable.reload({
 					where: {
-						parentId: obj.param.nodeId
+						deptId: obj.param.basicData
 					}
 				});
-				parentDeptId = obj.param.nodeId;
-				$("#card-header").html("[" + obj.param.context + "]的子部门");
+				$("#deptName").val('');
+				$("#card-header").html("[" + obj.param.context + "]的子机构");
 			});
 			
 			// 工具条点击事件
