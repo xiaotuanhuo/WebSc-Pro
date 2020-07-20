@@ -54,6 +54,7 @@ public class OrganizationService {
 					break;
 				case COUNTY:
 					userArea = organization.getArea();
+					break;
 				default:
 					break;
 			}
@@ -62,15 +63,15 @@ public class OrganizationService {
 			case XTGLY:
 			case CJGLY:
 			case QYGLY:
-				wsoList = organizationMapper.selectListByAuthData2(rootId, false, userProvince, userCity, userArea, wso);
+				wsoList = organizationMapper.selectListByAuthData(rootId, false, userProvince, userCity, userArea, wso);
 				break;
 			case WJJGLY:
-				wsoList = organizationMapper.selectListByAuthData2(rootId, true, userProvince, userCity, userArea, wso);
+				wsoList = organizationMapper.selectListByAuthData(rootId, true, userProvince, userCity, userArea, wso);
 				break;
 			case YLJGGLY:
 				// 查询当前用户的医疗机构根节点
 				WebScOrganization userOrganization = organizationMapper.selectByPrimaryKey(user.getRoleTypeId());
-				wsoList = organizationMapper.selectListByAuthData2(userOrganization.getRootId(), false, userProvince,
+				wsoList = organizationMapper.selectListByAuthData(userOrganization.getRootId(), false, userProvince,
 					userCity, userArea, wso);
 				break;
 			default:
@@ -162,17 +163,20 @@ public class OrganizationService {
 							cityDist.setId(organization.getOrgId());
 							cityDist.setParentId(organization.getOrgPid());
 							cityDist.setName(district.getDistrictMap().get(organization.getCity()).getName());
+							cityDist.setInstitution(organization.getOrgId());
 							cityDist.setDistType(DistType.CITY.getCode());
 							
 							provinceDist.setId(organization.getOrgPid());
 							provinceDist.setParentId(organization.getRootId());
 							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setInstitution(organization.getOrgId());
 							provinceDist.setDistType(DistType.CITY.getCode());
 							
 							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
 							superDist.setId(rootOrganization.getOrgId());
 							superDist.setParentId(rootOrganization.getOrgPid());
 							superDist.setName(rootOrganization.getOrgName());
+							superDist.setInstitution(organization.getOrgId());
 							superDist.setDistType(DistType.CITY.getCode());
 							
 							dists.add(superDist);
@@ -183,12 +187,14 @@ public class OrganizationService {
 							provinceDist.setId(organization.getOrgId());
 							provinceDist.setParentId(organization.getOrgPid());
 							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setInstitution(organization.getOrgId());
 							provinceDist.setDistType(DistType.PROVINCE.getCode());
 							
 							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
 							superDist.setId(rootOrganization.getOrgId());
 							superDist.setParentId(rootOrganization.getOrgPid());
 							superDist.setName(rootOrganization.getOrgName());
+							superDist.setInstitution(organization.getOrgId());
 							superDist.setDistType(DistType.PROVINCE.getCode());
 							
 							dists.add(superDist);
@@ -211,23 +217,27 @@ public class OrganizationService {
 							areaDist.setId(organization.getArea());
 							areaDist.setParentId(organization.getOrgPid());
 							areaDist.setName(district.getDistrictMap().get(organization.getArea()).getName());
+							areaDist.setInstitution(organization.getOrgId());
 							areaDist.setDistType(DistType.COUNTY.getCode());
 							
 							WebScOrganization cityOrganization = organizationMapper.selectByPrimaryKey(organization.getOrgPid());
 							cityDist.setId(cityOrganization.getOrgId());
 							cityDist.setParentId(cityOrganization.getOrgPid());
 							cityDist.setName(district.getDistrictMap().get(cityOrganization.getCity()).getName());
+							cityDist.setInstitution(organization.getOrgId());
 							cityDist.setDistType(DistType.COUNTY.getCode());
 							
 							provinceDist.setId(cityOrganization.getOrgPid());
 							provinceDist.setParentId(cityOrganization.getRootId());
 							provinceDist.setName(district.getDistrictMap().get(cityOrganization.getProvince()).getName());
+							provinceDist.setInstitution(organization.getOrgId());
 							provinceDist.setDistType(DistType.COUNTY.getCode());
 							
 							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(cityOrganization.getRootId());
 							superDist.setId(rootOrganization.getOrgId());
 							superDist.setParentId(rootOrganization.getOrgPid());
 							superDist.setName(rootOrganization.getOrgName());
+							superDist.setInstitution(organization.getOrgId());
 							superDist.setDistType(DistType.COUNTY.getCode());
 							
 							dists.add(superDist);
@@ -238,16 +248,19 @@ public class OrganizationService {
 							cityDist.setId(organization.getOrgId());
 							cityDist.setParentId(organization.getOrgPid());
 							cityDist.setName(district.getDistrictMap().get(organization.getCity()).getName());
+							cityDist.setInstitution(organization.getOrgId());
 							cityDist.setDistType(DistType.CITY.getCode());
 							
 							provinceDist.setId(organization.getOrgPid());
 							provinceDist.setParentId(organization.getRootId());
 							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setInstitution(organization.getOrgId());
 							provinceDist.setDistType(DistType.CITY.getCode());
 							
 							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
 							superDist.setId(rootOrganization.getOrgId());
 							superDist.setParentId(rootOrganization.getOrgPid());
+							superDist.setInstitution(organization.getOrgId());
 							superDist.setName(rootOrganization.getOrgName());
 							superDist.setDistType(DistType.CITY.getCode());
 							
@@ -259,12 +272,14 @@ public class OrganizationService {
 							provinceDist.setId(organization.getOrgId());
 							provinceDist.setParentId(organization.getOrgPid());
 							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setInstitution(organization.getOrgId());
 							provinceDist.setDistType(DistType.PROVINCE.getCode());
 							
 							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
 							superDist.setId(rootOrganization.getOrgId());
 							superDist.setParentId(rootOrganization.getOrgPid());
 							superDist.setName(rootOrganization.getOrgName());
+							superDist.setInstitution(organization.getOrgId());
 							superDist.setDistType(DistType.PROVINCE.getCode());
 							
 							dists.add(superDist);
@@ -289,17 +304,21 @@ public class OrganizationService {
 							cityDist.setId(cityOrganization.getOrgId());
 							cityDist.setParentId(cityOrganization.getOrgPid());
 							cityDist.setName(district.getDistrictMap().get(cityOrganization.getCity()).getName());
+							cityDist.setInstitution(organization.getOrgId());
 							cityDist.setDistType(DistType.COUNTY.getCode());
 							
 							provinceDist.setId(cityOrganization.getOrgPid());
 							provinceDist.setParentId(cityOrganization.getRootId());
 							provinceDist.setName(district.getDistrictMap().get(cityOrganization.getProvince()).getName());
+							provinceDist.setInstitution(organization.getOrgId());
+							provinceDist.setInstitution(organization.getOrgId());
 							provinceDist.setDistType(DistType.COUNTY.getCode());
 							
 							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(cityOrganization.getRootId());
 							superDist.setId(rootOrganization.getOrgId());
 							superDist.setParentId(rootOrganization.getOrgPid());
 							superDist.setName(rootOrganization.getOrgName());
+							superDist.setInstitution(organization.getOrgId());
 							superDist.setDistType(DistType.COUNTY.getCode());
 							
 							dists.add(superDist);
@@ -309,12 +328,14 @@ public class OrganizationService {
 							provinceDist.setId(organization.getOrgPid());
 							provinceDist.setParentId(organization.getRootId());
 							provinceDist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+							provinceDist.setInstitution(organization.getOrgId());
 							provinceDist.setDistType(DistType.CITY.getCode());
 							
 							WebScOrganization rootOrganization = organizationMapper.selectByPrimaryKey(organization.getRootId());
 							superDist.setId(rootOrganization.getOrgId());
 							superDist.setParentId(rootOrganization.getOrgPid());
 							superDist.setName(rootOrganization.getOrgName());
+							superDist.setInstitution(organization.getOrgId());
 							superDist.setDistType(DistType.CITY.getCode());
 							
 							dists.add(superDist);
@@ -324,6 +345,7 @@ public class OrganizationService {
 							superDist.setId(rootOrganization.getOrgId());
 							superDist.setParentId(rootOrganization.getOrgPid());
 							superDist.setName(rootOrganization.getOrgName());
+							superDist.setInstitution(organization.getOrgId());
 							superDist.setDistType(DistType.PROVINCE.getCode());
 							
 							dists.add(superDist);
@@ -348,24 +370,28 @@ public class OrganizationService {
 						dist.setId(organization.getOrgId());
 						dist.setParentId(organization.getOrgPid());
 						dist.setName(district.getDistrictMap().get(organization.getArea()).getName());
+						dist.setInstitution(organization.getOrgId());
 						dist.setDistType(DistType.COUNTY.getCode());
 						dists.add(dist);
 					} else if (organization.getCity() != null) {
 						dist.setId(organization.getOrgId());
 						dist.setParentId(organization.getOrgPid());
 						dist.setName(district.getDistrictMap().get(organization.getCity()).getName());
+						dist.setInstitution(organization.getOrgId());
 						dist.setDistType(DistType.CITY.getCode());
 						dists.add(dist);
 					} else if (organization.getProvince() != null) {
 						dist.setId(organization.getOrgId());
 						dist.setParentId(organization.getOrgPid());
 						dist.setName(district.getDistrictMap().get(organization.getProvince()).getName());
+						dist.setInstitution(organization.getOrgId());
 						dist.setDistType(DistType.PROVINCE.getCode());
 						dists.add(dist);
 					} else {
 						dist.setId(organization.getOrgId());
 						dist.setParentId(organization.getOrgPid());
 						dist.setName(organization.getOrgName());
+						dist.setInstitution(organization.getOrgId());
 						dist.setDistType(DistType.STATE.getCode());
 						dists.add(dist);
 					}

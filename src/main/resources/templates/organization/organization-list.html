@@ -201,20 +201,20 @@
 				dataFormat: "list",
 				icon: "-1",
 				initLevel: "2",
+				record: true,
 				response: {
 					statusCode: 0,
 					treeId: 'id',
 					title: 'name',
-					parentId: 'parentId',
-					basicData: "distType"
+					parentId: 'parentId'
                 }
 			});
 			
 			dtree.on("node('organziationTree')", function (obj) {
 				table.reload('organization-table', {
 					where: {
-						organizationId: obj.param.nodeId,
-						distType: obj.param.basicData
+						organizationId: obj.param.recordData.institution,
+						distType: obj.param.recordData.distType
 					}
 				});
 				console.log(111);
