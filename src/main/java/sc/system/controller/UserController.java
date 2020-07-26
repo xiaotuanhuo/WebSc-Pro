@@ -120,4 +120,20 @@ public class UserController {
 		userService.updatePasswordByUserId(userId, password);
 		return ResultBean.success();
 	}
+	
+	@OperationLog("锁定用户")
+	@PutMapping("/lock/{userId}")
+	@ResponseBody
+	public ResultBean lock(@PathVariable("userId") int userId) {
+		userService.lock(userId);
+		return ResultBean.success();
+	}
+	
+	@OperationLog("激活用户")
+	@PutMapping("/unlock/{userId}")
+	@ResponseBody
+	public ResultBean unlock(@PathVariable("userId") int userId) {
+		userService.unlock(userId);
+		return ResultBean.success();
+	}
 }

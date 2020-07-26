@@ -92,7 +92,7 @@ public class LoginNameRealm extends AuthorizingRealm {
             throw new UnknownAccountException();
         }
         // 如果账号被锁定, 则抛出异常, (超级管理员除外)
-        if (ShiroUtil.USER_LOCK.equals(user.getStatus()) && !shiroActionProperties.getSuperAdminUsername().equals(loginname)) {
+        if (ShiroUtil.LOCK.equals(user.getStatus()) && !shiroActionProperties.getSuperAdminUsername().equals(loginname)) {
             throw new LockedAccountException();
         }
         return new SimpleAuthenticationInfo(user, user.getLoginPwd(), ByteSource.Util.bytes(user.getSalt()), super.getName());

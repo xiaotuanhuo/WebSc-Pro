@@ -24,10 +24,17 @@ import org.springframework.transaction.annotation.Transactional;
 import sc.common.constants.RoleEnum;
 import sc.common.exception.DuplicateNameException;
 import sc.common.shiro.ShiroActionProperties;
+import sc.common.util.ShiroUtil;
 import sc.common.util.TreeUtil;
+import sc.system.mapper.BureauMapper;
+import sc.system.mapper.DeptMapper;
+import sc.system.mapper.OrganizationMapper;
 import sc.system.mapper.UserMapper;
 import sc.system.mapper.UserRoleMapper;
+import sc.system.model.WebScBureau;
+import sc.system.model.WebScDept;
 import sc.system.model.WebScMenu;
+import sc.system.model.WebScOrganization;
 import sc.system.model.WebScUser;
 import sc.system.model.vo.UserVO;
 
@@ -41,6 +48,15 @@ public class UserService {
 	
 	@Resource
 	private UserMapper userMapper;
+	
+	@Resource
+	private DeptMapper deptMapper;
+	
+	@Resource
+	private BureauMapper bureauMapper;
+	
+	@Resource
+	private OrganizationMapper organizationMapper;
 	
 	@Resource
 	private MenuService menuService;
@@ -95,17 +111,57 @@ public class UserService {
 		return user.getUserId();
 	}
 	
+	public void lock(int userId) {
+		WebScUser user = userMapper.selectByPrimaryKey(userId);
+		user.setStatus(ShiroUtil.LOCK);
+		userMapper.updateByPrimaryKey(user);
+	}
+	
+	public void unlock(int userId) {
+		// 校验其所属机构是否处于锁定状态
+		WebScUser user = userMapper.selectByPrimaryKey(userId);
+		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
+			case CJGLY:
+			case QYGLY:
+			case YS:
+			case HS:
+			case QYDDLRY:
+				WebScDept dept = deptMapper.selectByPrimaryKey(user.getRoleTypeId());
+				if (dept.getStatus().equals(ShiroUtil.LOCK)) {
+					throw new DuplicateNameException("所属机构已锁定，无法激活");
+				}
+				break;
+			case YLJGGLY:
+			case JGDDLRY:
+				WebScOrganization organization = organizationMapper.selectByPrimaryKey(user.getRoleTypeId());
+				if (organization.getStatus().equals(ShiroUtil.LOCK)) {
+					throw new DuplicateNameException("所属机构已锁定，无法激活");
+				}
+				break;
+			case WJJGLY:
+				WebScBureau bureau = bureauMapper.selectByPrimaryKey(user.getRoleTypeId());
+				if (bureau.getStatus().equals(ShiroUtil.LOCK)) {
+					throw new DuplicateNameException("所属机构已锁定，无法激活");
+				}
+				break;
+			default:
+				break;
+		}
+		user.setStatus(ShiroUtil.UNLOCK);
+		userMapper.updateByPrimaryKey(user);
+	}
+	
 	public void updateLastLoginTimeByUsername(String loginname) {
 		userMapper.updateLastLoginTimeByLoginName(loginname);
 	}
 	
 	public boolean disableUserByID(Integer id) {
-		// offlineByUserId(id); // 加上这段代码, 禁用用户后, 会将当前在线的用户立即踢出.
-		return userMapper.updateStatusByPrimaryKey(id, 0) == 1;
+		offlineByUserId(id); // 加上这段代码, 禁用用户后, 会将当前在线的用户立即踢出.
+		return userMapper.updateStatusByPrimaryKey(id, "0") == 1;
 	}
 	
 	public boolean enableUserByID(Integer id) {
-		return userMapper.updateStatusByPrimaryKey(id, 1) == 1;
+		return userMapper.updateStatusByPrimaryKey(id, "1") == 1;
 	}
 	
 	/**
@@ -135,13 +191,13 @@ public class UserService {
 	 */
 	public void checkLoginNameExistOnCreate(String loginname) {
 		if (userMapper.countByLoginName(loginname) > 0) {
-			throw new DuplicateNameException();
+			throw new DuplicateNameException("用户名已存在");
 		}
 	}
 	
 	public void checkLoginNameExistOnUpdate(WebScUser user) {
 		if (userMapper.countByLoginNameNotIncludeUserId(user.getLoginName(), user.getUserId()) > 0) {
-			throw new DuplicateNameException();
+			throw new DuplicateNameException("用户名已存在");
 		}
 	}
 	

@@ -8,8 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 /**
@@ -33,6 +31,12 @@ public class DeptController {
 	@GetMapping
 	public String add(Model model) {
 		return "dept/dept-add";
+	}
+	
+	@GetMapping("/{id}")
+	public String update(@PathVariable("id") String deptId, Model model) {
+		model.addAttribute("dept", deptService.getByDeptId(deptId));
+		return "dept/dept-edit";
 	}
 	
 	@GetMapping("/detail/{deptId}")
@@ -113,10 +117,33 @@ public class DeptController {
 		return ResultBean.success(deptService.getUnleafTree());
 	}
 	
-	@OperationLog("新增区域/维修点")
+	@OperationLog("新增医疗集团")
 	@PostMapping
 	@ResponseBody
 	public ResultBean add(WebScDept dept) {
 		return ResultBean.success(deptService.add(dept));
+	}
+	
+	@OperationLog("编辑医疗集团")
+	@PutMapping
+	@ResponseBody
+	public ResultBean update(WebScDept dept) {
+		return ResultBean.success(deptService.update(dept));
+	}
+	
+	@OperationLog("锁定医疗集团")
+	@PutMapping("/lock/{deptId}")
+	@ResponseBody
+	public ResultBean lock(@PathVariable("deptId") String deptId) {
+		deptService.lock(deptId);
+		return ResultBean.success();
+	}
+	
+	@OperationLog("激活医疗集团")
+	@PutMapping("/unlock/{deptId}")
+	@ResponseBody
+	public ResultBean unlock(@PathVariable("deptId") String deptId) {
+		deptService.unlock(deptId);
+		return ResultBean.success();
 	}
 }

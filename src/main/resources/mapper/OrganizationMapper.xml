@@ -16,6 +16,7 @@
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
         <result column="area" jdbcType="VARCHAR" property="area"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
     </resultMap>
     
     <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScOrganization">
@@ -32,6 +33,7 @@
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
         <result column="area" jdbcType="VARCHAR" property="area"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
         <collection property="children" ofType="sc.system.model.WebScOrganization" select="selectSubTree" column="{org_pid = org_id}"/>
     </resultMap>
     
@@ -48,14 +50,29 @@
 		leader_tel,
 		province,
 		city,
-		area
+		area,
+		status
     </sql>
     
     <select id="selectByPrimaryKey" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
-        from WSC_ORGANIZATION
-        where org_id = #{orgId,jdbcType=VARCHAR}
+         wo.org_id,
+         wo.org_pid,
+         wo.root_id,
+         wo.credentials,
+         wo.leaf,
+         wo.org_name,
+         wo.org_address,
+         wo.org_tel,
+         wo.leader_name,
+         wo.leader_tel,
+         wo.province,
+         wo.city,
+         wo.area,
+         wo.status,
+         rootOrg.org_name as rootName
+        from WSC_ORGANIZATION wo left join WSC_ORGANIZATION rootOrg on wo.root_id = rootOrg.org_id
+        where wo.org_id = #{orgId,jdbcType=VARCHAR}
         
     </select>
     
@@ -72,10 +89,188 @@
         order by org_id
     </select>
     
-    <select id="selectAll" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
+    <!-- <select id="selectAll" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from WSC_ORGANIZATION
+    </select> -->
+    
+    <!-- <select id="selectAll" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
+	    select 
+		    org.org_id,
+			org.org_pid,
+			org.credentials,
+			org.leaf,
+			org.org_name,
+			org.org_address,
+			org.org_tel,
+			org.leader_name,
+			org.leader_tel,
+			org.province,
+			org.city,
+			org.area,
+			rootOrg.org_name as porgName
+		from
+	        (select
+	        <include refid="Base_Column_List"/>
+	        from WSC_ORGANIZATION
+	        <where>
+	        	卫监局管理员只能查看具有麻醉资质的医疗机构
+	        	<if test="bureau">
+	        		AND credentials = '1'
+	        	</if>
+	        	医疗机构管理员查看所属机构下的医疗机构
+	        	<if test="orgPid != null and orgPid != ''">
+	        		AND org_pid = #{orgPid}
+	        	</if>
+	        	<choose>
+	        		当前用户所在行政区划范围
+	        		<when test="areaCode != null and areaCode != ''">
+	        			AND area = #{areaCode} AND leaf = 1
+	        		</when>
+	        		<otherwise>
+	        			<choose>
+	        				<when test="cityCode != null and cityCode != ''">
+	        					AND city = #{cityCode} AND leaf = 1
+	        				</when>
+	        				<otherwise>
+	        					<choose>
+	        						<when test="provinceCode != null and provinceCode != ''">
+	        							AND province = #{provinceCode}  AND leaf = 1
+	        						</when>
+	        						<otherwise>
+	        							 AND leaf = 1
+	        						</otherwise>
+	        					</choose>
+	        				</otherwise>
+	        			</choose>
+	        		</otherwise>
+	        	</choose>
+	        </where>) AS org left join WSC_ORGANIZATION rootOrg on org.org_pid = rootOrg.org_id
+	        
+	        <where>
+	            <if test="wso.orgName != null and wso.orgName != ''">
+	                AND org.org_name like CONCAT('%', #{wso.orgName, jdbcType=VARCHAR}, '%')
+	            </if>
+	            <if test="wso.province != null and wso.province != ''">
+	                AND org.province = #{wso.province}
+	            </if>
+	            <if test="wso.city != null and wso.city != ''">
+	                AND org.province = #{wso.city}
+	            </if>
+	            <if test="wso.area != null and wso.area != ''">
+	                AND org.area = #{wso.area}
+	            </if>
+	        </where>
+	        
+	        order by org.org_id
+    </select> -->
+    
+    <select id="selectAll" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
+	    select 
+		    org.org_id,
+			org.org_pid,
+			org.credentials,
+			org.leaf,
+			org.org_name,
+			org.org_address,
+			org.org_tel,
+			org.leader_name,
+			org.leader_tel,
+			org.province,
+			org.city,
+			org.area,
+			org.status,
+			rootOrg.org_name as rootName
+		from
+	        (select
+	        <include refid="Base_Column_List"/>
+	        from WSC_ORGANIZATION
+	        <where>
+	        	<!-- 卫监局管理员只能查看具有麻醉资质的医疗机构 -->
+	        	<if test="bureau">
+	        		AND credentials = '1'
+	        	</if>
+	        	<choose>
+	        		<!-- 医疗机构管理员角色查看当前医疗机构下的机构 -->
+	        		<when test="orgRole">
+	        			<choose>
+	        				<!-- 非叶子节点的医疗机构管理员 -->
+	        				<when test="root_id != null and root_id != ''">
+	        					AND root_id = #{root_id}
+	        					<choose>
+	        						<!-- 当前用户所在行政区划范围 -->
+					        		<when test="user.area != null and user.area != ''">
+					        			AND area = #{user.area} AND leaf = 1
+					        		</when>
+					        		<otherwise>
+					        			<choose>
+					        				<when test="user.city != null and user.city != ''">
+					        					AND city = #{user.city} AND leaf = 1
+					        				</when>
+					        				<otherwise>
+					        					<choose>
+					        						<when test="user.province != null and user.province != ''">
+					        							AND province = #{user.province}  AND leaf = 1
+					        						</when>
+					        						<otherwise>
+					        							 AND leaf = 1
+					        						</otherwise>
+					        					</choose>
+					        				</otherwise>
+					        			</choose>
+					        		</otherwise>
+	        					</choose>
+	        				</when>
+	        				<otherwise>
+	        					AND org_id = #{user.roleTypeId}
+	        				</otherwise>
+	        			</choose>
+	        		</when>
+	        		<otherwise>
+	        			<choose>
+			        		<when test="user.area != null and user.area != ''">
+			        			AND area = #{user.area} AND leaf = 1
+			        		</when>
+			        		<otherwise>
+			        			<choose>
+			        				<when test="user.city != null and user.city != ''">
+			        					AND city = #{user.city} AND leaf = 1
+			        				</when>
+			        				<otherwise>
+			        					<choose>
+			        						<when test="user.province != null and user.province != ''">
+			        							AND province = #{user.province}  AND leaf = 1
+			        						</when>
+			        						<otherwise>
+			        							 AND leaf = 1
+			        						</otherwise>
+			        					</choose>
+			        				</otherwise>
+			        			</choose>
+			        		</otherwise>
+	        			</choose>
+	        		</otherwise>
+	        	</choose>
+	        	
+	        </where>) AS org left join WSC_ORGANIZATION rootOrg on org.root_id = rootOrg.org_id
+	        
+	        <where>
+	            <if test="wso.orgName != null and wso.orgName != ''">
+	                AND org.org_name like CONCAT('%', #{wso.orgName, jdbcType=VARCHAR}, '%')
+	            </if>
+	            <if test="wso.province != null and wso.province != ''">
+	                AND org.province = #{wso.province}
+	            </if>
+	            <if test="wso.city != null and wso.city != ''">
+	                AND org.city = #{wso.city}
+	            </if>
+	            <if test="wso.area != null and wso.area != ''">
+	                AND org.area = #{wso.area}
+	            </if>
+	        </where>
+	        
+	        order by org.org_id
     </select>
     
     <insert id="insert" parameterType="sc.system.model.WebScOrganization" >
@@ -94,7 +289,8 @@
         	leader_tel = #{leaderTel,jdbcType=VARCHAR},
         	province = #{province,jdbcType=VARCHAR},
         	city = #{city,jdbcType=VARCHAR},
-        	area = #{area,jdbcType=VARCHAR}
+        	area = #{area,jdbcType=VARCHAR},
+        	status = #{status,jdbcType=VARCHAR}
         where org_id = #{orgId,jdbcType=VARCHAR}
     </update>
     
@@ -397,6 +593,15 @@
         order by da.org_id
     </select>
     
-    
+    <select id="countByName" resultType="java.lang.Integer">
+        select count(*)
+        from WSC_ORGANIZATION
+        <where>
+        	<if test="org_id != null and org_id != ''">
+        		org_id != #{org_id}
+        	</if>
+        	AND org_name = #{org_name}
+        </where>
+    </select>
     
 </mapper>

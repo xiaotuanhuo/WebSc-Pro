@@ -21,7 +21,7 @@
 	<div class="z-body animated fadeIn">
 		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
 			<ul class="layui-tab-title">
-				<shiro:hasRole name="cjgly">
+				<shiro:hasRole name="xtgly">
 					<li>集团总部</li>
 				</shiro:hasRole>
 				<li class="layui-this">集团分部</li>
@@ -31,55 +31,48 @@
 				<div class="layui-tab-item">
 					<form action="" method="post" class="layui-form layui-form-pane">
 						<div class="layui-form-item">
-							<label for="deptName" class="layui-form-label">集团名称</label>
+							<label for="headName" class="layui-form-label">集团名称</label>
 							<div class="layui-input-block">
-								<input type="text" id="deptName" name="deptName"
-									th:value="${dept?.name}" lay-verify="required"
-									lay-vertype="tips" autocomplete="off" placeholder="请输入集团名称"
-									class="layui-input">
+								<input type="text" id="headName" name="headName"
+									lay-verify="required" lay-vertype="tips" autocomplete="off"
+									placeholder="请输入集团名称" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
-							<label for="deptAddress" class="layui-form-label">集团地址</label>
+							<label for="headAddress" class="layui-form-label">集团地址</label>
 							<div class="layui-input-block">
-								<input type="text" id="deptAddress" name="deptAddress"
-									th:value="${dept?.deptAddress}" lay-verify="required"
-									lay-vertype="tips" autocomplete="off" placeholder="请输入集团地址"
-									class="layui-input">
+								<input type="text" id="headAddress" name="headAddress"
+									lay-verify="required" lay-vertype="tips" autocomplete="off"
+									placeholder="请输入集团地址" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
-							<label for="deptTel" class="layui-form-label">集团电话</label>
+							<label for="headTel" class="layui-form-label">集团电话</label>
 							<div class="layui-input-block">
-								<input type="text" id="deptTel" name="deptTel"
-									th:value="${dept?.deptTel}" lay-verify="required"
-									lay-vertype="tips" autocomplete="off" placeholder="请输入集团电话"
-									class="layui-input">
+								<input type="text" id="headTel" name="headTel"
+									lay-verify="required" lay-vertype="tips" autocomplete="off"
+									placeholder="请输入集团电话" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
-							<label for="eeptLeader" class="layui-form-label">负责人</label>
+							<label for="headLeaderName" class="layui-form-label">负责人</label>
 							<div class="layui-input-block">
-								<input type="text" id="eeptLeader" name="eeptLeader"
-									th:value="${dept?.leaderName}" lay-verify="required"
-									lay-vertype="tips" autocomplete="off" placeholder="请输入集团负责人"
-									class="layui-input">
+								<input type="text" id="headLeaderName" name="headLeaderName"
+									lay-verify="required" lay-vertype="tips" autocomplete="off"
+									placeholder="请输入集团负责人" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
-							<label for="leaderTel" class="layui-form-label">负责人电话</label>
+							<label for="headLeaderTel" class="layui-form-label">负责人电话</label>
 							<div class="layui-input-block">
-								<input type="text" id="leaderTel" name="leaderTel"
-									th:value="${dept?.leaderTel}" lay-verify="required"
-									lay-vertype="tips" autocomplete="off" placeholder="请输入负责人电话"
-									class="layui-input">
+								<input type="text" id="headLeaderTel" name="headLeaderTel"
+									lay-verify="required" lay-vertype="tips" autocomplete="off"
+									placeholder="请输入负责人电话" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-form-item">
 							<div class="layui-input-block"
 								style="margin-left: 0; text-align: center;">
-								<!-- 总部默认父节点，新增分部集团时覆盖 -->
-								<input type="hidden" id="parentId" name="parentId" placeholder="0">
 								<button class="layui-btn layui-btn-blue" lay-submit=""
 									data-th-lay-filter="addHead">增加</button>
 							</div>
@@ -92,25 +85,25 @@
 						<div class="layui-form-item">
 							<label class="layui-form-label">上级集团</label>
 							<div class="layui-input-block">
-								<div class="layui-unselect layui-form-select" id="parentNameDiv">
+								<div class="layui-unselect layui-form-select" id="parentDeptKit">
 									<div class="layui-select-title">
-										<input type="text" id="parentName" placeholder="请选择"
-											class="layui-input layui-unselect" readonly> <input
-											type="hidden" name="parentId" id="parentId"> <i
-											class="layui-edge"></i>
+										<input type="text" id="parentDeptText" placeholder="请选择"
+											class="layui-input layui-unselect" readonly>
+										<input type="hidden" name="parentId" id="parentId">
+										<i class="layui-edge"></i>
 									</div>
 								</div>
-								<div class="layui-card dtree-select" id="parentTreeDiv">
+								<div class="layui-card dtree-select" id="parentDeptTree">
 									<div class="layui-card-body">
 										<div id="toolbarDiv">
-											<ul id="parentTree" class="dtree" data-id="0"
+											<ul id="deptTree" class="dtree" data-id="0"
 												style="width: 100%;"></ul>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div id="districtDiv" class="layui-form-item">
+						<div class="layui-form-item">
 							<label for="province" class="layui-form-label">区域</label>
 							<div class="layui-inline">
 								<select name="province" lay-filter="province" class="province">
@@ -167,7 +160,6 @@
 							<div class="layui-form-item">
 								<div class="layui-input-block"
 									style="margin-left: 0; text-align: center;">
-									<input type="hidden" id="parentId" name="parentId" class="deptParent" th:value="${dept?.parentId}">
 									<button class="layui-btn layui-btn-blue" lay-submit=""
 										data-th-lay-filter="addBranch">增加</button>
 								</div>
@@ -197,7 +189,7 @@
 				address = layui.address();
 			
 			var deptDTree = dtree.render({
-				elem: "#parentTree",
+				elem: "#deptTree",
 				url: "/dept/unleafTree",
 				dataStyle: "layuiStyle",
 				method: "GET",
@@ -216,21 +208,20 @@
 					var parentId = getQueryString('parentId') ? getQueryString('parentId') : [[${dept?.parentId + ''}]] ;
 					var parent = deptDTree.getParam(parentId);
 					if (parent) {
-						$("#parentName").val(parent.context);
+						$("#parentText").val(parent.context);
 						$("#parentId").val(parent.nodeId);
 					}
 				}
 			});
 			
-            $("#parentName").on("click",function() {
+            $("#parentDeptText").on("click",function() {
                 $(this).toggleClass("layui-form-selected");
-                $("#parentTreeDiv").toggleClass("layui-show layui-anim layui-anim-upbit");
+                $("#parentDeptTree").toggleClass("layui-show layui-anim layui-anim-upbit");
             });
 
-            dtree.on("node(parentTree)", function(obj) {
+            dtree.on("node(deptTree)", function(obj) {
             	if (currentNodeId != obj.param.nodeId) {
             		currentNodeId = obj.param.nodeId;
-            		$('.deptParent').val(currentNodeId);
                 	// 当前所选集团的行政区划
                 	$("select[name=province]").html('<option value="">请选择省</option>');
     				$("select[name=city]").html('<option value="">请选择市</option>');
@@ -247,15 +238,20 @@
     				}
             	}
                 
-				$("#parentName").val(obj.param.context);
+				$("#parentDeptText").val(obj.param.context);
 				$("#parentId").val(obj.param.nodeId);
-				$("#parentNameDiv").toggleClass("layui-form-selected");
-				$("#parentTreeDiv").toggleClass("layui-show layui-anim layui-anim-upbit");
+				$("#parentDeptKit").toggleClass("layui-form-selected");
+				$("#parentDeptTree").toggleClass("layui-show layui-anim layui-anim-upbit");
 			});
             
-          //监听提交
+			//监听提交
             form.on('submit(addHead)', function (form) {
-            	form.field.parentId = "0";	// 总部默认父节点
+            	form.field.parentId = "0";	// 总部默认父节点:0
+            	form.field.deptName = $('#headName').val();
+            	form.field.deptAddress = $('#headAddress').val();
+            	form.field.deptTel = $('#headTel').val();
+            	form.field.leaderName = $('#headLeaderName').val();
+            	form.field.leaderTel = $('#headLeaderTel').val();
                 $.post('/dept', form.field, function (result) {
                     handlerResult(result, addDone);
                 });
@@ -272,35 +268,17 @@
             		alert("请选择市");
             		return false;
             	}
-                $.post('/dept', form.field, function (result) {
-                    handlerResult(result, addDone);
-                });
-                return false;
-            });
-
-            //监听提交
-            form.on('submit(edit)', function (form) {
-                form.field._method = 'PUT';
-                $.post('/dept', form.field, function (result) {
-                    handlerResult(result, editDone);
-                });
-                return false;
-            });
-
-
-            function addDone(data) {
-                console.log("add result id : ", data);
-                var index = parent.layer.getFrameIndex(window.name); 
-                parent.layer.close(index); 
-                parent.layer.msg("添加成功", {icon: 6});
-            }
-
-            function editDone(data) {
-                console.log("edit result id : ", data);
-                var index = parent.layer.getFrameIndex(window.name); 
-                parent.layer.close(index); 
-                parent.layer.msg("修改成功", {icon: 6});
-            }
+				$.post('/dept', form.field, function (result) {
+					handlerResult(result, addDone);
+				});
+				return false;
+			});
+            
+			function addDone(data) {
+				var index = parent.layer.getFrameIndex(window.name); 
+				parent.layer.close(index); 
+				parent.layer.msg("添加成功", {icon: 6});
+			}
         });
     </script>
 </body>

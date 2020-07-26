@@ -43,6 +43,8 @@ public class WebScDept implements Serializable {
 	@JsonIgnore
 	private Date modifyTime;
 	
+	private String status;
+	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private List<WebScDept> children;
 	
@@ -125,6 +127,14 @@ public class WebScDept implements Serializable {
 	
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+	
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	public Date getModifyTime() {

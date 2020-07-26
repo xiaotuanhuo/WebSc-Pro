@@ -25,8 +25,8 @@ public class OperatorService {
     private RoleOperatorMapper roleOperatorMapper;
 
     public void deleteByPrimaryKey(Integer operatorId) {
-        // 删除分配给用户的操作权限
-        roleOperatorMapper.deleteByOperatorId(operatorId);
+//        // 删除分配给用户的操作权限
+//        roleOperatorMapper.deleteByOperatorId(operatorId);
         // 删除自身
         operatorMapper.deleteByPrimaryKey(operatorId);
     }

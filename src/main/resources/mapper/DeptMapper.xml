@@ -15,6 +15,7 @@
         <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
     </resultMap>
 
     <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScDept">
@@ -30,6 +31,7 @@
         <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
         <collection property="children" ofType="sc.system.model.WebScDept" select="selectSubTree" column="{parent_id = dept_id}"/>
     </resultMap>
     
@@ -57,7 +59,8 @@
 		create_time,
 		modify_time,
 		province,
-		city
+		city,
+		status
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -100,7 +103,7 @@
             useGeneratedKeys="true">
 	insert into WSC_DEPT (dept_id, dept_name, parent_id, dept_address,
 	dept_tel, leader_name, leader_tel, province, city, order_num,
-	create_time, modify_time)
+	create_time, modify_time, status)
 	values (#{deptId,jdbcType=VARCHAR},
 	#{deptName,jdbcType=VARCHAR},
 	#{parentId,jdbcType=INTEGER},
@@ -118,7 +121,11 @@
         update WSC_DEPT
         set dept_name = #{deptName,jdbcType=VARCHAR},
         	parent_id = #{parentId,jdbcType=VARCHAR},
-        	order_num = #{orderNum,jdbcType=INTEGER}
+        	dept_address = #{deptAddress,jdbcType=INTEGER},
+        	dept_tel = #{deptTel,jdbcType=INTEGER},
+        	leader_name = #{leaderName,jdbcType=INTEGER},
+        	leader_tel = #{leaderTel,jdbcType=INTEGER},
+        	status = #{status,jdbcType=VARCHAR}
         where dept_id = #{deptId,jdbcType=VARCHAR}
     </update>
 
@@ -261,6 +268,39 @@
             </choose>
         </where>
         order by dept_id
+    </select>
+    
+    <select id="countByDist" resultType="java.lang.Integer">
+        select count(*)
+        from WSC_DEPT
+        <where>
+        	<choose>
+     			<when test="city_code != null and city_code != ''">
+     				AND province = #{province_code} AND city = #{city_code}
+     			</when>
+     			<otherwise>
+     				<choose>
+     					<when test="province_code != null and province_code != ''">
+     						AND province = #{province_code} AND city is null
+						</when>
+						<otherwise>
+							AND parent_id = '0'
+						</otherwise>
+					</choose>
+				</otherwise>
+			</choose>
+        </where>
+    </select>
+    
+    <select id="countByName" resultType="java.lang.Integer">
+        select count(*)
+        from WSC_DEPT
+        <where>
+        	<if test="dept_id != null and dept_id != ''">
+        		AND dept_id != #{dept_id}
+        	</if>
+        	AND dept_name = #{dept_name}
+        </where>
     </select>
     
 </mapper>

@@ -50,30 +50,36 @@
 					 新增用户
 			</button>
 		</shiro:hasPermission>
-		<shiro:hasPermission name="user:reset">
+	</script>
+	<!-- <shiro:hasPermission name="user:reset">
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="reset">
 				<i class="layui-icon layui-icon-refresh-1 zadmin-oper-area"></i>
 					密码重置
 			</button>
-		</shiro:hasPermission>
-	</script>
+		</shiro:hasPermission> -->
 	
 	<script type="text/html" id="column-toolbar">
+		<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail">详情</a>
+
 		<shiro:hasPermission name="user:update">
-			<a lay-event="edit">
-				<i class="zadmin-icon zadmin-icon-edit-square zadmin-oper-area zadmin-blue" title="编辑"></i>
-			</a>
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
+		</shiro:hasPermission>
+
+		<shiro:hasPermission name="user:reset">
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="reset">重置</a>
 		</shiro:hasPermission>
 
 		<shiro:hasPermission name="user:delete">
-			<a lay-event="del">
-				<i class="zadmin-icon zadmin-icon-delete zadmin-oper-area zadmin-red" title="注销"></i>
-			</a>
+			{{# if('<shiro:principal property="roleTypeId"/>' !== d.id) { }}
+				{{# if('<shiro:principal property="userName"/>' !== d.userName) { }}
+					{{# if(d.status == '1') { }}
+						<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="lock">锁定</a>
+					{{# } else { }}
+						<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="unlock">激活</a>
+					{{# } }}
+				{{# } }}
+			{{# } }}
 		</shiro:hasPermission>
-
-		<shiro:lacksPermission  name="user:update,user:reset,user:delete">
-			<i class="zadmin-icon zadmin-icon-wuquanxian zadmin-oper-area zadmin-red"></i>无权限
-		</shiro:lacksPermission>
 	</script>
     
 	<script type="text/html" id="statusTpl">
@@ -108,14 +114,14 @@
 				smartReloadModel: true,
 				cols: [
 					[
-						{type: 'radio', fixed: 'left'},
-						{field: 'userId', title: 'id', hide: true},
-						{field: 'userName', title: '姓名', align: 'center',sort: true},
-						{field: 'sex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center'},
-						{field: 'phone', title: '手机', align: 'center'},
-						{field: 'roleName', title: '角色', align: 'center'},
-						{field: 'status', title: '状态', templet: "#statusTpl", align: 'center'},
-						{title: '操作', fixed: 'right', align: 'center', toolbar: '#column-toolbar'}
+						{type:'numbers', title:'序号', fixed:'left', width:'5%'},
+						{field:'userId', title:'id', hide:true},
+						{field:'userName', title:'姓名', sort:true},
+						{field:'sex', title:'性别', templet:'#sexTpl', width:'8%'},
+						{field:'phone', title:'手机'},
+						{field:'roleName', title:'角色'},
+						{field:'status', title:'状态', templet:'#statusTpl', width:'8%'},
+						{title:'操作', fixed:'right', align:'center', toolbar:'#column-toolbar', width:'20%'}
 					]
 				]
 			});
@@ -127,17 +133,6 @@
 					case 'add':
 						add();
 						break;
-					case 'reset':
-						var checkStatus = table.checkStatus(obj.config.id);
-						var checkData = checkStatus.data;
-						if (checkData.length === 0) {
-							layer.alert('请选择重置用户');
-						} else if (checkData.length > 1) {
-							layer.alert('只能同时重置一个用户');
-						} else {
-							reset(checkData[0].userId);
-						}
-						break;
 					default:
 						break;
 				}
@@ -147,10 +142,16 @@
 			table.on('tool', function (obj) {
 				var data = obj.data;
 				var event = obj.event;
-				if (event === 'edit') {
+				if (event === 'detail') {
+					detail(data.userId);
+				} else if (event === 'edit') {
 					edit(data.userId);
-				} else if (event === 'del') {
-					del(obj);
+				} else if (event === 'reset') {
+					reset(data.userId);
+				} else if (event === 'lock') {
+					lock(data.userId);
+				} else if (event === 'unlock') {
+					unlock(data.userId);
 				}
 			});
 			
@@ -158,7 +159,35 @@
 				layer.open({
 					content: "/user",
 					title: "新增用户",
-					area: ['70%', '80%'],
+					area: ['100%', '100%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true,
+					end: function () {
+						table.reload('user-table');
+					}
+				});
+			}
+			
+			function detail(id) {
+				layer.open({
+					content: '/user/' + id,
+					title: "编辑",
+					area: ['100%', '100%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true,
+					end: function () {
+						table.reload('user-table');
+					}
+				});
+			}
+			
+			function edit(id) {
+				layer.open({
+					content: '/user/' + id,
+					title: "编辑",
+					area: ['100%', '100%'],
 					type: 2,
 					maxmin: true,
 					shadeClose: true,
@@ -182,6 +211,22 @@
                 });
 			}
 			
+			function lock(id) {
+				$.post('/user/lock/' + id, {_method: "PUT"}, function (data) {
+					handlerResult(data, function () {
+						table.reload('user-table');
+					});
+				});
+			};
+			
+			function unlock(id) {
+				$.post('/user/unlock/' + id, {_method: "PUT"}, function (data) {
+					handlerResult(data, function () {
+						table.reload('user-table');
+					});
+				});
+			};
+			
 			function del(obj) {
 				layer.confirm("确定删除用户吗?", {icon: 3, title: '提示'},
 					function (index) {//确定回调
@@ -199,20 +244,6 @@
 			function deleteDone(data) {
 				parent.layer.msg("删除成功", {icon: 6});
 				table.reload('user-table');
-			}
-			
-			function edit(id) {
-				layer.open({
-					content: '/user/' + id,
-					title: "编辑",
-					area: ['70%', '80%'],
-					type: 2,
-					maxmin: true,
-					shadeClose: true,
-					end: function () {
-						table.reload('user-table');
-					}
-				});
 			}
 			
 			form.on('submit(search)', function (form) {

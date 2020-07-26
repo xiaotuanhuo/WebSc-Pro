@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="UTF-8">
+    <title>页面添加</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.min.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/dtree.css}" />
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/font/dtreefont.css}">
+</head>
+
+<body>
+	<span id="roleTypeId" style="display: none;"><shiro:principal property="roleTypeId"/></span>
+	<div class="z-body animated fadeIn">
+		<div class="layui-tab-content" style="height: 100px;">
+			<div class="layui-tab-item layui-show">
+				<form action="" method="post" class="layui-form layui-form-pane">
+					<!-- <div class="layui-form-item" th:style="${dept.parentId} eq '0' ? 'display: none;' : ''">
+						<label class="layui-form-label">上级集团</label>
+						<div class="layui-input-block">
+							<ul id="parentTree" class="dtree" data-id="0" data-value="请选择机构"></ul>
+						</div>
+					</div>
+					<div class="layui-form-item" th:style="${dept.parentId} eq '0' ? 'display: none;' : ''">
+						<label for="province" class="layui-form-label">区域</label>
+						<div class="layui-inline">
+							<select id="province" name="province" lay-filter="province" class="province">
+								<option value="">请选择省</option>
+							</select>
+						</div>
+						<div class="layui-inline city" th:style="${dept.city} == null ? 'display: none;' : ''">
+							<select id="city" name="city" lay-filter="city" disabled>
+								<option value="">请选择市</option>
+							</select>
+						</div>
+					</div> -->
+					<div class="layui-form-item">
+						<label for="deptName" class="layui-form-label">集团名称</label>
+						<div class="layui-input-block">
+							<input type="text" id="deptName" name="deptName"
+								th:value="${dept.deptName}" lay-verify="required" lay-vertype="tips" autocomplete="off"
+								placeholder="请输入集团名称" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label for="deptAddress" class="layui-form-label">集团地址</label>
+						<div class="layui-input-block">
+							<input type="text" id="deptAddress" name="deptAddress"
+								th:value="${dept.deptAddress}" lay-verify="required" lay-vertype="tips" autocomplete="off"
+								placeholder="请输入集团地址" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label for="deptTel" class="layui-form-label">集团电话</label>
+						<div class="layui-input-block">
+							<input type="text" id="deptTel" name="deptTel"
+								th:value="${dept.deptTel}" lay-verify="required" lay-vertype="tips" autocomplete="off"
+								placeholder="请输入集团电话" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label for="leaderName" class="layui-form-label">负责人</label>
+						<div class="layui-input-block">
+							<input type="text" id="leaderName" name="leaderName"
+								th:value="${dept.leaderName}" lay-verify="required" lay-vertype="tips" autocomplete="off"
+								placeholder="请输入集团负责人" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label for="leaderTel" class="layui-form-label">负责人电话</label>
+						<div class="layui-input-block">
+							<input type="text" id="leaderTel" name="leaderTel"
+								th:value="${dept.leaderTel}" lay-verify="required" lay-vertype="tips" autocomplete="off"
+								placeholder="请输入负责人电话" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-form-item">
+							<div class="layui-input-block"
+								style="margin-left: 0; text-align: center;">
+								<input type="hidden" id="parentId" name="parentId" th:value="${dept?.parentId}">
+								<input type="hidden" id="deptId" name="deptId" th:value="${dept?.deptId}">
+								<!-- <input type="hidden" id="defaultProvince" name="defaultProvince" th:value="${dept.province}">
+								<input type="hidden" id="defaultCity" name="defaultCity" th:value="${dept.city}"> -->
+								<input type="hidden" id="province" name="province" th:value="${dept.province}">
+								<input type="hidden" id="city" name="city" th:value="${dept.city}">
+								<input type="hidden" id="status" name="status" th:value="${dept.status}">
+								<button class="layui-btn layui-btn-blue" lay-submit=""
+									data-th-lay-filter="edit">修改</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
+	<script th:src="@{/lib/layui/layui.js}"></script>
+	<script th:src="@{/js/common.js}"></script>
+		
+	<script>
+		/* var roleTypeId = $('#roleTypeId').text() == 'null' ? null : $('#roleTypeId').text();
+		var currentNodeId = '';	// 当前选中节点
+		var unCity = false;		// 市区划是否必填
+		var defaultParentId = $('#parentId').val();
+		var defaultProvince = $("#defaultProvince").val();
+		var defaultCity = $("#defaultCity").val(); */
+		
+		layui.config({
+			base: '/lib/layui/extend/'
+		}).use(['form', 'layer'], function () {
+			var $ = layui.jquery,
+				form = layui.form,
+				layer = layui.layer;
+				//address = layui.address();
+			
+			/* var deptDTree = dtree.renderSelect({
+				elem: "#parentTree",
+				url: "/dept/unleafTree",
+				dataStyle: "layuiStyle",
+				method: "GET",
+				dot: false,     // 圆点是否显示
+				accordion: true,
+				menubar: true,
+				record: true,
+				selectInitVal: defaultParentId,
+				response: {
+					statusCode: 0,
+					message: "msg",
+					treeId: "id",
+					parentId: "parentId",
+					title: "name"
+				},
+				done: function() {
+					if (defaultProvince != "") {
+						$('#province').siblings("div.layui-form-select").find('dl.layui-anim').find("dd[lay-value='" + defaultProvince + "']").click();
+					}
+					if (defaultCity != "") {
+						$('#city').siblings("div.layui-form-select").find('dl.layui-anim').find("dd[lay-value='" + defaultCity + "']").click();
+					}
+				}
+			});
+			
+			dtree.on("node(parentTree)", function(obj) {
+            	if (currentNodeId != obj.param.nodeId) {
+            		currentNodeId = obj.param.nodeId;
+            		$('.deptParent').val(currentNodeId);
+                	// 当前所选集团的行政区划
+                	$("select[name=province]").html('<option value="">请选择省</option>');
+    				$("select[name=city]").html('<option value="">请选择市</option>');
+    				$("select[name=city]").attr("disabled", "disabled");
+                	if (obj.param.recordData.province.length === undefined) {
+                		unCity = false;
+                		$('.city').hide();
+                		address = layui.address();
+    				} else {
+    					unCity = true;
+    					$('.city').show();
+    					var branchPrvoince = obj.param.recordData.province;
+                		address = layui.address(branchPrvoince, null, null);
+    				}
+            	}
+            	$("#parentId").val(obj.param.nodeId);
+			}); */
+			
+			//监听提交
+			form.on('submit(edit)', function (form) {
+				form.field._method = 'PUT';
+				$.post('/dept', form.field, function (result) {
+					handlerResult(result, editDone);
+				});
+				return false;
+			});
+			
+			function editDone(data) {
+				var index = parent.layer.getFrameIndex(window.name); 
+				parent.layer.close(index); 
+				parent.layer.msg("修改成功", {icon: 6});
+			}
+		});
+	</script>
+</body>
+
+</html>

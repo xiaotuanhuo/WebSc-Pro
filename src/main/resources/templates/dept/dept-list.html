@@ -81,7 +81,29 @@
 		</shiro:hasPermission>
 	</script>
 
-	<script type="text/html" id="column-toolbar">
+	<script type="text/html" id="statusTpl">
+		{{ d.status == '1' ? '正常' : '锁定' }}
+	</script>
+	
+	<script type="text/html" id="operationTpl">
+		<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail{{d.id}}">详情</a>
+
+		<shiro:hasPermission name="dept:update">
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit{{d.id}}">修改</a>
+		</shiro:hasPermission>
+
+		<shiro:hasPermission name="dept:delete">
+			{{# if('<shiro:principal property="roleTypeId"/>' !== d.id) { }}
+				{{# if(d.status == '1') { }}
+					<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="lock{{d.id}}">锁定</a>
+				{{# } else { }}
+					<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="unlock{{d.id}}">激活</a>
+				{{# } }}
+			{{# } }}
+		</shiro:hasPermission>
+	</script>
+    
+	<!-- <script type="text/html" id="column-toolbar">
 		<shiro:hasPermission name="dept:update">
 			<a lay-event="edit">
 				<i class="zadmin-icon zadmin-icon-edit-square zadmin-oper-area zadmin-blue" title="编辑"></i>
@@ -97,22 +119,12 @@
 		<shiro:lacksPermission name="dept:update, dept:delete">
 			<i class="zadmin-icon zadmin-icon-wuquanxian zadmin-oper-area zadmin-red"></i>无权限
 		</shiro:lacksPermission>
-    </script>
-
-	<script type="text/html" id="column-toolbar-sort">
-		<i class="zadmin-icon zadmin-icon-shangyimian zadmin-oper-area zadmin-blue" lay-event="up" title="上移"></i>
-
-		<i class="zadmin-icon zadmin-icon-xiayimian zadmin-oper-area zadmin-blue" lay-event="down" title="下移"></i>
-
-		<i class="zadmin-icon zadmin-icon-zhidingmian zadmin-oper-area zadmin-blue" lay-event="top" title="置顶"></i>
-
-		<i class="zadmin-icon zadmin-icon-zhidimian zadmin-oper-area zadmin-blue" lay-event="bottom" title="置底"></i>
-	</script>
-
+    </script> -->
+    
 	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
 	<script th:src="@{/lib/layui/layui.js}"></script>
 	<script th:src="@{/js/common.js}"></script>
-
+	
 	<script>
 		var userProvince = $('#userProvince').text() == 'null' ? null : $('#userProvince').text();
 		var userCity = $('#userCity').text() == 'null' ? null : $('#userCity').text();
@@ -122,21 +134,6 @@
 		var tableId = 'deptTable';
 		var parentDeptId = 0;
 		var sortNo = 0;
-		
-		// 获取有没有删除, 更新, 和新增的权限.
-		var hasDeptDelete = false;
-		var hasDeptUpdate = false;
-		var hasDeptAdd = false;
-		
-		$.get('/security/hasPermission/dept:update', function (data) {
-			hasDeptUpdate = data.data;
-		});
-		$.get('/security/hasPermission/dept:delete', function (data) {
-			hasDeptDelete = data.data;
-		});
-		$.get('/security/hasPermission/dept:add', function (data) {
-			hasDeptAdd = data.data;
-		});
 		
 		layui.config({
 			base: '/lib/layui/extend/'
@@ -185,10 +182,11 @@
 					[
 						{field:'id', hide:true},
 						{field:'parentId', hide:true},
-					    {field:'name', title: '名称', width:'40%'},
+					    {field:'name', title: '名称', width:'30%'},
 						{field:'provinceName', title:'省', width:'20%'},
 						{field:'cityName', title:'市', width:'20%'},
-						{field:'operator', title:'操作', align:'center', width:'20%'}
+						{field:'status', title:'状态', templet:"#statusTpl", width:'10%'},
+						{field:'disabled', title:'操作', align:'center', templet:'#operationTpl', width:'20%'}
 					]
 				],
 				done:function () {
@@ -221,6 +219,8 @@
 				var data = obj.data;
 				var event = obj.event;
 				var deptId = '';
+				//event的值有当前事件+deptId组成
+				//event.substr(?) 截取获得deptId
 				if (event.indexOf('detail') == 0) {
 					deptId = event.substr(6);
 					layer.open({
@@ -233,8 +233,13 @@
 					});
 				} else if (event.indexOf('edit') == 0) {
 					deptId = event.substr(4);
-				} else if (event.indexOf('del') == 0) {
-					deptId = event.substr(3);
+					edit(deptId);
+				} else if (event.indexOf('unlock') == 0) {
+					deptId = event.substr(6);
+					unlock(deptId);
+				} else if (event.indexOf('lock') == 0) {
+					deptId = event.substr(4);
+					lock(deptId);
 				}
 			});
 			
@@ -246,64 +251,63 @@
             	}
             });
 			
-            function add() {
-                layer.open({
-                    content: "/dept?parentId=" + parentDeptId,
-                    title: "添加子节点",
-                    area: ['70%', '80%'],
-                    type: 2,
-                    maxmin: true,
-                    shadeClose: true,
-                    end: function () {
-                        refresh();
-                    }
-                });
-            };
-
-            function swapSort(currentId, swapId) {
-                $.post('/dept/swap', {currentId: currentId, swapId: swapId}, function (data) {
-                    layer.msg("交换成功");
-                    handlerResult(data, function () {
-                        refresh();
-                    });
-                });
-            };
-
-            function del(id) {
-                layer.confirm("你确定删除数据吗？如果存在下级节点则一并删除！", {icon: 3, title: '提示'},
-                    function (index) {
-                        $.post('/dept/' + id, {_method: "DELETE"}, function (data) {
-                            layer.close(index);
-                            handlerResult(data, function () {
-                                refresh();
-                            });
-                        });
-                    }, function (index) {
-                        layer.close(index);
-                    }
-                );
-            };
-
-            function refresh() {
-            	treeTable.reload();
+			function add() {
+				layer.open({
+					content: "/dept",
+					title: "添加子节点",
+					area: ['70%', '80%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true,
+					end: function () {
+						refresh();
+					}
+				});
+			};
+			
+			function refresh() {
+				treeTable.reload();
                 DTree.menubarMethod().refreshTree();
-            };
-            
-            function edit(id) {
-                layer.open({
-                    content: '/dept/' + id,
-                    title: "编辑",
-                    area: ['40%', '85%'],
-                    type: 2,
-                    maxmin: true,
-                    shadeClose: true,
-                    end: function () {
-                        refresh();
-                    }
-                });
-            };
-        });
-    </script>
+			};
+			
+			function edit(id) {
+				layer.open({
+					content: '/dept/' + id,
+					title: "编辑",
+					area: ['70%', '80%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true,
+					end: function () {
+						refresh();
+					}
+				});
+			};
+			
+			function lock(id) {
+				layer.confirm("确定锁定吗？其子节点及关联用户也会锁定。", {icon: 3, title: '提示'},
+					function (index) {
+						$.post('/dept/lock/' + id, {_method: "PUT"}, function (data) {
+							layer.close(index);
+							handlerResult(data, function () {
+								refresh();
+							});
+						});
+					}, function (index) {
+						layer.close(index);
+					}
+				);
+			};
+			
+			function unlock(id) {
+				$.post('/dept/unlock/' + id, {_method: "PUT"}, function (data) {
+					handlerResult(data, function () {
+						refresh();
+					});
+				});
+			};
+		});
+	</script>
 </body>
 
 </html>

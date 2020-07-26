@@ -12,7 +12,6 @@
     <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/animate.min.css}">
-    <link rel="stylesheet" th:href="@{/lib/layui/extend/dtree.css}" />
 </head>
 
 <body>
@@ -22,87 +21,121 @@
 		<span id="userArea" style="display: none;"><shiro:principal property="area"/></span>
 		<span id="roleId" style="display: none;"><shiro:principal property="roleId"/></span>
 		<span id="roleTypeId" style="display: none;"><shiro:principal property="roleTypeId"/></span>
-		<form action="" method="post" class="layui-form layui-form-pane">
-			<div class="layui-form-item">
-				<label for="rootId" class="layui-form-label">医疗机构</label>
-				<div class="layui-input-block">
-					<div id="rootId" class="xm-select-demo"></div>
+		
+		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+			<ul class="layui-tab-title">
+				<shiro:hasRole name="cjgly">
+					<li>医疗机构总部</li>
+				</shiro:hasRole>
+				<li class="layui-this">医疗机构分部</li>
+			</ul>
+			<div class="layui-tab-content" style="height: 100px;">
+				<!-- 医疗机构总部 -->
+				<div class="layui-tab-item">
+					<form action="" method="post" class="layui-form layui-form-pane">
+						<div class="layui-form-item">
+							<label for="headName" class="layui-form-label">机构名称</label>
+							<div class="layui-input-block">
+								<input type="text" id="headName" name="headName"
+									lay-verify="required" lay-vertype="tips" autocomplete="off"
+									class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block"
+								style="margin-left: 0; text-align: center;">
+								<button th:text="增加"
+									class="layui-btn layui-btn-normal btn-w100" lay-submit=""
+									data-th-lay-filter="headAdd"></button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<!-- 医疗机构分步 -->
+				<div class="layui-tab-item layui-show">
+					<form action="" method="post" class="layui-form layui-form-pane">
+						<div class="layui-form-item">
+							<label for="rootId" class="layui-form-label">所属机构</label>
+							<div class="layui-input-block">
+								<div id="orgPid" class="xm-select-demo"></div>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="orgName" class="layui-form-label">机构名称</label>
+							<div class="layui-input-block">
+								<input type="text" id="orgName" name="orgName"
+									th:value="${user?.orgName}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="credentials" class="layui-form-label">麻醉资质</label>
+							<div class="layui-input-block">
+								<div id="credentials" class="xm-select-demo"></div>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="province" class="layui-form-label">区域</label>
+							<div class="layui-inline">
+								<select name="province" lay-filter="province" class="province">
+									<option value="">请选择省</option>
+								</select>
+							</div>
+							<div class="layui-inline">
+								<select name="city" lay-filter="city" disabled>
+									<option value="">请选择市</option>
+								</select>
+							</div>
+							<div class="layui-inline">
+								<select name="area" lay-filter="area" disabled>
+									<option value="">请选择县/区</option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="orgAddress" class="layui-form-label">机构地址</label>
+							<div class="layui-input-block">
+								<input type="text" id="orgAddress" name="orgAddress"
+									th:value="${user?.orgAddress}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="orgTel" class="layui-form-label">联系电话</label>
+							<div class="layui-input-block">
+								<input type="text" id="orgTel" name="orgTel"
+									th:value="${user?.orgTel}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="leaderName" class="layui-form-label">机构负责人</label>
+							<div class="layui-input-block">
+								<input type="text" id="leaderName" name="leaderName"
+									th:value="${user?.leaderName}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="leaderTel" class="layui-form-label">负责人电话</label>
+							<div class="layui-input-block">
+								<input type="text" id="leaderTel" name="leaderTel"
+									th:value="${user?.leaderTel}" lay-verify="required"
+									lay-vertype="tips" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block"
+								style="margin-left: 0; text-align: center;">
+								<button th:text="增加"
+									class="layui-btn layui-btn-normal btn-w100" lay-submit=""
+									data-th-lay-filter="branchAdd"></button>
+							</div>
+						</div>
+					</form>
 				</div>
 			</div>
-			<div class="layui-form-item">
-				<label for="orgName" class="layui-form-label">机构名称</label>
-				<div class="layui-input-block">
-					<input type="text" id="orgName" name="orgName"
-						th:value="${user?.orgName}" lay-verify="required"
-						lay-vertype="tips" autocomplete="off" class="layui-input">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label for="credentials" class="layui-form-label">麻醉资质</label>
-				<div class="layui-input-block">
-					<div id="credentials" class="xm-select-demo"></div>
-				</div>
-			</div>
-			<div id="districtDiv" class="layui-form-item">
-				<label for="province" class="layui-form-label">区域</label>
-				<div class="layui-inline">
-					<select name="province" lay-filter="province" class="province">
-						<option value="">请选择省</option>
-					</select>
-				</div>
-				<div class="layui-inline">
-					<select name="city" lay-filter="city" disabled>
-						<option value="">请选择市</option>
-					</select>
-				</div>
-				<div id="areaDiv" class="layui-inline">
-					<select name="area" lay-filter="area" disabled>
-						<option value="">请选择县/区</option>
-					</select>
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label for="orgAddress" class="layui-form-label">机构地址</label>
-				<div class="layui-input-block">
-					<input type="text" id="orgAddress" name="orgAddress"
-						th:value="${user?.orgAddress}" lay-verify="required"
-						lay-vertype="tips" autocomplete="off" class="layui-input">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label for="orgTel" class="layui-form-label">联系电话</label>
-				<div class="layui-input-block">
-					<input type="text" id="orgTel" name="orgTel"
-						th:value="${user?.orgTel}" lay-verify="required"
-						lay-vertype="tips" autocomplete="off" class="layui-input">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label for="leaderName" class="layui-form-label">机构负责人</label>
-				<div class="layui-input-block">
-					<input type="text" id="leaderName" name="leaderName"
-						th:value="${user?.leaderName}" lay-verify="required"
-						lay-vertype="tips" autocomplete="off" class="layui-input">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label for="leaderTel" class="layui-form-label">负责人电话</label>
-				<div class="layui-input-block">
-					<input type="text" id="leaderTel" name="leaderTel"
-						th:value="${user?.leaderTel}" lay-verify="required"
-						lay-vertype="tips" autocomplete="off" class="layui-input">
-				</div>
-			</div>
-			
-			<div class="layui-form-item">
-				<div class="layui-input-block"
-					style="margin-left: 0; text-align: center;">
-					<button th:text="${user}?'修改':'增加'"
-						class="layui-btn layui-btn-normal btn-w100" lay-submit=""
-						data-th-lay-filter="${user}?'edit':'add'"></button>
-				</div>
-			</div>
-		</form>
+		</div>
 	</div>
 	
 	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
@@ -121,13 +154,13 @@
 			$ = layui.jquery;
 			var form = layui.form,
 				layer = layui.layer,
-				xmSelect = layui.xmSelect
+				xmSelect = layui.xmSelect,
 				address = layui.address(userProvince, userCity, userArea);
 			form.render();
 			
-			// 角色组件
+			// 医疗机构根节点组件
 			var rootKit = xmSelect.render({
-				el: '#rootId',
+				el: '#orgPid',
 				radio: true,
 				clickClose: true,
 				repeat: true,
@@ -185,8 +218,18 @@
 				]
 			});
 			
-			//监听提交
-			form.on('submit(add)', function (form) {
+			//监听机构总部提交
+			form.on('submit(headAdd)', function (form) {
+				form.field.orgName = $('#headName').val();
+				form.field.orgPid = '0';
+				$.post('/organization/root', form.field, function (result) {
+					handlerResult(result, addDone);
+				});
+				return false;
+            });
+			
+			//监听机构分步提交
+			form.on('submit(branchAdd)', function (form) {
 				form.field.rootId = rootKit.getValue('valueStr');
 				form.field.rootName = rootKit.getValue('nameStr');
 				form.field.credentials = credentialsKit.getValue('valueStr');

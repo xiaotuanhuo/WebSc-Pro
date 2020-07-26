@@ -61,10 +61,12 @@ public interface UserMapper {
      */
     List<WebScUser> selectWithRoleAndDist(@Param("user") UserVO user);
     
+    List<WebScUser> selectByRoleTypeId(@Param("roleTypeId") String roleTypeId);
+    
     /**
      * 更改用户的状态为某项值
      */
-    int updateStatusByPrimaryKey(@Param("id") Integer id, @Param("status") int status);
+    int updateStatusByPrimaryKey(@Param("id") Integer id, @Param("status") String status);
 
     /**
      * 更新用户最后登录事件

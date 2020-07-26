@@ -105,20 +105,20 @@ public class WebExceptionHandler {
         return generateErrorInfo(ResultBean.FAIL, "验证码错误");
     }
 
+//    @ExceptionHandler
+//    public String lockedAccount(DuplicateNameException e) {
+//        if (log.isDebugEnabled()) {
+//            log.debug("用户名已存在");
+//        }
+//        return generateErrorInfo(ResultBean.FAIL, "用户名已存在");
+//    }
+    
     @ExceptionHandler
     public String lockedAccount(DuplicateNameException e) {
         if (log.isDebugEnabled()) {
-            log.debug("用户名已存在");
+            log.debug(e.getMessage());
         }
-        return generateErrorInfo(ResultBean.FAIL, "用户名已存在");
-    }
-    
-    @ExceptionHandler
-    public String lockedAccount(DuplicateDistrictException e) {
-        if (log.isDebugEnabled()) {
-            log.debug("当前行政区划下已存在机构");
-        }
-        return generateErrorInfo(ResultBean.FAIL, "当前行政区划下已存在机构");
+        return generateErrorInfo(ResultBean.FAIL, e.getMessage());
     }
 
     @ExceptionHandler

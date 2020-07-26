@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import sc.system.model.WebScOrganization;
+import sc.system.model.WebScUser;
 
 @Mapper
 public interface OrganizationMapper {
@@ -43,7 +44,31 @@ public interface OrganizationMapper {
 	  * 获取所有医疗机构节点
 	  * @return
 	  */
-	List<WebScOrganization> selectAll();
+//	List<WebScOrganization> selectAll();
+	
+	/**
+	 * 获取所有医疗机构节点
+	 * @param isBureau	是否是卫监局角色
+	 * @param orgPid	父节点
+	 * @param privince	用户省
+	 * @param city		用户市
+	 * @param area		用户区/县
+	 * @param wso		前端查询条件
+	 * @return
+	 */
+//	List<WebScOrganization> selectAll(@Param("bureau") boolean isBureau, @Param("orgPid") String orgPid, @Param("provinceCode") String privince,
+//			@Param("cityCode") String city, @Param("areaCode") String area, @Param("wso") WebScOrganization wso);
+	
+	/**
+	 * 获取所有医疗机构叶子节点
+	 * @param isBureau	是否是卫监局角色
+	 * @param isOrgRole	是否是医疗机构管理员角色
+	 * @param rootId	医疗机构根节点（医疗机构管理员）
+	 * @param user		当前用户
+	 * @param wso		前端查询条件
+	 * @return
+	 */
+	List<WebScOrganization> selectAll(@Param("bureau") boolean isBureau, @Param("orgRole") boolean isOrgRole, @Param("root_id") String rootId, @Param("user") WebScUser user, @Param("wso") WebScOrganization wso);
 	
 	/**
 	 * 查询当前节点及其子节点（树）
@@ -76,4 +101,12 @@ public interface OrganizationMapper {
 	int updateByPrimaryKey(WebScOrganization wso);
 	
 	int deleteByPrimaryKey(String id);
+	
+	/**
+	 * 统计已经有几个此机构名称, 检测是否重复.
+	 * @param orgId 非null时表示编辑，统计机构名称数量时不包含该项
+	 * @param name
+	 * @return
+	 */
+    int countByName(@Param("org_id") String orgId, @Param("org_name") String name);
 }

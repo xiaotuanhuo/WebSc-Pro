@@ -23,6 +23,10 @@
 					<td th:text="${dept.deptName}"></td>
 				</tr>
 				<tr>
+					<th width='120px'>状态：</th>
+					<td th:text="${dept.status eq '1' ? '正常' : '锁定'}"></td>
+				</tr>
+				<tr>
 					<th width='120px'>所在省：</th>
 					<td th:text="${dept.provinceName}"></td>
 				</tr>

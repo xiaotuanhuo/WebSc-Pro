@@ -35,7 +35,9 @@ public class WebScOrganization {
 	private String cityName;
 	private String area;
 	private String areaName;
-	private String orgParentId;
+	private String status;
+//	private String porgName;
+//	private String orgParentId;
 	private List<WebScOrganization> children;
 	
 	public String getOrgId() {
@@ -174,13 +176,29 @@ public class WebScOrganization {
 		this.areaName = areaName;
 	}
 	
-	public String getOrgParentId() {
-		return orgParentId;
+	public String getStatus() {
+		return status;
 	}
 	
-	public void setOrgParentId(String orgParentId) {
-		this.orgParentId = orgParentId;
+	public void setStatus(String status) {
+		this.status = status;
 	}
+	
+//	public String getOrgParentId() {
+//		return orgParentId;
+//	}
+//	
+//	public void setOrgParentId(String orgParentId) {
+//		this.orgParentId = orgParentId;
+//	}
+	
+//	public String getPorgName() {
+//		return porgName;
+//	}
+//	
+//	public void setPorgName(String porgName) {
+//		this.porgName = porgName;
+//	}
 	
 	public List<WebScOrganization> getChildren() {
 		return children;
@@ -194,7 +212,7 @@ public class WebScOrganization {
 	public String toString() {
 		return "WebScOrganization [orgId=" + orgId + ", orgPid=" + orgPid + ", orgName=" + orgName + ", orgAddress="
 				+ orgAddress + ", orgTel=" + orgTel + ", leaderName=" + leaderName + ", leaderTel=" + leaderTel
-				+ ", province=" + province + ", city=" + city + ", area=" + area + ", orgParentId=" + orgParentId + "]";
+				+ ", province=" + province + ", city=" + city + ", area=" + area + ", orgParentId=" + "" + "]";
 	}
 	
 }

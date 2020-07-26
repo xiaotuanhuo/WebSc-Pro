@@ -7,9 +7,10 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import sc.common.annotation.OperationLog;
@@ -35,14 +36,35 @@ public class OrganizationController {
 		return "organization/organization-add";
 	}
 	
+	@GetMapping("/detail/{id}")
+	public String getDeptInfo(@PathVariable("id") String id, Model model) {
+		model.addAttribute("organization", organizationService.getByOrgid(id));
+		return "organization/organization-detail";
+	}
+	
+	@GetMapping("/{id}")
+	public String update(@PathVariable("id") String id, Model model) {
+		model.addAttribute("organization", organizationService.getByOrgid(id));
+		return "organization/organization-edit";
+	}
+	
+//	@OperationLog("获取医疗机构列表")
+//	@GetMapping("/list")
+//	@ResponseBody
+//	public PageResultBean<WebScOrganization> getList(WebScOrganization wso,
+//			@RequestParam(value = "organizationId", required = false) String organizationId,
+//			@RequestParam(value = "distType", required = false) String distType) {
+//		// 数据查询
+//		List<WebScOrganization> wsoList = organizationService.getList(wso, organizationId, distType);
+//		return new PageResultBean<>(wsoList.size(), wsoList);
+//	}
+	
 	@OperationLog("获取医疗机构列表")
 	@GetMapping("/list")
 	@ResponseBody
-	public PageResultBean<WebScOrganization> getList(WebScOrganization wso,
-			@RequestParam(value = "organizationId", required = false) String organizationId,
-			@RequestParam(value = "distType", required = false) String distType) {
+	public PageResultBean<WebScOrganization> getList(WebScOrganization wso) {
 		// 数据查询
-		List<WebScOrganization> wsoList = organizationService.getList(wso, organizationId, distType);
+		List<WebScOrganization> wsoList = organizationService.getList(wso);
 		return new PageResultBean<>(wsoList.size(), wsoList);
 	}
 	
@@ -75,5 +97,36 @@ public class OrganizationController {
 	@ResponseBody
 	public ResultBean add(WebScOrganization wso) {
 		return ResultBean.success(organizationService.insert(wso));
+	}
+	
+	@OperationLog("新增医疗机构根节点")
+	@PostMapping("/root")
+	@ResponseBody
+	public ResultBean addRoot(WebScOrganization wso) {
+		return ResultBean.success(organizationService.insertRoot(wso));
+	}
+	
+	@OperationLog("编辑医疗集团")
+	@PutMapping
+	@ResponseBody
+	public ResultBean update(WebScOrganization organization) {
+		return ResultBean.success(organizationService.update(organization));
+	}
+	
+
+	@OperationLog("锁定医疗机构")
+	@PutMapping("/lock/{orgId}")
+	@ResponseBody
+	public ResultBean lock(@PathVariable("orgId") String orgId) {
+		organizationService.lock(orgId);
+		return ResultBean.success();
+	}
+	
+	@OperationLog("激活医疗机构")
+	@PutMapping("/unlock/{orgId}")
+	@ResponseBody
+	public ResultBean unlock(@PathVariable("orgId") String orgId) {
+		organizationService.unlock(orgId);
+		return ResultBean.success();
 	}
 }

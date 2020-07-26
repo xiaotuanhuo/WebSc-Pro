@@ -19,40 +19,32 @@
 		<table class="layui-table" lay-skin="line">
 			<tbody>
 				<tr>
-					<th width='120px'>卫监局名称：</th>
-					<td th:text="${bureau.bureauName}"></td>
-				</tr>
-				<tr>
-					<th width='120px'>状态：</th>
-					<td th:text="${bureau.status eq '1' ? '正常' : '锁定'}"></td>
+					<th width='120px'>机构名称：</th>
+					<td th:text="${organization.orgName}"></td>
 				</tr>
 				<tr>
 					<th width='120px'>所在省：</th>
-					<td th:text="${bureau.provinceName}"></td>
+					<td th:text="${organization.provinceName}"></td>
 				</tr>
 				<tr>
 					<th width='120px'>所在市：</th>
-					<td th:text="${bureau.cityName}"></td>
+					<td th:text="${organization.cityName}"></td>
 				</tr>
 				<tr>
-					<th width='120px'>所在区/县：</th>
-					<td th:text="${bureau.areaName}"></td>
+					<th width='120px'>机构地址：</th>
+					<td th:text="${organization.orgAddress}"></td>
 				</tr>
 				<tr>
-					<th width='120px'>卫监局地址：</th>
-					<td th:text="${bureau.bureauAddress}"></td>
-				</tr>
-				<tr>
-					<th width='120px'>卫监局电话：</th>
-					<td th:text="${bureau.bureauTel}"></td>
+					<th width='120px'>机构电话：</th>
+					<td th:text="${organization.orgTel}"></td>
 				</tr>
 				<tr>
 					<th width='120px'>负责人：</th>
-					<td th:text="${bureau.leaderName}"></td>
+					<td th:text="${organization.leaderName}"></td>
 				</tr>
 				<tr>
 					<th width='120px'>负责人电话：</th>
-					<td th:text="${bureau.leaderTel}"></td>
+					<td th:text="${organization.leaderTel}"></td>
 				</tr>
 			</tbody>
 		</table>

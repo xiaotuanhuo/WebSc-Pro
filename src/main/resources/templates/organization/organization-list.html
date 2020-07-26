@@ -40,67 +40,42 @@
 		<div class="rubik-loader"></div>
 	</div>
 	
-	<div style="height: 100%">
-		<div style="height: 100%">
-			<div style="padding: 20px; background-color: #F2F2F2; height: 100%;">
-				<div class="layui-row layui-col-space15">
-					<div class="layui-col-md3">
-						<div class="layui-card">
-							<div class="layui-card-header">医疗机构结构</div>
-							<div class="layui-card-body" id="toolbarDiv">
-								<div class="layui-card-body" id="toolbarDiv">
-	                                <ul id="organziationTree" class="dtree" data-id="0"></ul>
-	                            </div>
-							</div>
-						</div>
+	<div class="z-body animated fadeIn">
+		<form class="layui-form zadmin-search-area input">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label for="userName" class="layui-form-label">名称</label>
+					<div class="layui-input-inline" style="width: 19%;">
+						<input type="text" name="orgName" autocomplete="off"
+							id="orgName" class="layui-input">
 					</div>
-					<div class="layui-col-md9">
-						<div class="layui-card">
-							<div class="layui-card-header" id="card-header">医疗机构</div>
-							<div class="layui-card-body">
-								<div class="animated fadeIn">
-									<form class="layui-form zadmin-search-area input">
-										<div class="layui-form-item">
-											<div class="layui-inline">
-												<label for="orgName" class="layui-form-label">名称</label>
-												<div class="layui-inline" style="width: 19%;">
-													<input type="text" name="orgName" autocomplete="off"
-														class="layui-input">
-												</div>
-												<div class="layui-inline" style="width: 19%;">
-													<select name="province" lay-filter="province" class="province">
-														<option value="">请选择省</option>
-													</select>
-												</div>
-												<div class="layui-inline" style="width: 19%;">
-													<select name="city" lay-filter="city" disabled>
-														<option value="">请选择市</option>
-													</select>
-												</div>
-												<div class="layui-inline" style="width: 19%;">
-													<select name="area" lay-filter="area" disabled>
-														<option value="">请选择县/区</option>
-													</select>
-												</div>
-												<button lay-submit="" lay-filter="search"
-													class="layui-btn layui-btn-sm layui-btn-primary table-action">
-													<i class="zadmin-icon zadmin-icon-search"></i>
-												</button>
-											</div>
-										</div>
-									</form>
-									<table class="layui-hide" id="organization-table" lay-filter="treeTable"></table>
-								</div>
-							</div>
-						</div>
+					<div class="layui-inline" style="width: 19%;">
+						<select name="province" lay-filter="province" class="province">
+							<option value="">请选择省</option>
+						</select>
 					</div>
+					<div class="layui-inline" style="width: 19%;">
+						<select name="city" lay-filter="city" disabled>
+							<option value="">请选择市</option>
+						</select>
+					</div>
+					<div class="layui-inline" style="width: 19%;">
+						<select name="area" lay-filter="area" disabled>
+							<option value="">请选择县/区</option>
+						</select>
+					</div>
+					<button lay-submit="" lay-filter="search"
+						class="layui-btn layui-btn-sm layui-btn-primary table-action">
+						<i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i>
+					</button>
 				</div>
 			</div>
-		</div>
+		</form>
+		<table class="layui-hide" id="organization-table"></table>
 	</div>
 	
 	<script type="text/html" id="toolbar">
-		<shiro:hasPermission name="dept:add">
+		<shiro:hasPermission name="organization:add">
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">
 				<i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area"></i>
 					新增
@@ -108,33 +83,23 @@
 		</shiro:hasPermission>
 	</script>
 	
-    <script type="text/html" id="column-toolbar">
-		<shiro:hasPermission name="dept:update">
-			<a lay-event="edit">
-				<i class="zadmin-icon zadmin-icon-edit-square zadmin-oper-area zadmin-blue" title="编辑"></i>
-			</a>
-		</shiro:hasPermission>
-
-		<shiro:hasPermission name="dept:delete">
-			<a lay-event="del">
-				<i class="zadmin-icon zadmin-icon-delete zadmin-oper-area zadmin-red" title="删除"></i>
-			</a>
-		</shiro:hasPermission>
-
-		<shiro:lacksPermission name="dept:update, dept:delete">
-			<i class="zadmin-icon zadmin-icon-wuquanxian zadmin-oper-area zadmin-red"></i>无权限
-		</shiro:lacksPermission>
-    </script>
-    
-    <script type="text/html" id="column-toolbar-sort">
-		<i class="zadmin-icon zadmin-icon-shangyimian zadmin-oper-area zadmin-blue" lay-event="up" title="上移"></i>
-
-		<i class="zadmin-icon zadmin-icon-xiayimian zadmin-oper-area zadmin-blue" lay-event="down" title="下移"></i>
-
-		<i class="zadmin-icon zadmin-icon-zhidingmian zadmin-oper-area zadmin-blue" lay-event="top" title="置顶"></i>
-
-		<i class="zadmin-icon zadmin-icon-zhidimian zadmin-oper-area zadmin-blue" lay-event="bottom" title="置底"></i>
+	<script type="text/html" id="statusTpl">
+		{{ d.status == '1' ? '正常' : '锁定' }}
 	</script>
+	
+    <script type="text/html" id="column-toolbar">
+		<shiro:hasPermission name="organization:update">
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
+		</shiro:hasPermission>
+
+		<shiro:hasPermission name="organization:delete">
+			{{# if(d.status == '1') { }}
+				<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="lock">锁定</a>
+			{{# } else { }}
+				<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="unlock">激活</a>
+			{{# } }}
+		</shiro:hasPermission>
+    </script>
 	
 	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
 	<script th:src="@{/lib/layui/layui.js}"></script>
@@ -145,31 +110,17 @@
 		var userCity = $('#userCity').text() == 'null' ? null : $('#userCity').text();
 		var userArea = $('#userArea').text() == 'null' ? null : $('#userArea').text();
         var parentDeptId = 0;
-        // 获取有没有删除, 更新, 和新增的权限.
-		var hasDeptDelete = false;
-		var hasDeptUpdate = false;
-		var hasDeptAdd = false;
-		
-		$.get('/security/hasPermission/organization:update', function (data) {
-			hasDeptUpdate = data.data;
-		});
-		$.get('/security/hasPermission/organization:delete', function (data) {
-			hasDeptDelete = data.data;
-		});
-		$.get('/security/hasPermission/organization:add', function (data) {
-			hasDeptAdd = data.data;
-		});
 		
 		layui.config({
 			base: '/lib/layui/extend/'
-		}).use(['layer', 'form', 'table', 'tablePlug', 'dtree', 'address'], function () {
+		}).use(['layer', 'form', 'table', 'tablePlug', 'address'], function () {
 			var $ = layui.$;
 			var layer = layui.layer;
 			var form = layui.form;
 			var table = layui.table;
 			var tablePlug = layui.tablePlug;
 			var dtree = layui.dtree;
-			var address = layui.address(userProvince, userCity, userArea);
+			var address = layui.address();
 			
 			tablePlug.smartReload.enable(true);
 			
@@ -182,43 +133,21 @@
 				smartReloadModel: true,
 				cols: [
 					[
-						{type: 'numbers', title: '序号', width:'5%'},
-						{field: 'id', title: 'ID', hide: true},
-						{field: 'name', title: '机构名称', sort: true},
-						{field: 'provinceName', title: '省', sort: true},
-						{field: 'cityName', title: '市', sort: true},
-						{field: 'areaName', title: '区', sort: true},
-						{field: 'orgAddress', title: '地址'}
+						{type:'numbers', fixed:'left', title:'序号', width:'4%'},
+						{field:'id', title:'ID', hide:true},
+						{field:'name', fixed:'left', title:'机构名称', width:'10%'},
+						{field:'rootName', title:'所属机构', sort:true, width:'10%'},
+						{field:'orgAddress', title:'地址', width:'10%'},
+						{field:'orgTel', title:'电话', width:'10%'},
+						{field:'leaderName', title:'联系人', width:'10%'},
+						{field:'leaderTel', title:'联系人电话', width:'10%'},
+						{field:'status', title:'状态', templet:"#statusTpl", width:'8%'},
+						{field:'provinceName', title:'省', width:'10%'},
+						{field:'cityName', title:'市', width:'10%'},
+						{field:'areaName', title:'区', width:'10%'},
+						{title:'操作', fixed:'right', align:'center', toolbar:'#column-toolbar', width:'10%'}
 					]
 				]
-			});
-			
-			dtree.render({
-				elem: "#organziationTree",
-				url: "/organization/dist/tree",
-				method: 'GET',
-				dataStyle: 'layuiStyle',
-				dataFormat: "list",
-				icon: "-1",
-				initLevel: "2",
-				record: true,
-				response: {
-					statusCode: 0,
-					treeId: 'id',
-					title: 'name',
-					parentId: 'parentId'
-                }
-			});
-			
-			dtree.on("node('organziationTree')", function (obj) {
-				table.reload('organization-table', {
-					where: {
-						organizationId: obj.param.recordData.institution,
-						distType: obj.param.recordData.distType
-					}
-				});
-				console.log(111);
-				$("#card-header").html("[" + obj.param.context + "]的子机构");
 			});
 			
 			// 工具条点击事件
@@ -228,40 +157,16 @@
 				if (event === 'add') {
 					add();
 				}
-            });
+			});
 			
 			table.on('tool', function (obj) {
 				var data = obj.data;
-				var swapId;
-				var currentId;
 				if (obj.event === 'edit') {
 					edit(data.id);
-				} else if (obj.event === 'del') {
-					del(data.id);
-				} else if (obj.event === "up") {
-					swapId = $(obj.tr).prev().find("td[data-field='id'] div").html();
-					currentId = data.id;
-					if (typeof swapId == 'undefined') {
-						layer.msg("已是第一层");
-						return;
-					}
-					swapSort(currentId, swapId);
-				} else if (obj.event === "down") {
-					swapId = $(obj.tr).next().find("td[data-field='id'] div").html();
-					currentId = data.id;
-					if (typeof swapId == 'undefined') {
-						layer.msg("已是最后一层");
-						return;
-					}
-					swapSort(currentId, swapId);
-				} else if (obj.event === "top") {
-					swapId = $("tr[data-index='0']").first().parent().children().first().find("td[data-field='id'] div").html();
-					currentId = data.id;
-					swapSort(currentId, swapId);
-				} else if (obj.event === "bottom") {
-					swapId = $("tr[data-index='0']").first().parent().children().last().find("td[data-field='id'] div").html();
-					currentId = data.id;
-					swapSort(currentId, swapId);
+				} else if (obj.event === 'lock') {
+					lock(data.id);
+				} else if (obj.event === 'unlock') {
+					unlock(data.id);
 				}
 			});
 			
@@ -278,8 +183,56 @@
 				});
 			}
 			
+			function detail(id) {
+				layer.open({
+					content: "/organization/detail/" + id,
+					title: "详细信息",
+					area: ['70%', '80%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true
+				});
+			}
+			
+			function edit(id) {
+				layer.open({
+					content: '/organization/' + id,
+					title: "编辑",
+					area: ['70%', '80%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true,
+					end: function () {
+						refresh();
+					}
+				});
+			}
+			
+			function lock(id) {
+				layer.confirm("确定锁定吗？其关联用户也会锁定。", {icon: 3, title: '提示'},
+					function (index) {
+						$.post('/organization/lock/' + id, {_method: "PUT"}, function (data) {
+							layer.close(index);
+							handlerResult(data, function () {
+								refresh();
+							});
+						});
+					}, function (index) {
+						layer.close(index);
+					}
+				);
+			};
+			
+			function unlock(id) {
+				$.post('/organization/unlock/' + id, {_method: "PUT"}, function (data) {
+					handlerResult(data, function () {
+						refresh();
+					});
+				});
+			};
+			
 			function del(id) {
-				layer.confirm("你确定删除数据吗？如果存在下级节点则一并删除！", {icon: 3, title: '提示'},
+				layer.confirm("你确定删除数据吗？", {icon: 3, title: '提示'},
 					function (index) {
 						$.post('/dept/' + id, {_method: "DELETE"}, function (data) {
 							layer.close(index);
@@ -293,31 +246,16 @@
 				);
 			}
 			
-			function refresh() {
-				table.reload("organization-table");
-				DTree.menubarMethod().refreshTree();
-			}
-			
-			function edit(id) {
-				layer.open({
-					content: '/dept/' + id,
-					title: "编辑",
-					area: ['70%', '80%'],
-					type: 2,
-					maxmin: true,
-					shadeClose: true,
-					end: function () {
-						refresh();
-					}
-				});
-			}
-			
 			form.on('submit(search)', function (form) {
 				table.reload('organization-table', {
 					where: form.field
 				});
 				return false;
 			});
+			
+			function refresh() {
+				table.reload("organization-table");
+			}
 		});
 	</script>
 </body>

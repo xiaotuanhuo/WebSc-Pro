@@ -1,10 +1,11 @@
 package sc.system.service;
 
-import sc.common.constants.DistType;
 import sc.common.constants.RoleEnum;
-import sc.common.exception.DuplicateDistrictException;
+import sc.common.exception.DuplicateNameException;
+import sc.common.util.ShiroUtil;
 import sc.common.util.UUID19;
 import sc.system.mapper.DeptMapper;
+import sc.system.mapper.UserMapper;
 import sc.system.model.WebScDept;
 import sc.system.model.WebScUser;
 import sc.system.model.vo.DistTree;
@@ -16,8 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.sun.org.apache.xpath.internal.operations.And;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -31,14 +31,74 @@ public class DeptService {
 	@Resource
 	private DeptMapper deptMapper;
 	
+	@Resource
+	private UserMapper userMapper;
+	
 	@Autowired
 	private District district;
 	
+	public WebScDept getByDeptId(String deptId) {
+		return deptMapper.selectByPrimaryKey(deptId);
+	}
+	
 	public String add(WebScDept dept) {
-		checkDeptExistOnCreate(dept.getParentId(), dept.getProvince(), dept.getCity());
+		if (dept.getProvince() != null && dept.getProvince().equals("")) {
+			dept.setProvince(null);
+		}
+		if (dept.getCity() != null && dept.getCity().equals("")) {
+			dept.setCity(null);
+		}
+		checkDistExist(dept.getProvince(), dept.getCity());
+		checkNameExist(null, dept.getDeptName());
 		dept.setDeptId(UUID19.uuid());
 		deptMapper.insert(dept);
 		return dept.getDeptId();
+	}
+	
+	public boolean update(WebScDept dept) {
+		if (dept.getCity() != null && dept.getCity().equals("")) {
+			dept.setCity(null);
+		}
+		if (dept.getProvince() != null && dept.getProvince().equals("")) {
+			dept.setProvince(null);
+		}
+		checkNameExist(dept.getDeptId(), dept.getDeptName());
+		return deptMapper.updateByPrimaryKey(dept) == 1;
+	}
+	
+	public void lock(String deptId) {
+		// 锁定医疗集团时其子节点及关联用户也会锁定
+		List<WebScDept> depts = deptMapper.selectTree(deptId);
+		updateStatus(depts);
+	}
+	
+	public void unlock(String deptId) {
+		// 上级节点未激活时无法激活当前节点
+		WebScDept dept = deptMapper.selectByPrimaryKey(deptId);
+		WebScDept superDept = deptMapper.selectByPrimaryKey(dept.getParentId());
+		if (superDept != null && superDept.getStatus().equals(ShiroUtil.LOCK)) {
+			throw new DuplicateNameException("上级机构已锁定，无法激活");
+		}
+		dept.setStatus(ShiroUtil.UNLOCK);
+		deptMapper.updateByPrimaryKey(dept);
+	}
+	
+	@Transactional
+	private void updateStatus(List<WebScDept> depts) {
+		for (WebScDept dept : depts) {
+			List<WebScUser> users = userMapper.selectByRoleTypeId(dept.getDeptId());
+			for (WebScUser user : users) {
+				if (user.getStatus().equals(ShiroUtil.UNLOCK)) {
+					user.setStatus(ShiroUtil.LOCK);
+					userMapper.updateByPrimaryKey(user);
+				}
+			}
+			if (dept.getStatus().equals(ShiroUtil.UNLOCK)) {
+				dept.setStatus(ShiroUtil.LOCK);
+				deptMapper.updateByPrimaryKey(dept);
+			}
+			updateStatus(dept.getChildren());
+		}
 	}
 	
 	public WebScDept getDeptInfo(String deptId) {
@@ -129,19 +189,19 @@ public class DeptService {
 //		List<WebScDept> depts = deptMapper.selectTree(user.getRoleTypeId());
 		
 		List<WebScDept> depts = deptMapper.selectTree(deptId == null ? user.getRoleTypeId() : deptId);
-		// 前端对表的操作由于插件的缘故，从后台生成操作代码
-		// 其中编辑和删除对系统管理员、超级管理员、区域管理员可见
-		boolean show = false;
-		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
-			case XTGLY:
-			case CJGLY:
-			case QYGLY:
-				show = true;
-				break;
-			default:
-				break;
-		}
-		return getDistName(depts, show);
+//		// 前端对表的操作由于插件的缘故，从后台生成操作代码
+//		// 其中编辑和删除对系统管理员、超级管理员、区域管理员可见
+//		boolean show = false;
+//		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
+//			case XTGLY:
+//			case CJGLY:
+//			case QYGLY:
+//				show = true;
+//				break;
+//			default:
+//				break;
+//		}
+		return getDistName(depts);
 	}
 	
 	/**
@@ -189,14 +249,15 @@ public class DeptService {
 		return deptMapper.selectUnleafTree(user.getRoleTypeId());
 	}
 	
-	/**
-	 * 校验当前父节点下是否已存在集团
-	 * @param parentId
-	 */
-	public void checkDeptExistOnCreate(String parentId, String province, String city) {
-		WebScDept dept = deptMapper.selectByParentIdAndDistrict(parentId, province, city);
-		if (dept != null) {
-			throw new DuplicateDistrictException();
+	private void checkDistExist(String province, String city) {
+		if (deptMapper.countByDist(province, city) > 0) {
+			throw new DuplicateNameException("当前行政区划下已存在医疗集团");
+		}
+	}
+	
+	private void checkNameExist(String deptId, String deptName) {
+		if (deptMapper.countByName(deptId, deptName) > 0) {
+			throw new DuplicateNameException("集团名称已存在");
 		}
 	}
 	
@@ -205,10 +266,10 @@ public class DeptService {
 	 * @param depts
 	 * @return
 	 */
-	private List<WebScDept> getDistName(List<WebScDept> depts, boolean show) {
+	private List<WebScDept> getDistName(List<WebScDept> depts) {
 		if (depts.size() > 0) {
 			for (WebScDept dept : depts) {
-				String htmlDetail = "<a lay-event=\"detail" + dept.getDeptId() + "\">\r\n" + 
+				/*String htmlDetail = "<a lay-event=\"detail" + dept.getDeptId() + "\">\r\n" + 
 						"		<i class=\"layui-icon layui-icon-form zadmin-oper-area zadmin-blue\" title=\"详情\"></i>\r\n" + 
 						"	</a>";
 				String htmlEdit = "<a lay-event=\"edit" + dept.getDeptId() + "\">\r\n" + 
@@ -221,7 +282,7 @@ public class DeptService {
 					dept.setOperator(htmlDetail + htmlEdit + htmlDel);
 				} else {
 					dept.setOperator(htmlDetail);
-				}
+				}*/
 				if (dept.getProvince() != null) {
 					dept.setProvinceName(district.getDistrictMap().get(dept.getProvince()).getName());
 				}
@@ -229,7 +290,7 @@ public class DeptService {
 					dept.setCityName(district.getDistrictMap().get(dept.getCity()).getName());
 				}
 				if (dept.getChildren().size() > 0) {
-					getDistName(dept.getChildren(), show);
+					getDistName(dept.getChildren());
 				}
 			}
 		}

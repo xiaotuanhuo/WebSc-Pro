@@ -18,9 +18,6 @@ public interface DeptMapper {
 
     int updateByPrimaryKey(WebScDept dept);
 
-	WebScDept selectByParentIdAndDistrict(@Param("parent_id") String parentId, @Param("province_code") String province,
-			@Param("city_code") String city);
-    
     List<WebScDept> selectByParentId(@Param("parentId") String parentId);
     
     /**
@@ -52,4 +49,19 @@ public interface DeptMapper {
 
     int swapSort(@Param("currentId") Integer currentId, @Param("swapId") Integer swapId);
 
+    /**
+     * 统计当前区划下的医疗集团数量
+     * @param province
+     * @param city
+     * @return
+     */
+    int countByDist(@Param("province_code") String province, @Param("city_code") String city);
+    
+    /**
+     * 统计该医疗集团名称数量
+     * @param deptId	不为null是表示修改，统计数量时不包含该项
+     * @param deptName
+     * @return
+     */
+    int countByName(@Param("dept_id") String deptId, @Param("dept_name") String deptName);
 }

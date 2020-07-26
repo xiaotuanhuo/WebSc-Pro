@@ -21,8 +21,8 @@ public class UserVO {
 	private String city;			// 当前用户所属市
 	private String area;			// 当前用户所属区/县
 	
-	private String name;		// 用户姓名（前台查询条件）
-	private String phone;				// 手机号（前台查询条件）
+	private String name;			// 用户姓名（前台查询条件）
+	private String phone;			// 手机号（前台查询条件）
 	
 	public UserVO() {
 		this.adminRoleId = RoleEnum.XTGLY.getCode() + "";

@@ -22,7 +22,7 @@
         <result column="area" jdbcType="VARCHAR" property="area"/>
         <result column="patient_type" jdbcType="VARCHAR" property="patientType"/>
         <result column="operation_type" jdbcType="VARCHAR" property="operationType"/>
-        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="last_login_time" jdbcType="VARCHAR" property="lastLoginTime"/>
         <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
         <result column="modify_time" jdbcType="VARCHAR" property="modifyTime"/>
@@ -119,7 +119,7 @@
         					#{area,jdbcType=VARCHAR},
         					#{patientType,jdbcType=VARCHAR},
         					#{operationType,jdbcType=VARCHAR},
-        					#{status,jdbcType=INTEGER},
+        					#{status,jdbcType=VARCHAR},
         					#{photo,jdbcType=VARCHAR})
     </insert>
     
@@ -187,7 +187,7 @@
                 operation_type = #{operationType,jdbcType=VARCHAR},
             </if>
             <if test="status != null">
-                status = #{status,jdbcType=INTEGER},
+                status = #{status,jdbcType=VARCHAR},
             </if>
             <if test="photo != null">
                 photo = #{photo,jdbcType=INTEGER}
@@ -234,6 +234,13 @@
         select
         <include refid="Base_Column_List"/>
         from WSC_USER
+    </select>
+
+	<select id="selectByRoleTypeId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_USER
+        where role_type_id = #{roleTypeId}
     </select>
 
     <update id="updateStatusByPrimaryKey">
@@ -465,7 +472,7 @@
 
     <update id="activeUserByUserId">
         update WSC_USER
-        set status = 1
+        set status = '1'
         where user_id = #{userId}
     </update>
 

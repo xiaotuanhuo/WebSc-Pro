@@ -16,7 +16,7 @@
     <result column="status" property="status" jdbcType="VARCHAR" />
   </resultMap>
   
-    <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScBureau">
+  <resultMap id="TreeBaseResultMap" type="sc.system.model.WebScBureau">
     <id column="bureau_id" property="bureauId" jdbcType="VARCHAR" />
     <result column="bureau_pid" property="bureauPid" jdbcType="VARCHAR" />
     <result column="bureau_name" property="bureauName" jdbcType="VARCHAR" />
@@ -29,8 +29,24 @@
     <result column="area" property="area" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="VARCHAR" />
-        <collection property="children" ofType="sc.system.model.WebScBureau" select="selectSubTree" column="{bureau_pid = bureau_id}"/>
-    </resultMap>
+	<collection property="children" ofType="sc.system.model.WebScBureau" select="selectSubTree" column="{bureau_pid = bureau_id}"/>
+  </resultMap>
+    
+  <resultMap id="UnleafTreeBaseResultMap" type="sc.system.model.WebScBureau">
+    <id column="bureau_id" property="bureauId" jdbcType="VARCHAR" />
+    <result column="bureau_pid" property="bureauPid" jdbcType="VARCHAR" />
+    <result column="bureau_name" property="bureauName" jdbcType="VARCHAR" />
+    <result column="bureau_address" property="bureauAddress" jdbcType="VARCHAR" />
+    <result column="bureau_tel" property="bureauTel" jdbcType="VARCHAR" />
+    <result column="leader_name" property="leaderName" jdbcType="VARCHAR" />
+    <result column="leader_tel" property="leaderTel" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <collection property="children" ofType="sc.system.model.WebScBureau" select="selectUnleafSubTree" column="{bureau_pid = bureau_id}"/>
+  </resultMap>
     
   <sql id="Base_Column_List" >
     bureau_id, bureau_pid, bureau_name, bureau_address, bureau_tel, leader_name, leader_tel, 
@@ -58,13 +74,12 @@
     insert into WSC_BUREAU (bureau_id, bureau_pid, bureau_name, 
       bureau_address, bureau_tel, leader_name, 
       leader_tel, province, city, 
-      area, create_date, status
+      area, create_date
       )
     values (#{bureauId,jdbcType=VARCHAR}, #{bureauPid,jdbcType=VARCHAR}, #{bureauName,jdbcType=VARCHAR}, 
       #{bureauAddress,jdbcType=VARCHAR}, #{bureauTel,jdbcType=VARCHAR}, #{leaderName,jdbcType=VARCHAR}, 
       #{leaderTel,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
-      #{area,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}
-      )
+      #{area,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="sc.system.model.WebScBureau" >
     insert into WSC_BUREAU
@@ -258,5 +273,117 @@
             </choose>
         </where>
         order by bureau_id
+    </select>
+    
+    <!-- // 查询当前节点及其所有非叶子子节点
+		 // 该方法查询当前节点
+		 // resultMap="UnleafTreeBaseResultMap"递归查询子节点 -->
+    <select id="selectUnleafTree" resultMap="UnleafTreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_BUREAU wb
+        <where>
+            <choose>
+				<when test="area_code != null and area_code != ''">
+					<!-- 最小区划 叶子节点 恒不成立 -->
+            		AND 1 = 2
+            	</when>
+            	<otherwise>
+            		<choose>
+            			<when test="city_code != null and city_code != ''">
+		               		AND wb.city = #{city_code} AND wb.area is null
+		               	</when>
+		               	<otherwise>
+		               		<choose>
+		               			<when test="province_code != null and province_code != ''">
+			                		AND wb.province = #{province_code} AND wb.city is null
+			                	</when>
+			                	<otherwise>
+			                		AND wb.province is null
+			                	</otherwise>
+		               		</choose>
+		               	</otherwise>
+            		</choose>
+            	</otherwise>
+			</choose>
+        </where>
+        order by bureau_id
+    </select>
+    
+    <!-- // 查询当前节点所有非叶子子节点
+		 // resultMap="UnleafTreeBaseResultMap"递归查询子节点 -->
+	<select id="selectUnleafSubTree" resultMap="UnleafTreeBaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_BUREAU wb
+        <where>
+            <choose>
+                <when test="bureau_pid!=null">
+                    and wb.bureau_pid = #{bureau_pid} and wb.area is null
+                </when>
+                <otherwise>
+                    and wb.bureau_pid = '0'
+                </otherwise>
+            </choose>
+        </where>
+        order by bureau_id
+    </select>
+    
+    <!-- // 查询上级节点  -->
+	<select id="selectSuper" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_BUREAU wb
+        <where>
+            <choose>
+                <when test="area_code != null and area_code != ''">
+                	AND wb.province = #{province_code} AND wb.city = #{city_code} AND wb.area is null
+                </when>
+                <otherwise>
+                	<choose>
+                		<when test="city_code != null and city_code != ''">
+                			AND wb.province = #{province_code} AND wb.city is null
+                		</when>
+                		<otherwise>
+                			AND wb.bureau_pid = '0'
+                		</otherwise>
+                	</choose>
+                </otherwise>
+            </choose>
+        </where>
+        order by bureau_id
+    </select>
+    
+    <select id="countByDist" resultType="java.lang.Integer">
+        select count(*)
+        from WSC_BUREAU
+        <where>
+        	<choose>
+     			<when test="city_code != null and city_code != ''">
+     				AND province = #{province_code} AND city = #{city_code}
+     			</when>
+     			<otherwise>
+     				<choose>
+     					<when test="province_code != null and province_code != ''">
+     						AND province = #{province_code} AND city is null
+						</when>
+						<otherwise>
+							AND bureau_pid = '0'
+						</otherwise>
+					</choose>
+				</otherwise>
+			</choose>
+        </where>
+    </select>
+    
+    <select id="countByName" resultType="java.lang.Integer">
+        select count(*)
+        from WSC_BUREAU
+        <where>
+        	<if test="bureau_id != null and bureau_id != ''">
+        		AND bureau_id != #{bureau_id}
+        	</if>
+        	AND bureau_name = #{bureau_name}
+        </where>
     </select>
 </mapper>
