@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.DocTmpMapper">
+
+	<insert id="insert" parameterType="sc.system.model.WebScDoc">
+		insert into WSC_DOCUMENT_TMP(document_id,
+									patient_name,
+									patient_age,
+									patient_sex,
+									operative_id,
+									anesthetic_id,
+									height,
+									weight,
+									asa,
+									xtbs,
+									shs,
+									shcs,
+									sskssj,
+									ssjssj,
+									sssc,
+									jmjs,
+									ywsj_hxxt,
+									ywsj_hxxt_qt,
+									ywsj_xhxt,
+									ywsj_xhxt_qt,
+									ywsj_gm,
+									ywsj_gm_socre,
+									ywsj_qt,
+									shbl_zw,
+									shbl_hbtt,
+									shbl_ex,
+									shbl_xy,
+									shbl_ot,
+									shbl_ot_score,
+									shttzl,
+									photo_1,
+									photo_2,
+									photo_3,
+									photo_4,
+									photo_5,
+									status)
+						values(#{documentId,jdbcType=VARCHAR},
+							   #{patientName,jdbcType=VARCHAR},
+							   #{patientAge,jdbcType=NUMERIC},
+							   #{patientSex,jdbcType=VARCHAR},
+							   #{operativeId,jdbcType=VARCHAR},
+							   #{anestheticId,jdbcType=VARCHAR},
+							   #{height,jdbcType=NUMERIC},
+							   #{weight,jdbcType=NUMERIC},
+							   #{asa,jdbcType=VARCHAR},
+							   #{xtbs,jdbcType=VARCHAR},
+							   #{shs,jdbcType=VARCHAR},
+							   #{shcs,jdbcType=NUMERIC},
+							   #{sskssj,jdbcType=VARCHAR},
+							   #{ssjssj,jdbcType=VARCHAR},
+							   #{sssc,jdbcType=NUMERIC},
+							   #{jmjs,jdbcType=VARCHAR},
+							   #{ywsjHxxt,jdbcType=VARCHAR},
+							   #{ywsjHxxtQt,jdbcType=VARCHAR},
+							   #{ywsjXhxt,jdbcType=VARCHAR},
+							   #{ywsjXhxtQt,jdbcType=VARCHAR},
+							   #{ywsjGm,jdbcType=VARCHAR},
+							   #{ywsjGmAocre,jdbcType=VARCHAR},
+							   #{ywsjQt,jdbcType=VARCHAR},
+							   #{shblZw,jdbcType=VARCHAR},
+							   #{shblHbtt,jdbcType=VARCHAR},
+							   #{shblEx,jdbcType=VARCHAR},
+							   #{shblXy,jdbcType=VARCHAR},
+							   #{shblOt,jdbcType=VARCHAR},
+							   #{shblOtScore,jdbcType=NUMERIC},
+							   #{shttzl,jdbcType=VARCHAR},
+							   #{photo_1,jdbcType=VARCHAR},
+							   #{photo_2,jdbcType=VARCHAR},
+							   #{photo_3,jdbcType=VARCHAR},
+							   #{photo_4,jdbcType=VARCHAR},
+							   #{photo_5,jdbcType=VARCHAR},
+							   #{status,jdbcType=VARCHAR}
+							   )
+	</insert>
+	
+	<select id="count" resultType="int">
+		select count(*) from WSC_DOCUMENT_TMP
+	</select>
+	
+	<update id="update" parameterType="sc.system.model.WebScDoc">
+		update WSC_DOCUMENT_TMP 
+		<set>
+            <if test="patientName != null">
+            	patient_name = #{patientName,jdbcType=VARCHAR},
+            </if>
+            <if test="patientAge != null">
+            	patient_age = #{patientAge,jdbcType=NUMERIC},
+            </if>
+            <if test="patientSex != null">
+            	patient_sex = #{patientSex,jdbcType=VARCHAR},
+            </if>
+            <if test="operativeId != null">
+            	operative_id = #{operativeId,jdbcType=VARCHAR},
+            </if>
+            <if test="anestheticId != null">
+            	anesthetic_id = #{anestheticId,jdbcType=VARCHAR},
+            </if>
+            <if test="height != null">
+            	height = #{height,jdbcType=NUMERIC},
+            </if>
+            <if test="weight != null">
+            	weight = #{weight,jdbcType=NUMERIC},
+            </if>
+            <if test="asa != null">
+            	asa = #{asa,jdbcType=VARCHAR},
+            </if>
+            <if test="xtbs != null">
+            	xtbs = #{xtbs,jdbcType=VARCHAR},
+            </if>
+            <if test="shs != null">
+            	shs = #{shs,jdbcType=VARCHAR},
+            </if>
+            <if test="shcs != null">
+            	shcs = #{shcs,jdbcType=NUMERIC},
+            </if>
+            <if test="sskssj != null">
+            	sskssj = #{sskssj,jdbcType=VARCHAR},
+            </if>
+            <if test="ssjssj != null">
+            	ssjssj = #{ssjssj,jdbcType=VARCHAR},
+            </if>
+            <if test="sssc != null">
+            	sssc = #{sssc,jdbcType=NUMERIC},
+            </if>
+            <if test="jmjs != null">
+            	jmjs = #{jmjs,jdbcType=VARCHAR},
+            </if>
+            <if test="ywsjHxxt != null">
+            	ywsj_hxxt = #{ywsjHxxt,jdbcType=VARCHAR},
+            </if>
+            <if test="ywsjHxxtQt != null">
+            	ywsj_hxxt_qt = #{ywsjHxxtQt,jdbcType=VARCHAR},
+            </if>
+            <if test="ywsjXhxt != null">
+            	ywsj_xhxt = #{ywsjXhxt,jdbcType=VARCHAR},
+            </if>
+            <if test="ywsjHxxtQt != null">
+            	ywsj_xhxt_qt = #{ywsjHxxtQt,jdbcType=VARCHAR},
+            </if>
+            <if test="ywsjXhxt != null">
+            	ywsj_xhxt = #{ywsjXhxt,jdbcType=VARCHAR},
+            </if>
+            <if test="ywsjXhxtQt != null">
+            	ywsj_xhxt_qt = #{ywsjXhxtQt,jdbcType=VARCHAR},
+            </if>
+            <if test="ywsjGm != null">
+            	ywsj_gm = #{ywsjGm,jdbcType=VARCHAR},
+            </if>
+            <if test="ywsjGmAocre != null">
+            	ywsj_gm_socre = #{ywsjGmAocre,jdbcType=VARCHAR},
+            </if>
+            <if test="ywsjQt != null">
+            	ywsj_qt = #{ywsjQt,jdbcType=VARCHAR},
+            </if>
+            <if test="shblZw != null">
+            	shbl_zw = #{shblZw,jdbcType=VARCHAR},
+            </if>
+            <if test="shblHbtt != null">
+            	shbl_hbtt = #{shblHbtt,jdbcType=VARCHAR},
+            </if>
+            <if test="shblEx != null">
+            	shbl_ex = #{shblEx,jdbcType=VARCHAR},
+            </if>
+            <if test="shblXy != null">
+            	shbl_xy = #{shblXy,jdbcType=VARCHAR},
+            </if>
+            <if test="shblOt != null">
+            	shbl_ot = #{shblOt,jdbcType=VARCHAR},
+            </if>
+            <if test="shblOtScore != null">
+            	shbl_ot_score = #{shblOtScore,jdbcType=NUMERIC},
+            </if>
+            <if test="shttzl != null">
+            	shttzl = #{shttzl,jdbcType=VARCHAR},
+            </if>
+            <if test="photo_1 != null">
+            	photo_1 = #{photo_1,jdbcType=VARCHAR},
+            </if>
+            <if test="photo_2 != null">
+            	photo_2 = #{photo_2,jdbcType=VARCHAR},
+            </if>
+            <if test="photo_3 != null">
+            	photo_3 = #{photo_3,jdbcType=VARCHAR},
+            </if>
+            <if test="photo_4 != null">
+            	photo_4 = #{photo_4,jdbcType=VARCHAR},
+            </if>
+            <if test="photo_5 != null">
+            	photo_5 = #{photo_5,jdbcType=VARCHAR},
+            </if>
+            <if test="patientName != null">
+            	status = #{status,jdbcType=VARCHAR},
+            </if>
+      	</set>
+      	where document_id = #{documentId,jdbcType=VARCHAR}
+	</update>
+</mapper>

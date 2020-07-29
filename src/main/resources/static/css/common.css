@@ -161,6 +161,14 @@
     color: #f5222d;
 }
 
+.zadmin-green {
+    color: #32CD32;
+}
+
+.zadmin-orange {
+	color: #FFA500;
+}
+
 .zadmin-left {
     float: left;
 }
@@ -173,11 +181,16 @@
 .layui-form-select dl { max-height:200px; }
 
 
+.layui-table-cell{
+	padding: 0 5px;
+}
+
 /*.layui-form-item .layui-input-inline{
 	float:left;
  	width: calc(100% - 90px);
  	margin-right:10px
 }*/
+
 
 /* 个人中心页面 */
 .user-info-page .user-info{
@@ -273,4 +286,45 @@
 }
 .user-info-page .canvas-group .layui-btn-primary:hover{
     opacity: 1;
+
+
+@keyframes fade {
+    from {
+        opacity: 1.0;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    to {
+        opacity: 1.0;
+    }
+}
+
+@-webkit-keyframes fade {
+    from {
+        opacity: 1.0;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    to {
+        opacity: 1.0;
+    }
+}
+
+.addBox {
+	width:100%;
+    height: 150px;
+    background-color:white;
+    border: 1px dashed #aaa;
+    border-radius: 4px;
+    text-align: center;
+    padding: 25px 0 25px 0;
+    cursor: pointer;
+}
+
+.addBox:hover{
+	animation: fade 600ms infinite;
+    -webkit-animation: fade 600ms infinite;
+
 }

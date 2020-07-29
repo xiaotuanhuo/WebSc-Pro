@@ -2,12 +2,15 @@ package sc.system.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +30,7 @@ import sc.system.model.WebScOperative;
 import sc.system.model.WebScOrganization;
 import sc.system.model.WebScUser;
 import sc.system.model.WebScUser_Distribution;
+import sc.system.model.vo.District;
 
 import com.github.pagehelper.PageHelper;
 
@@ -40,6 +44,9 @@ public class DocService {
 	private AnestheticMapper anestheticMapper;
 	@Resource
 	private OrganizationMapper organizationMapper;
+	
+	@Autowired
+	private District district;
 	
 	public int insert(WebScDoc doc) {
         return docMapper.insert(doc);
@@ -59,10 +66,25 @@ public class DocService {
     
     public List<WebScDoc> selectWebScDocList(int page, int rows, WebScDoc doc){
     	PageHelper.startPage(page, rows);
-    	return docMapper.selectWebScDocList(doc);
+    	List<WebScDoc> ls = docMapper.selectWebScDocList(doc);
+    	for(WebScDoc d : ls){
+    		if(d.getStatus() != null && !d.getStatus().equals("")){
+    			d.setPatientName(d.getTmpPatientName());
+    			d.setPatientAge(d.getTmpPatientAge());
+    			d.setPatientSex(d.getTmpPatientSex());
+    			d.setOperativeId(d.getTmpOperativeId());
+    			d.setOperativeName(d.getTmpOperativeName());
+    			d.setAnestheticId(d.getTmpAnestheticId());
+    			d.setAnestheticName(d.getTmpAnestheticName());
+    		}
+    	}
+    	
+    	return ls;
     }
     
-    public List<WebScUser> getDistributionDrGridList(String documentId, String province){
+    public List<WebScUser_Distribution> getDistributionDrGridList(String documentId, String qaName, WebScUser user){
+    	List<WebScUser_Distribution> drList = new ArrayList<WebScUser_Distribution>();
+    	
     	//获取订单数据
     	WebScDoc doc = new WebScDoc();
     	doc.setDocumentId(documentId);
@@ -79,14 +101,112 @@ public class DocService {
 	    	
 	    	//创建查询条件
 	    	Map<String, String> searchMap = new HashMap<String, String>();
-	    	searchMap.put("province", province);
+	    	searchMap.put("qaName", qaName);
+	    	searchMap.put("province", user.getProvince());
 	    	searchMap.put("org_id",org.getOrgId());
 	    	searchMap.put("operate_start_time", doc.getOperateStartTime());
 	    	//获取医生信息
-	    	List<WebScUser_Distribution> drList = docMapper.getDistributionDrGridList(searchMap);
-    	
+	    	drList = docMapper.getDistributionDrGridList(searchMap);
+	    	
+	    	for(WebScUser_Distribution duser : drList){
+	    		int iDistributionScore = 0;
+	    		int iScope = 0;
+	    		//匹配当日医院
+	    		duser.setIswork("0");
+	    		if(uls != null && uls.size() > 0){
+	    			for(String userid : uls){
+	    				if(duser.getUserId().equals(userid)){
+	    					duser.setIswork("1");
+	    					iDistributionScore += 3;
+	    					break;
+	    				}
+	    			}
+	    		}
+	    		//当日有空
+	    		if(duser.getIscalendar() != null && !duser.getIscalendar().equals("")){
+	    			iDistributionScore += 2;
+	    			duser.setIscalendar("1");
+	    		}else{
+	    			duser.setIscalendar("0");
+	    		}
+	    		//备案
+	    		if(duser.getIsrecord() != null && !duser.getIsrecord().equals("")){
+	    			iDistributionScore += 2;
+	    			duser.setIscalendar("1");
+	    		}else{
+	    			duser.setIsrecord("0");
+	    		}
+	    		
+	    		//所在区域范围
+	    		if(org.getProvince().equals(duser.getProvince())){
+	    			iDistributionScore += 1;
+	    			iScope += 1;
+	    		}
+	    		
+	    		if(org.getCity() != null && duser.getCity() != null){
+	    			if(org.getCity().equals(duser.getCity())){
+	    				iDistributionScore += 1;
+		    			iScope += 1;
+	    			}
+	    		}
+	    		
+	    		if(org.getArea() != null && duser.getArea() != null){
+	    			if(org.getArea().equals(duser.getArea())){
+	    				iDistributionScore += 1;
+		    			iScope += 1;
+	    			}
+	    		}
+	    		duser.setIsScope(iScope + "");
+	    		
+	    		//病人类型
+	    		if(duser.getPatient_type() != null){
+	    			//订单病人类型
+	    			int age = doc.getPatientAge();
+	    			String docPatType = "0";
+	    			if(age <= 16) docPatType = "1";
+	    			else if(age > 16 && age <= 60) docPatType = "2";
+	    			else docPatType = "3";
+	    			
+	    			duser.setIsPatient("0");
+	    			String[] pat = duser.getPatient_type().split(",");
+	    			for(String str : pat){
+	    				if(str.equals(docPatType)){
+	    					duser.setIsPatient("1");
+	    					iDistributionScore += 1;
+	    					break;
+	    				}
+	    			}
+	    		}
+	    		
+	    		//省/市/区 转换成中文
+	    		if(duser.getProvince() != null && !duser.getProvince().equals(""))
+	    			duser.setProvince(district.getDistrictMap().get(duser.getProvince()).getName());
+	    		if(duser.getCity() != null && !duser.getCity().equals(""))
+	    			duser.setCity(district.getDistrictMap().get(duser.getCity()).getName());
+	    		if(duser.getArea() != null && !duser.getArea().equals(""))
+	    			duser.setArea(district.getDistrictMap().get(duser.getArea()).getName());
+	    		
+	    		duser.setDistributionScore(iDistributionScore);
+	    	}
+	    	
+	    	//list 排序
+	    	Collections.sort(drList, new Comparator<WebScUser_Distribution>() {  
+	    		  
+	            @Override  
+	            public int compare(WebScUser_Distribution o1, WebScUser_Distribution o2) {  
+	                int i = o1.getDistributionScore() - o2.getDistributionScore();
+	                if(i == 0){
+	                	return o1.getUserName().compareTo(o2.getUserName());
+	                }
+	                return -i;  
+	            }  
+	        });
     	}
-    	return null;
+    	return drList;
+    }
+    
+    public List<WebScUser> getTransferUser(Map<String, String> searchMap){
+    	return docMapper.getTransferUser(searchMap);
     }
     
     public String importDocsService(MultipartFile file) throws Exception {
@@ -235,6 +355,10 @@ public class DocService {
 		}
     	
     	return "成功导入"+docs.size()+"条，失败"+(rows.size()-docs.size()-1)+"条："+msg;
+    }
+    
+    public List<WebScUser> getQaUserInfo(Map<String, String> searchMap){
+    	return docMapper.getQaUserInfo(searchMap);
     }
     
 }

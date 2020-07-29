@@ -21,24 +21,17 @@
     	<div class="layui-tab" lay-filter="test">
 	        <div class="layui-carousel" id="distribution-tab">
   				<div carousel-item>
-	        		<div style="background-color: white;">
+	        		<div style="background-color: white;margin-top: 20px;text-align: center;">
 	        			<div class="layui-row">
-		        			<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-		        				<label for="qaName" class="layui-form-label">姓名</label>
-				                <div class="layui-input-block">
-				             		<input type="text" id="qaName" class="layui-input" >
-				                </div>
-			                </div>
-			                <div class="layui-col-xs12 layui-col-sm8 layui-col-md8" style="margin-top: 8px;">
-			                	<button class="layui-btn layui-btn-normal" style="margin-left: 15px;"
-			                		id="btnSearch">查询</button>
+		        			<label for="operativeId" class="layui-form-label">取消原因</label>
+			       			<div class="layui-input-block">
+			             		 <textarea placeholder="请输入内容" class="layui-textarea" id="doc_deleteReason"></textarea>
 			                </div>
 		                </div>
-		                <div class="layui-row">
-							<table class="layui-hide" id="user-table"></table>
-						</div>
+		                
 		            	<div class="layui-row">
 			            	<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;text-align: center;">
+			            		<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="btnDel">确认取消</button>
 				            	<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="btnSub">订单详情</button>
 			                </div>
 		            	</div>
@@ -169,7 +162,7 @@
 						       	 
 				            	<div class="layui-row">
 					            	<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;text-align: center;">
-						            	<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="btnNext">分配列表</button>
+						            	<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="btnNext">撤销原因</button>
 					                </div>
 				            	</div>
 				        	</div>
@@ -183,7 +176,7 @@
 	<script type="text/html" id="fp-column-toolbar">
 		<shiro:hasPermission name="user:userinfo">
             <a lay-event="userinfo">
-                <i class="zadmin-icon zadmin-icon-quanxianguankong zadmin-oper-area zadmin-green" title="医生信息" style=""></i>
+                <i class="layui-icon layui-icon-tips zadmin-oper-area zadmin-blue" title="医生信息" style=""></i>
             </a>
 		</shiro:hasPermission>
 
@@ -251,9 +244,7 @@
     <script th:src="@{/js/common.js}"></script>
 
     <script th:inline="javascript">
-    	var doc_id = [[${doc.documentId}]];
-    	var operativeId = [[${doc.operativeId}]];
-    	var anestheticId = [[${doc.anestheticId}]];
+    	var doc = [[${doc}]];
     	
         layui.config({
             base: '/lib/layui/extend/'
@@ -282,8 +273,8 @@
 		 	}, true);
             
             //默认选中
-            var op = operativeId.split(",");
-            var an = anestheticId.split(",");
+            var op = doc.operativeId.split(",");
+            var an = doc.anestheticId.split(",");
             formSelects.value('operative-select', op, true);
             formSelects.value('anesthetic-select', an, true);
             formSelects.disabled("operative-select");
@@ -299,27 +290,6 @@
 		                ,indicator: 'none' 
 		       		});
             
-            var grid = table.render({
-                elem: '#user-table'
-                , url: '/doc/distribution_drlist'
-            	, where: {'id': doc_id, 'qaName': ''}
-            	, height: 320
-            	, limit: Number.MAX_VALUE // 数据表格默认全部显示
-                , cols: [
-                    [
-                        {field: 'userId', title: 'ID', align: 'center',sort: true, hide: true}
-                        , {field: 'distributionScore', title: '推荐', templet: '#distributionTpl', unresize: true, align: 'center',sort: true, width:'12%'}
-                        , {field: 'userName', title: '姓名', align: 'center',sort: true, width:'13%'}
-                        , {field: 'iswork', title: '当日已派单', templet: '#workTpl', unresize: true, align: 'center',sort: true, width:'10%'}
-                        , {field: 'isrecord', title: '机构备案', templet: '#recordTpl', unresize: true, align: 'center',sort: true, width:'10%'}
-                        , {field: 'iscalendar', title: '空闲日', templet: '#calendarTpl', unresize: true, align: 'center',sort: true, width:'10%'}
-                        , {field: 'scope', title: '所在区域', templet: '#scopeTpl', unresize: true, align: 'center',sort: true, width:'23%'}
-                        , {field: 'patient_type', title: '病人类型', templet: "#patientTypeTpl", align: 'center',sort: true, width:'10%'}
-                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#fp-column-toolbar', width:'10%'}
-                    ]
-                ]
-            });
-            
             //下一步
             form.on('submit(btnNext)', function (form) {
             	fptab.slide("add"); 
@@ -332,32 +302,15 @@
                 return false;
             });
             
-            var active = {
-               	reload: function(){
-   	            	table.reload('user-table', {
-   		            	where: {
-   		            		id: doc_id,
-   		            		qaName: $('#qaName').val()
-   		            	}
-   	          		});
-           		}
-        	};
-            
-            $('#btnSearch').on('click', function(){
-            	active["reload"] ? active["reload"].call(this) : '';
-   			}); 
-            
-            //grid按钮
-            table.on('tool', function (obj) {
-                var data = obj.data;
-                var event = obj.event;
-                if (event === 'setdistribution')											 {
-             		layer.confirm("确认订单分配给" + data.userName + "吗?", {icon: 3, title: '分配确认'},
+            form.on('submit(btnDel)', function (form) {
+            	var delReason = $("#doc_deleteReason").val();
+            	layer.confirm("确认取消订单，取消原因：" + delReason, {icon: 3, title: '取消确认'},
        					function (index) {
              				//调用后台
-             				$.post('/doc/setdistribution', {
-             					'doc_id': doc_id,
-             					'user_id': data.userId
+             				$.post('/doc/setremove', {
+             					'id': doc.documentId,
+             					'state': doc.documentState,
+             					'reason': delReason
              					}, function (result) {
 			           
             					layer.close(index);
@@ -367,10 +320,10 @@
        					}, function (index) {
        						layer.close(index);
        					}
-        			);
-                }
+        		);
+            	
+                return false;
             });
-            
         });
     </script>
 </body>

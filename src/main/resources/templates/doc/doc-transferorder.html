@@ -169,7 +169,7 @@
 						       	 
 				            	<div class="layui-row">
 					            	<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;text-align: center;">
-						            	<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="btnNext">分配列表</button>
+						            	<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="btnNext">转单列表</button>
 					                </div>
 				            	</div>
 				        	</div>
@@ -180,80 +180,24 @@
     	</div>
 	</div>
 	
-	<script type="text/html" id="fp-column-toolbar">
-		<shiro:hasPermission name="user:userinfo">
-            <a lay-event="userinfo">
-                <i class="zadmin-icon zadmin-icon-quanxianguankong zadmin-oper-area zadmin-green" title="医生信息" style=""></i>
-            </a>
-		</shiro:hasPermission>
-
-        <shiro:hasPermission name="doc:setdistribution">
-            <a lay-event="setdistribution">
-                <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="订单分配"></i>
+	<script type="text/html" id="tr-column-toolbar">
+        <shiro:hasPermission name="doc:settransferorder">
+            <a lay-event="settransferorder">
+                <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="转发订单"></i>
             </a>
 		</shiro:hasPermission>
     </script>
     
-    <script type="text/html" id="workTpl">
-		{{# if(d.iswork == '1'){ }}
-			<i class="layui-icon layui-icon-ok" style="color:blue;"></i>
-		{{# } else { }}
-			<i class="layui-icon layui-icon-close" style="color:red;"></i>
-		{{# } }}
+  	<script type="text/html" id="sexTpl">
+		{{ d.sex == '0' ? '女' : '男' }}
     </script>
-    
-    <script type="text/html" id="recordTpl">
-		{{# if(d.isrecord == '1'){ }}
-			<i class="layui-icon layui-icon-ok" style="color:blue;"></i>
-		{{# } else { }}
-			<i class="layui-icon layui-icon-close" style="color:red;"></i>
-		{{# } }}
-    </script>
-    
-    <script type="text/html" id="calendarTpl">
-		{{# if(d.iscalendar == '1'){ }}
-			<i class="layui-icon layui-icon-ok" style="color:blue;"></i>
-		{{# } else { }}
-			<i class="layui-icon layui-icon-close" style="color:red;"></i>
-		{{# } }}
-    </script>
-    
-    <script type="text/html" id="scopeTpl">
-		{{# if(d.isScope == '1'){ }}
-			<span style="color:blue;">{{d.province}}</span><span> - {{d.city}} - {{d.area}}</span>
-		{{# } else if(d.isScope == '2'){ }}
-			<span style="color:blue;">{{d.province}}</span> - <span style="color:blue;">{{d.city}}</span><span> - {{d.area}}</span>
-		{{# } else if(d.isScope == '3'){ }}
-			<span style="color:blue;">{{d.province}}</span> - <span style="color:blue;">{{d.city}}</span> - <span style="color:blue;">{{d.area}}</span>
-		{{# } else { }}
-			<span>{{d.province}} - {{d.city}} - {{d.area}}</span>
-		{{# } }}
-    </script>
-    
-    <script type="text/html" id="patientTypeTpl">
-		{{# if(d.isPatient == '1'){ }}
-			<i class="layui-icon layui-icon-ok" style="color:blue;"></i>
-		{{# } else { }}
-			<i class="layui-icon layui-icon-close" style="color:red;"></i>
-		{{# } }}
-    </script>
-    <script type="text/html" id="distributionTpl">
-		{{# if(d.distributionScore > 4 && d.distributionScore < 8){ }}
-			<span style="color:blue;">推荐</span>
-		{{# } else if(d.distributionScore > 8){ }}
-			<span style="color:blue;">强烈推荐</span>
-		{{# } }}
-    </script>
-    
     
     <script th:src="@{/lib/jquery/jquery.min.js}"></script>
     <script th:src="@{/lib/layui/layui.js}"></script>
     <script th:src="@{/js/common.js}"></script>
 
     <script th:inline="javascript">
-    	var doc_id = [[${doc.documentId}]];
-    	var operativeId = [[${doc.operativeId}]];
-    	var anestheticId = [[${doc.anestheticId}]];
+    	var doc = [[${doc}]];
     	
         layui.config({
             base: '/lib/layui/extend/'
@@ -282,8 +226,8 @@
 		 	}, true);
             
             //默认选中
-            var op = operativeId.split(",");
-            var an = anestheticId.split(",");
+            var op = doc.operativeId.split(",");
+            var an = doc.anestheticId.split(",");
             formSelects.value('operative-select', op, true);
             formSelects.value('anesthetic-select', an, true);
             formSelects.disabled("operative-select");
@@ -301,21 +245,17 @@
             
             var grid = table.render({
                 elem: '#user-table'
-                , url: '/doc/distribution_drlist'
-            	, where: {'id': doc_id, 'qaName': ''}
+                , url: '/doc/transferuser'
+            	, where: {'id': doc.documentId, 'name': ''}
             	, height: 320
             	, limit: Number.MAX_VALUE // 数据表格默认全部显示
                 , cols: [
                     [
                         {field: 'userId', title: 'ID', align: 'center',sort: true, hide: true}
-                        , {field: 'distributionScore', title: '推荐', templet: '#distributionTpl', unresize: true, align: 'center',sort: true, width:'12%'}
-                        , {field: 'userName', title: '姓名', align: 'center',sort: true, width:'13%'}
-                        , {field: 'iswork', title: '当日已派单', templet: '#workTpl', unresize: true, align: 'center',sort: true, width:'10%'}
-                        , {field: 'isrecord', title: '机构备案', templet: '#recordTpl', unresize: true, align: 'center',sort: true, width:'10%'}
-                        , {field: 'iscalendar', title: '空闲日', templet: '#calendarTpl', unresize: true, align: 'center',sort: true, width:'10%'}
-                        , {field: 'scope', title: '所在区域', templet: '#scopeTpl', unresize: true, align: 'center',sort: true, width:'23%'}
-                        , {field: 'patient_type', title: '病人类型', templet: "#patientTypeTpl", align: 'center',sort: true, width:'10%'}
-                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#fp-column-toolbar', width:'10%'}
+                        , {field: 'userName', title: '姓名', align: 'center',sort: true}
+                        , {field: 'age', title: '年龄', align: 'center',sort: true}
+                        , {field: 'sex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true}
+                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#tr-column-toolbar'}
                     ]
                 ]
             });
@@ -336,8 +276,8 @@
                	reload: function(){
    	            	table.reload('user-table', {
    		            	where: {
-   		            		id: doc_id,
-   		            		qaName: $('#qaName').val()
+   		            		id: doc.documentId,
+   		            		name: $('#qaName').val()
    		            	}
    	          		});
            		}
@@ -351,12 +291,13 @@
             table.on('tool', function (obj) {
                 var data = obj.data;
                 var event = obj.event;
-                if (event === 'setdistribution')											 {
-             		layer.confirm("确认订单分配给" + data.userName + "吗?", {icon: 3, title: '分配确认'},
+                if (event === 'settransferorder')											 {
+             		layer.confirm("确认转单给" + data.userName + "吗?", {icon: 3, title: '转单确认'},
        					function (index) {
              				//调用后台
-             				$.post('/doc/setdistribution', {
-             					'doc_id': doc_id,
+             				$.post('/doc/settransferorder', {
+             					'doc_id': doc.documentId,
+             					'qa_user_id' : doc.qaUserId,
              					'user_id': data.userId
              					}, function (result) {
 			           

@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 
 import sc.system.model.WebScDoc;
 import sc.system.model.WebScOrganization;
+import sc.system.model.WebScUser;
 import sc.system.model.WebScUser_Distribution;
 
 @Mapper
@@ -36,4 +37,9 @@ public interface DocMapper {
 	List<String> getWorkDr(String time);
 	
 	List<WebScUser_Distribution> getDistributionDrGridList(Map<String, String> searchMap);
+	
+	List<WebScUser> getTransferUser(Map<String, String> searchMap);
+	
+	List<WebScUser> getQaUserInfo(Map<String, String> searchMap);
+	
 }

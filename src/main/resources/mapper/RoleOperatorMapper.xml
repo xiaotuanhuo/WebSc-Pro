@@ -38,7 +38,7 @@
 
     <delete id="deleteByOperatorId">
         delete
-        from S_OPERATOR
+        from WSC_OPERATOR
         where operator_id = #{operatorId}
     </delete>
 

@@ -15,6 +15,8 @@ public class WebScUser_Distribution {
 	private String isOperation;	
 	private String operation_type;
 	
+	private int distributionScore;
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -92,5 +94,11 @@ public class WebScUser_Distribution {
 	}
 	public void setOperation_type(String operation_type) {
 		this.operation_type = operation_type;
+	}
+	public int getDistributionScore() {
+		return distributionScore;
+	}
+	public void setDistributionScore(int distributionScore) {
+		this.distributionScore = distributionScore;
 	}
 }

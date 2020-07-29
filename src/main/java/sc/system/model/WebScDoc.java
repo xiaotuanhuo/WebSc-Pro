@@ -41,8 +41,22 @@ public class WebScDoc implements Serializable {
 	private String hospitalEvaluateMemo;
 	private Integer doctorEvaluate;
 	private String doctorEvaluateMemo;
-	private String orgId;
+
+	private String transferUserId;
+	private String oldDocumentState;
+	private String deleteReason;
 	
+	private String qaUserName;
+	private String orgId;
+	private String orgName;
+	private String orgAddress;
+	private String orgTel;
+	private String leaderName;
+	private String leaderTel;
+	private String orgProvince;
+	private String orgCity;
+	private String orgArea;
+
 	//单据发布者所在省，市，区
 	private String province;
 	private String city;
@@ -50,6 +64,48 @@ public class WebScDoc implements Serializable {
 	
 	//角色【临时判断用】
 	private String roleId;
+	
+	//模板
+	private String tmpOperativeId;
+	private String tmpOperativeName;
+	private String tmpAnestheticId;
+	private String tmpAnestheticName;
+	private String tmpPatientName;
+	private Integer tmpPatientAge;
+	private String tmpPatientSex;
+	
+	private Double height;
+	private Double weight;
+	private String asa;
+	private String xtbs;
+	private String shs;
+	private Integer shcs;
+	private String sskssj;
+	private String ssjssj;
+	private Integer sssc;
+	private String jmjs;
+	private String ywsjHxxt;
+	private String ywsjHxxtQt;
+	private String ywsjXhxt;
+	private String ywsjXhxtQt;
+	private String ywsjGm;
+	private String ywsjGmAocre;
+	private String ywsjQt;
+	private String shblZw;
+	private String shblHbtt;
+	private String shblEx;
+	private String shblXy;
+	private String shblOt;
+	private Integer shblOtScore;
+	private String shttzl;
+	private String photo_1;
+	private String photo_2;
+	private String photo_3;
+	private String photo_4;
+	private String photo_5;
+	private String status;
+	
+	private String photo;
 	
 	public String getDocumentId() {
 		return documentId;
@@ -267,11 +323,312 @@ public class WebScDoc implements Serializable {
 	public void setAnestheticName(String anestheticName) {
 		this.anestheticName = anestheticName;
 	}
+
+	public String getQaUserName() {
+		return qaUserName;
+	}
+	public void setQaUserName(String qaUserName) {
+		this.qaUserName = qaUserName;
+	}
+	public String getOrgName() {
+		return orgName;
+	}
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+	public String getOrgAddress() {
+		return orgAddress;
+	}
+	public void setOrgAddress(String orgAddress) {
+		this.orgAddress = orgAddress;
+	}
+	public String getOrgTel() {
+		return orgTel;
+	}
+	public void setOrgTel(String orgTel) {
+		this.orgTel = orgTel;
+	}
+	public String getLeaderName() {
+		return leaderName;
+	}
+	public void setLeaderName(String leaderName) {
+		this.leaderName = leaderName;
+	}
+	public String getLeaderTel() {
+		return leaderTel;
+	}
+	public void setLeaderTel(String leaderTel) {
+		this.leaderTel = leaderTel;
+	}
+
+	public Double getHeight() {
+		return height;
+	}
+	public void setHeight(Double height) {
+		this.height = height;
+	}
+	public Double getWeight() {
+		return weight;
+	}
+	public void setWeight(Double weight) {
+		this.weight = weight;
+	}
+	public String getAsa() {
+		return asa;
+	}
+	public void setAsa(String asa) {
+		this.asa = asa;
+	}
+	public String getXtbs() {
+		return xtbs;
+	}
+	public void setXtbs(String xtbs) {
+		this.xtbs = xtbs;
+	}
+	public String getShs() {
+		return shs;
+	}
+	public void setShs(String shs) {
+		this.shs = shs;
+	}
+	public Integer getShcs() {
+		return shcs;
+	}
+	public void setShcs(Integer shcs) {
+		this.shcs = shcs;
+	}
+	public String getSskssj() {
+		return sskssj;
+	}
+	public void setSskssj(String sskssj) {
+		this.sskssj = sskssj;
+	}
+	public String getSsjssj() {
+		return ssjssj;
+	}
+	public void setSsjssj(String ssjssj) {
+		this.ssjssj = ssjssj;
+	}
+	public Integer getSssc() {
+		return sssc;
+	}
+	public void setSssc(Integer sssc) {
+		this.sssc = sssc;
+	}
+	public String getJmjs() {
+		return jmjs;
+	}
+	public void setJmjs(String jmjs) {
+		this.jmjs = jmjs;
+	}
+	public String getYwsjHxxt() {
+		return ywsjHxxt;
+	}
+	public void setYwsjHxxt(String ywsjHxxt) {
+		this.ywsjHxxt = ywsjHxxt;
+	}
+	public String getYwsjHxxtQt() {
+		return ywsjHxxtQt;
+	}
+	public void setYwsjHxxtQt(String ywsjHxxtQt) {
+		this.ywsjHxxtQt = ywsjHxxtQt;
+	}
+	public String getYwsjXhxt() {
+		return ywsjXhxt;
+	}
+	public void setYwsjXhxt(String ywsjXhxt) {
+		this.ywsjXhxt = ywsjXhxt;
+	}
+	public String getYwsjXhxtQt() {
+		return ywsjXhxtQt;
+	}
+	public void setYwsjXhxtQt(String ywsjXhxtQt) {
+		this.ywsjXhxtQt = ywsjXhxtQt;
+	}
+	public String getYwsjGm() {
+		return ywsjGm;
+	}
+	public void setYwsjGm(String ywsjGm) {
+		this.ywsjGm = ywsjGm;
+	}
+	public String getYwsjGmAocre() {
+		return ywsjGmAocre;
+	}
+	public void setYwsjGmAocre(String ywsjGmAocre) {
+		this.ywsjGmAocre = ywsjGmAocre;
+	}
+	public String getYwsjQt() {
+		return ywsjQt;
+	}
+	public void setYwsjQt(String ywsjQt) {
+		this.ywsjQt = ywsjQt;
+	}
+	public String getShblZw() {
+		return shblZw;
+	}
+	public void setShblZw(String shblZw) {
+		this.shblZw = shblZw;
+	}
+	public String getShblHbtt() {
+		return shblHbtt;
+	}
+	public void setShblHbtt(String shblHbtt) {
+		this.shblHbtt = shblHbtt;
+	}
+	public String getShblEx() {
+		return shblEx;
+	}
+	public void setShblEx(String shblEx) {
+		this.shblEx = shblEx;
+	}
+	public String getShblOt() {
+		return shblOt;
+	}
+	public void setShblOt(String shblOt) {
+		this.shblOt = shblOt;
+	}
+	public Integer getShblOtScore() {
+		return shblOtScore;
+	}
+	public void setShblOtScore(Integer shblOtScore) {
+		this.shblOtScore = shblOtScore;
+	}
+	public String getShttzl() {
+		return shttzl;
+	}
+	public void setShttzl(String shttzl) {
+		this.shttzl = shttzl;
+	}
+	public String getPhoto_1() {
+		return photo_1;
+	}
+	public void setPhoto_1(String photo_1) {
+		this.photo_1 = photo_1;
+	}
+	public String getPhoto_2() {
+		return photo_2;
+	}
+	public void setPhoto_2(String photo_2) {
+		this.photo_2 = photo_2;
+	}
+	public String getPhoto_3() {
+		return photo_3;
+	}
+	public void setPhoto_3(String photo_3) {
+		this.photo_3 = photo_3;
+	}
+	public String getPhoto_4() {
+		return photo_4;
+	}
+	public void setPhoto_4(String photo_4) {
+		this.photo_4 = photo_4;
+	}
+	public String getPhoto_5() {
+		return photo_5;
+	}
+	public void setPhoto_5(String photo_5) {
+		this.photo_5 = photo_5;
+	}
+	public String getTmpOperativeId() {
+		return tmpOperativeId;
+	}
+	public void setTmpOperativeId(String tmpOperativeId) {
+		this.tmpOperativeId = tmpOperativeId;
+	}
+	public String getTmpOperativeName() {
+		return tmpOperativeName;
+	}
+	public void setTmpOperativeName(String tmpOperativeName) {
+		this.tmpOperativeName = tmpOperativeName;
+	}
+	public String getTmpAnestheticId() {
+		return tmpAnestheticId;
+	}
+	public void setTmpAnestheticId(String tmpAnestheticId) {
+		this.tmpAnestheticId = tmpAnestheticId;
+	}
+	public String getTmpAnestheticName() {
+		return tmpAnestheticName;
+	}
+	public void setTmpAnestheticName(String tmpAnestheticName) {
+		this.tmpAnestheticName = tmpAnestheticName;
+	}
+	public String getTmpPatientName() {
+		return tmpPatientName;
+	}
+	public void setTmpPatientName(String tmpPatientName) {
+		this.tmpPatientName = tmpPatientName;
+	}
+	public Integer getTmpPatientAge() {
+		return tmpPatientAge;
+	}
+	public void setTmpPatientAge(Integer tmpPatientAge) {
+		this.tmpPatientAge = tmpPatientAge;
+	}
+	public String getTmpPatientSex() {
+		return tmpPatientSex;
+	}
+	public void setTmpPatientSex(String tmpPatientSex) {
+		this.tmpPatientSex = tmpPatientSex;
+	}
+	public String getShblXy() {
+		return shblXy;
+	}
+	public void setShblXy(String shblXy) {
+		this.shblXy = shblXy;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getPhoto() {
+		return photo;
+	}
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
+	public String getTransferUserId() {
+		return transferUserId;
+	}
+	public void setTransferUserId(String transferUserId) {
+		this.transferUserId = transferUserId;
+	}
+	public String getOldDocumentState() {
+		return oldDocumentState;
+	}
+	public void setOldDocumentState(String oldDocumentState) {
+		this.oldDocumentState = oldDocumentState;
+	}
+	public String getDeleteReason() {
+		return deleteReason;
+	}
+	public void setDeleteReason(String deleteReason) {
+		this.deleteReason = deleteReason;
+	}
+	public String getOrgProvince() {
+		return orgProvince;
+	}
+	public void setOrgProvince(String orgProvince) {
+		this.orgProvince = orgProvince;
+	}
+	public String getOrgCity() {
+		return orgCity;
+	}
+	public void setOrgCity(String orgCity) {
+		this.orgCity = orgCity;
+	}
+	public String getOrgArea() {
+		return orgArea;
+	}
+	public void setOrgArea(String orgArea) {
+		this.orgArea = orgArea;
+	}
 	public String getOrgId() {
 		return orgId;
 	}
 	public void setOrgId(String orgId) {
 		this.orgId = orgId;
 	}
-
 }

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>团队选择</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.min.css}">
+    <link rel="stylesheet" th:href="@{/iconfont/iconfont.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/formSelects-v4.css}" />
+</head>
+
+<body>
+    <div class="z-body animated fadeIn">
+    	<input id="gridType" type="hidden" />
+    	<div class="layui-carousel" id="qateam-tab">
+ 				<div carousel-item style="overflow: auto;">
+ 					<div style="background-color: white;">
+ 						<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
+							<legend>副麻</legend>
+						</fieldset>
+				    	<div id="fm_main" class="layui-row">
+							
+				    	</div>
+			    	
+				    	<div id="fm_add" class="layui-row">
+							<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;text-align: center;padding: 0 10px 0 10px;">
+								<div class="layui-row">
+									<button class="layui-btn layui-btn-normal addBox" lay-submit="" data-th-lay-filter="btnUserAdd">
+										<i class="layui-icon layui-icon-add-1" style="font-size: 100px;color: #aaa;"></i>
+									</button>
+								</div>
+							</div>
+				    	</div>
+				    	<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
+							<legend>护士</legend>
+						</fieldset>
+						<div id="hs_main" class="layui-row">
+							
+				    	</div>
+				    	<div id="hs_add" class="layui-row">
+							<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;text-align: center;padding: 0 10px 0 10px;">
+								<div class="layui-row">
+									<button class="layui-btn layui-btn-normal addBox" lay-submit="" data-th-lay-filter="btnHsUserAdd">
+										<i class="layui-icon layui-icon-add-1" style="font-size: 100px;color: #aaa;"></i>
+									</button>
+								</div>
+							</div>
+				    	</div>
+			    	</div>
+			    	<!-- 第2界面	用户选择 -->
+			    	<div style="background-color: white;padding: 10px;">
+			    		<div class="layui-row">
+		        			<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+		        				<label for="qaName" class="layui-form-label">姓名</label>
+				                <div class="layui-input-block">
+				             		<input type="text" id="searchName" class="layui-input" >
+				                </div>
+			                </div>
+			                <div class="layui-col-xs12 layui-col-sm8 layui-col-md8" style="margin-top: 8px;">
+			                	<button class="layui-btn layui-btn-normal" style="margin-left: 15px;"
+			                		id="btnSearch">查询</button>
+			                </div>
+		                </div>
+		                <div class="layui-row">
+							<table class="layui-hide" id="user-table"></table>
+						</div>
+		            	<div class="layui-row">
+			            	<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;text-align: center;">
+				            	<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="btnClose">取消选择</button>
+			                </div>
+		            	</div>
+			    	</div>
+			    	
+			    </div>
+			   
+			    
+			
+		</div>		    
+	</div>
+	
+	<script type="text/html" id="column-toolbar">
+      	<a lay-event="selUser">
+        	<i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="选中"></i>
+    	</a>
+    </script>
+    
+    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+
+    <script th:inline="javascript">
+		var doc_id = [[${doc_id}]];
+		var userls = [[${userls}]];
+		
+        layui.config({
+            base: '/lib/layui/extend/'
+        }).extend({
+            formSelects: 'formSelects-v4'
+        }).use(['table', 'form', 'layer', 'formSelects', 'carousel'], function () {
+            $ = layui.jquery;
+            var form = layui.form
+                , table = layui.table
+                , layer = layui.layer
+                , formSelects = layui.formSelects
+                , carousel = layui.carousel;
+            
+          	//轮播
+            fptab = carousel.render({
+		                elem: '#qateam-tab'
+		                ,autoplay: false
+		                ,full: true
+		                ,arrow: 'none' 
+		                ,indicator: 'none' 
+		       		});
+          	
+            var grid = table.render({
+                elem: '#user-table'
+            	, height: 320
+            	, limit: Number.MAX_VALUE // 数据表格默认全部显示
+                , cols: [
+                    [
+                        {field: 'userId', title: 'ID', align: 'center',sort: true, hide: true}
+                        , {field: 'userName', title: '姓名', align: 'center',sort: true}
+                        , {field: 'age', title: '年龄', align: 'center',sort: true}
+                        , {field: 'sex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true}
+                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#column-toolbar'}
+                    ]
+                ]
+            });
+            
+            var fm_active = {
+           		reload: function(){
+     	      		table.reload('user-table', {
+     	      		url: '/doc/getQaUserInfo',
+     		       	where: {
+     		       		id: doc_id, 
+     		       		type: '5',
+     		       		name: $('#searchName').val()
+     		    	}
+     	      		});
+           		}
+          	};
+            
+            var hs_active = {
+           		reload: function(){
+     	      		table.reload('user-table', {
+     	      		url: '/doc/getQaUserInfo',
+     		       	where: {
+     		       		id: doc_id, 
+     		       		type: '6',
+     		       		name: $('#searchName').val()
+     		    	}
+     	      		});
+           		}
+          	};
+            
+            form.on('submit(btnUserAdd)', function (form) {
+            	$("#gridType").val("5");
+            	fptab.slide("add"); 
+            	fm_active["reload"] ? fm_active["reload"].call(this) : '';
+                return false;
+            });
+            
+            form.on('submit(btnHsUserAdd)', function (form) {
+            	$("#gridType").val("6");
+            	fptab.slide("add"); 
+            	hs_active["reload"] ? hs_active["reload"].call(this) : '';
+                return false;
+            });
+            
+            form.on('submit(btnUserDel)', function (form) {
+            	alert(1);
+                return false;
+            });
+            
+            form.on('submit(btnClose)', function (form) {
+            	fptab.slide("sub"); 
+                return false;
+            });
+            
+            $('#btnSearch').on('click', function(){
+            	var type = $("#gridType").val();
+            	if(type == '5')
+            		fm_active["reload"] ? fm_active["reload"].call(this) : '';
+            	else
+            		hs_active["reload"] ? hs_active["reload"].call(this) : '';
+   			}); 
+            
+          	//grid按钮
+            table.on('tool', function (obj) {
+                var data = obj.data;
+                var event = obj.event;
+                if (event === 'selUser'){
+                	var type = $("#gridType").val();
+                	if(type == '5'){
+                		//医生
+                		$.post('/doc/addQaTeamUser', {id: doc_id, userId: data.userId, type:'5'}, function (result) {
+                			var html = appendUserInfo(data.userName, data.sex, data.age, data.userId, '5');
+                    		$("#fm_main").append(html);
+                    		$("#fm_main").css("display", "");
+                    		$("#fm_add").css("display", "none");
+                    		fptab.slide("sub");
+		                });
+                	}else{
+                		//护士
+                		$.post('/doc/addQaTeamUser', {id: doc_id, userId: data.userId, type:'6'}, function (result) {
+                			var html = appendUserInfo(data.userName, data.sex, data.age, data.userId, '6');
+                			$("#hs_main").append(html);
+                    		$("#hs_main").css("display", "");
+                    		fptab.slide("sub");
+		                });
+                	}
+                }
+            });
+          	
+          	if(userls != null){
+          		for(var i = 0; i < userls.length; i++){
+          			var user = userls[i];
+          			if(user.roleId == '5'){
+                		//医生
+               			var html = appendUserInfo(user.userName, user.sex, user.age, user.userId, '5');
+                   		$("#fm_main").append(html);
+                   		$("#fm_main").css("display", "");
+                   		$("#fm_add").css("display", "none");
+                	}else{
+                		//护士
+               			var html = appendUserInfo(user.userName, user.sex, user.age, user.userId, '6');
+               			$("#hs_main").append(html);
+                   		$("#hs_main").css("display", "");
+                	}
+          		}
+          	}
+          	
+        });
+        
+        function appendUserInfo(name, sex, age, id, type){
+        	var html = "<div class='layui-row' id='UserInfo_" + id + "' >" +
+					   "<div class='layui-col-xs12 layui-col-sm3 layui-col-md3' style='margin-top: 8px;text-align: center;margin-bottom: 20px;'>" +
+					   "	<div class='layui-row'>" +
+					   "		<img style='width: 150px;height: 180px;' />" +
+					   "	</div>" +
+					   "</div>" +
+					   "<div class='layui-col-xs11 layui-col-sm7 layui-col-md7' style='margin-top: 8px;'>" +
+					   "	<div class='layui-row'>" +
+					   "		<div class='layui-form-item'>" +
+					   "			<label for='loginname' class='layui-form-label'>姓名:</label>" +
+					   "			<div class='layui-input-block'>" +
+					   "				<input type='text'  value='" + name + "' class='layui-input' disabled='disabled' style='border-width: 0px;'>" +
+					   "			</div>" +
+					   "		</div>" +
+					   "		<div class='layui-form-item'>" +
+					   "			<label for='loginname' class='layui-form-label'>性别:</label>" +
+					   "			<div class='layui-input-block'>" +
+					   "				<input type='text'  value='" + sex + "' class='layui-input' disabled='disabled' style='border-width: 0px;'>" +
+					   "			</div>" +
+					   "		</div>" +
+					   "		<div class='layui-form-item'>" +
+					   "			<label for='loginname' class='layui-form-label'>年龄:</label>" +
+					   "			<div class='layui-input-block'>" +
+					   "				<input type='text'  value='" + age + "' class='layui-input' disabled='disabled' style='border-width: 0px;'>" +
+					   "			</div>" +
+					   "		</div>" +
+					   "	</div>" +
+					   "</div>" +
+					   "<div class='layui-col-xs1 layui-col-sm2 layui-col-md2' style='margin-top: 8px;text-align: center !important;'>" +
+					   "		<button class='layui-btn layui-btn-normal addBox' style='width:30%;height:180px;' onclick='btnUserDel(" + id + "," + type + ")'>" +
+					   "		<i class='layui-icon layui-icon-subtraction' style='font-size: 20px;color: #aaa;'></i>" +
+					   "	</button>" +
+					   "</div>";
+					   "</div>";
+			return html;
+        }
+        
+        function btnUserDel(id, type){
+        	$.post('/doc/delQaTeamUser', {id: doc_id, userId: id}, function (result) {
+        		if(type == '5'){
+        			$("#UserInfo_" + id).remove();
+            		$("#fm_main").css("display", "none");
+            		$("#fm_add").css("display", "");
+            	}else{
+            		$("#UserInfo_" + id).remove();
+            	}
+            });
+        }
+    </script>
+</body>
+
+</html>
