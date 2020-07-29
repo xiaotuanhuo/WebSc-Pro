@@ -1,12 +1,13 @@
 package sc.system.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class WebScUser implements Serializable {
 
     private static final long serialVersionUID = -3200103254689137288L;
     
-	private int userId;
+	private Integer userId;
  
 	private String userName;
 	
@@ -66,11 +67,11 @@ public class WebScUser implements Serializable {
 	
 	private String wxUserid;
 
-	public int getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 
@@ -305,4 +306,5 @@ public class WebScUser implements Serializable {
 	public void setRoleTypeName(String roleTypeName) {
 		this.roleTypeName = roleTypeName;
 	}
+
 }

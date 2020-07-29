@@ -37,7 +37,7 @@
 				<div th:if="${user == null}" class="layui-form-item">
 					<label for="loginPwd" class="layui-form-label">密码</label>
 					<div class="layui-input-block">
-						<input type="loginPwd" id="loginPwd" name="loginPwd"
+						<input type="password" id="loginPwd" name="loginPwd"
 							lay-verify="required" lay-vertype="tips" autocomplete="off"
 							class="layui-input">
 					</div>
@@ -94,17 +94,87 @@
 					<ul id="orgTree" class="dtree" data-id="0" data-value="请选择机构"></ul>
 				</div>
 			</div>
-			<div id="patientDiv" class="layui-form-item" style = "display: none;">
-				<label for="patientType" class="layui-form-label">病人类型</label>
-				<div class="layui-input-block">
-					<div id="patientType" class="xm-select-demo"></div>
+			<div id="doctorEle" style = "display: none;">
+				<div class="layui-form-item">
+					<label for="patientType" class="layui-form-label">病人类型</label>
+					<div class="layui-input-block">
+						<div id="patientType" class="xm-select-demo"></div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="operationType" class="layui-form-label">手术类型</label>
+					<div class="layui-input-block">
+						<div id="operationType" class="xm-select-demo"></div>
+					</div>
 				</div>
 			</div>
-			<div id="operationDiv" class="layui-form-item" style = "display: none;">
-				<label for="operationType" class="layui-form-label">手术类型</label>
-				<div class="layui-input-block">
-					<div id="operationType" class="xm-select-demo"></div>
+			<div id="doctorAndNurseEle" style = "display: none;">
+				<div class="layui-form-item">
+					<label for="idCard" class="layui-form-label">身份证</label>
+					<div class="layui-input-block">
+						<input type="text" id="idCard" name="idCard"
+							th:value="${user?.idCard}" lay-verify="" lay-vertype="tips"
+							autocomplete="off" class="layui-input">
+					</div>
 				</div>
+				<div class="layui-form-item">
+					<label for="certificateNo" class="layui-form-label">资格证号</label>
+					<div class="layui-input-block">
+						<input type="text" id="certificateNo" name="certificateNo"
+							th:value="${user?.certificateNo}" lay-verify="" lay-vertype="tips"
+							autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="occupationalNo" class="layui-form-label">职业证号</label>
+					<div class="layui-input-block">
+						<input type="text" id="occupationalNo" name="occupationalNo"
+							th:value="${user?.occupationalNo}" lay-verify="" lay-vertype="tips"
+							autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="titles" class="layui-form-label">职称</label>
+					<div class="layui-input-block">
+						<input type="text" id="titles" name="titles"
+							th:value="${user?.titles}" lay-verify="" lay-vertype="tips"
+							autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="titlesNo" class="layui-form-label">职称证号</label>
+					<div class="layui-input-block">
+						<input type="text" id="titlesNo" name="titlesNo"
+							th:value="${user?.titlesNo}" lay-verify="" lay-vertype="tips"
+							autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				
+				<div class="layui-form-item">
+					<label for="titlesNo" class="layui-form-label">证件照</label>
+					<div class="layui-inline">
+						<div class="layui-input-inline">
+							<!--图片名-->
+							<input id="fileName" type="text" lay-verify="fileName" autocomplete="off" class="layui-input" disabled>
+							<!--隐藏输入框 用来存放上传后图片路径-->
+							<input id="credential_hide" name="credentialOne" type="hidden" lay-verify="credentialOne" autocomplete="off" class="layui-input">
+						</div>
+						<!--隐藏按钮 上传-->
+						<button id="upload_img" type="button" hidden></button>
+						<button class="layui-btn layui-btn-normal" id="preview_img" type="button">上传图片</button>
+					</div>
+				</div>
+				
+				<div class="layui-form-item">
+					<!--折叠面板-->
+					<div class="layui-collapse" lay-accordion="" style="width: 399.5px">
+						<div class="layui-colla-item">
+							<h2 class="layui-colla-title">展开图片</h2>
+							<div class="layui-colla-content layui-show" id="colla_img" style=""></div>
+						</div>
+					</div>
+				</div>
+			
 			</div>
 			
 			<div class="layui-form-item">
@@ -118,9 +188,16 @@
 					<input type="hidden" id="province" name="province" th:value="${user?.province}">
 					<input type="hidden" id="city" name="city" th:value="${user?.city}">
 					<input type="hidden" id="area" name="area" th:value="${user?.area}">
-					<button th:text="${user}?'修改':'增加'"
+					
+					<!-- 仅上传图片至服务器 -->
+					<button id="submitImg" th:text="${user}?'修改':'增加'"
+						class="layui-btn layui-btn-normal btn-w100" lay-submit="" style="display: none;">
+					</button>
+					<!-- 表单提交按钮 -->
+					<button id="submitForm" th:text="${user}?'修改':'增加'"
 						class="layui-btn layui-btn-normal btn-w100" lay-submit=""
-						data-th-lay-filter="${user}?'edit':'add'"></button>
+						data-th-lay-filter="${user}?'edit':'add'">
+					</button>
 				</div>
 			</div>
 		</form>
@@ -148,11 +225,12 @@
 			base: '/lib/layui/extend/'
 		}).extend({
 			xmSelect: 'xm-Select'
-		}).use(['form', 'layer', 'xmSelect', 'dtree'], function () {
+		}).use(['form', 'layer', 'xmSelect', 'dtree', 'upload'], function () {
 			$ = layui.jquery;
 			var form = layui.form,
 				layer = layui.layer,
 				xmSelect = layui.xmSelect,
+				upload = layui.upload,
 				dtree = layui.dtree;
 			var sex = [[${user?.sex} + '']];
 			$("input[name='sex'][value='" + sex + "']").attr('checked',true);
@@ -190,38 +268,37 @@
 					if (isAdd && arr.length != 0 && arr[0].roleId == 2) {
 						// 选择医疗机构管理员角色时加载当前区划及下属医疗机构组织
 						loadTree('/organization/tree');
-						hideForDoctor();
+						hideDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 3) {
 						// 选择卫监局角色时加载当前区划及下属卫监局组织
 						loadTree('/bureau/tree');
-						hideForDoctor();
+						hideDoctor();
 					} else if (isAdd && arr.length != 0 && (arr[0].roleId == 4)) {
 						// 选择区域管理员角色时加载当前区划下属医疗集团组织
 						loadTree('/dept/subTree/' + $('#currentRoleTypeId').text());
-						hideForDoctor();
+						hideDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 5) {
 						// 选择医生角色时加载当前用户所属组织及其下属组织
 						loadTree('/dept/tree/city');
-						showForDoctor();
+						hideNurse();
+						showDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 6) {
 						// 选择护士角色时加载当前用户所属组织及其下属组织
 						loadTree('/dept/tree/city');
-						hideForDoctor();
+						hideDoctor();
+						showNurse();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 7) {
 						// 选择超级管理员时加载医疗集团根节点
 						loadTree('/dept/tree/root');
-						hideForDoctor();
+						hideDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 8) {
 						// 选择区域订单录入员角色时加载当前区划及其下属医疗机构组织
 						loadTree('/dept/tree');
-						hideForDoctor();
+						hideDoctor();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 9) {
 						// 选择医疗机构订单录入员角色时加载当前用户区划及其下属医疗机构组织
 						loadTree('/organization/tree');
-						hideForDoctor();
-					} else {
-						$('#orgDiv').hide();
-						hideForDoctor();
+						hideDoctor();
 					}
 				}
 			});
@@ -291,7 +368,7 @@
 				data: [
 					{name: '儿童', value: 1},
 					{name: '青年', value: 2},
-					{name: '老年', value: 3},
+					{name: '老年', value: 3}
 				]
 			});
 			
@@ -319,24 +396,56 @@
 				}
 			});
 			
-			// 选择医生角色时显示的控件
-			var showForDoctor = function() {
-				$('#patientDiv').show();
-				$('#operationDiv').show();
+			// 选择医生角色时显示
+			var showDoctor = function() {
+				$('#doctorEle').show();
+				$('#doctorAndNurseEle').show();
+				$('#submitImg').show();
+				$('#submitForm').hide();
 			};
 			
-			// 选择非医生角色时情况并隐藏控件
-			var hideForDoctor = function() {
+			// 选择非医生角色隐藏
+			var hideDoctor = function() {
+				/* // 清空内容
 				patientKit.setValue([]);
 				operationKit.setValue([]);
-				$('#patientDiv').hide();
-				$('#operationDiv').hide();
+				$("#idCard").val("");
+				$("#certificateNo").val("");
+				$("#occupationalNo").val("");
+				$("#titles").val("");
+				$("#titlesNo").val("");
+				$('#doctorAndNurseEle').hide(); */
+				// 隐藏
+				$('#doctorEle').hide();
+				$('#doctorAndNurseEle').hide();
+				$('#submitImg').hide();
+				$('#submitForm').show();
+			}
+			
+			// 选择护士角色时显示
+			var showNurse = function() {
+				$('#doctorAndNurseEle').show();
+				$('#submitImg').show();
+				$('#submitForm').hide();
+			}
+			
+			// 选择非护士角色隐藏
+			var hideNurse = function() {
+				/* $("#idCard").val("");
+				$("#certificateNo").val("");
+				$("#occupationalNo").val("");
+				$("#titles").val("");
+				$("#titlesNo").val(""); */
+				$('#doctorAndNurseEle').hide();
+				$('#submitImg').hide();
+				$('#submitForm').show();
 			}
 			
 			//监听提交
 			form.on('submit(add)', function (form) {
+				console.log('提交表单')
 				form.field.roleId = roleKit.getValue('valueStr');
-				//form.field.roleTypeId = $('#roleTypeId').val();
+				form.field.photo = $('#credential_hide').val();
 				if (roleKit.getValue('valueStr') === '5') {	// 医生
 					form.field.patientType = patientKit.getValue('valueStr');
 					form.field.operationType = operationKit.getValue('valueStr');
@@ -364,6 +473,42 @@
 			function editDone(data) {
 				layer.msg("修改成功", {icon: 6});
 			}
+			
+			/*上传图片*/
+			upload.render({
+				elem: '#preview_img',
+				url: '/user/upload',
+				acceptMime: 'image/*',
+				size: 1024,
+				auto: false, // 不自动上传
+				bindAction: '#upload_img', // 上传绑定到隐藏按钮
+				choose: function (obj) {
+					// 预读本地文件
+					obj.preview(function (index, file, result) {
+						$('#fileName').val(file.name); //展示文件名
+						$('#colla_img').find('img').remove();
+						$('#colla_img').append('<img id="showImg" src="' + result + '" width="370px">');
+					})
+				},
+				done: function (res) {
+					if (res.code == '0') {
+						$('#credential_hide').val(res.msg);	// 隐藏输入框赋值
+						$('#submitForm').click();	// 上传成功后单击隐藏的提交按钮
+					} else {
+						layer.msg('上传失败！', {icon: 5});
+					}
+				},
+				error: function (index, upload) {
+					layer.msg('上传失败！' + index, {icon: 5});
+				}
+			});
+			
+			// 仅上传图片的按钮点击事件
+		    $('#submitImg').click(function () {
+		        $(this).attr({'disabled': 'disabled'});
+		        $('#upload_img').click();	// 单击隐藏的上传按钮
+		    });
+		
         });
     </script>
 </body>

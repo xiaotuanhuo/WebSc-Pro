@@ -96,7 +96,6 @@
 								area,
 								patient_type,
 								operation_type,
-								status,
 								photo
 							)
         			values (#{userName,jdbcType=VARCHAR},
@@ -119,7 +118,6 @@
         					#{area,jdbcType=VARCHAR},
         					#{patientType,jdbcType=VARCHAR},
         					#{operationType,jdbcType=VARCHAR},
-        					#{status,jdbcType=VARCHAR},
         					#{photo,jdbcType=VARCHAR})
     </insert>
     

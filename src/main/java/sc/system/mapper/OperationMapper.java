@@ -2,6 +2,8 @@ package sc.system.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import sc.system.model.WebScOperation;
 
 /**
@@ -23,6 +25,8 @@ public interface OperationMapper {
      * @return
      */
     List<WebScOperation> selectAll();
+    
+    List<String> selectByIds(String[] ids);
 
     int updateByPrimaryKeySelective(WebScOperation record);
 

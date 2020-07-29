@@ -8,24 +8,38 @@ import sc.common.validate.groups.Create;
 import sc.system.model.WebScUser;
 import sc.system.service.RoleService;
 import sc.system.service.UserService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
-	@Resource
+	@Autowired
 	private UserService userService;
 	
-	@Resource
+	@Autowired
 	private RoleService roleService;
+	
+	@Value("${upload-path}")
+	private String uploadPath;
 	
 	@GetMapping("/index")
 	public String index() {
@@ -46,6 +60,38 @@ public class UserController {
 	public String add(Model model) {
 		return "user/user-add";
 	}
+    
+    @GetMapping("/detail/{userId}")
+	public String detail(@PathVariable("userId") Integer userId, Model model) {
+    	WebScUser user = userService.selectOne(userId);
+		model.addAttribute("user", user);
+		model.addAttribute("roles", roleService.getRolesBytUserRole(Integer.parseInt(user.getRoleId())));
+		return "user/user-detail";
+    }
+    
+    /**
+     * 医生、护士资质详情
+     * @param userId
+     * @param model
+     * @return
+     */
+    @GetMapping("/credentials/{userId}")
+	public String credentials(@PathVariable("userId") Integer userId, Model model) {
+    	WebScUser user = userService.selectOne(userId);
+		model.addAttribute("user", userService.selectOne(userId));
+		model.addAttribute("patients", userService.getPatients(user.getPatientType()));
+		model.addAttribute("operations", userService.getOperations(user.getOperationType()));
+		return "user/credentials-info";
+    }
+    
+    /**
+     * 获取用户头像
+     */
+    @GetMapping("/picture")
+    public void picture(String p, HttpServletResponse response) throws IOException {
+    	File file = new File(uploadPath + p);
+    	FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
+    }
     
 	@GetMapping("/{userId}")
 	public String update(@PathVariable("userId") Integer userId, Model model) {
@@ -135,5 +181,12 @@ public class UserController {
 	public ResultBean unlock(@PathVariable("userId") int userId) {
 		userService.unlock(userId);
 		return ResultBean.success();
+	}
+	
+	@OperationLog("图片上传")
+	@PostMapping(value = "upload")
+	@ResponseBody
+	public ResultBean imgUpload(@RequestParam("file") MultipartFile file) {
+		return userService.upload(file, uploadPath);
 	}
 }

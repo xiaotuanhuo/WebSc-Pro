@@ -18,16 +18,22 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import sc.common.constants.PatientEnum;
 import sc.common.constants.RoleEnum;
 import sc.common.exception.DuplicateNameException;
 import sc.common.shiro.ShiroActionProperties;
+import sc.common.util.ResultBean;
 import sc.common.util.ShiroUtil;
 import sc.common.util.TreeUtil;
+import sc.common.util.UploadUtil;
 import sc.system.mapper.BureauMapper;
 import sc.system.mapper.DeptMapper;
+import sc.system.mapper.OperationMapper;
 import sc.system.mapper.OrganizationMapper;
 import sc.system.mapper.UserMapper;
 import sc.system.mapper.UserRoleMapper;
@@ -38,7 +44,6 @@ import sc.system.model.WebScOrganization;
 import sc.system.model.WebScUser;
 import sc.system.model.vo.UserVO;
 
-import com.alipay.api.domain.UboVO;
 import com.github.pagehelper.PageHelper;
 
 @Service
@@ -57,6 +62,9 @@ public class UserService {
 	
 	@Resource
 	private OrganizationMapper organizationMapper;
+	
+	@Resource
+	private OperationMapper operationMapper;
 	
 	@Resource
 	private MenuService menuService;
@@ -89,6 +97,10 @@ public class UserService {
 		return userMapper.selectRoleIdsByUserId(userId);
 	}
 	
+	public ResultBean upload(MultipartFile file, String uploadPath) {
+		return UploadUtil.upload(file, uploadPath);
+	}
+	
 	@Transactional
 	public Integer add(WebScUser user) {
 		checkLoginNameExistOnCreate(user.getLoginName());
@@ -106,8 +118,21 @@ public class UserService {
 		if (user.getProvince().equals("")) {
 			user.setProvince(null);
 		}
+		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
+			case YS:
+			case HS:
+				break;
+			default:
+				// 非医生护士角色清空项
+				user.setIdCard(null);
+				user.setCertificateNo(null);
+				user.setOccupationalNo(null);
+				user.setTitles(null);
+				user.setTitlesNo(null);
+				user.setPhoto(null);
+				break;
+		}
 		userMapper.insert(user);
-		
 		return user.getUserId();
 	}
 	
@@ -288,5 +313,31 @@ public class UserService {
 	
 	private String generateSalt() {
 		return String.valueOf(System.currentTimeMillis());
+	}
+	
+	/**
+	 * 根据病人类型标识返回描述
+	 * @param patientType
+	 * @return
+	 */
+	public List<String> getPatients(String patientType) {
+		List<String> patients = new ArrayList<String>();
+		if (patientType != null) {
+			String[] codes = patientType.split(",");
+			for (String code : codes) {
+				PatientEnum pe = PatientEnum.valueOf(Integer.parseInt(code));
+				patients.add(pe.getType());
+			}
+		}
+		return patients;
+	}
+	
+	public List<String> getOperations(String operationType) {
+		List<String> operations = new ArrayList<String>();
+		if (operationType != null) {
+			String[] codes = operationType.split(",");
+			operations = operationMapper.selectByIds(codes);
+		}
+		return operations;
 	}
 }

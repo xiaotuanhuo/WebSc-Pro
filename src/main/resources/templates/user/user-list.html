@@ -170,16 +170,21 @@
 			}
 			
 			function detail(id) {
-				layer.open({
-					content: '/user/' + id,
-					title: "编辑",
-					area: ['100%', '100%'],
+				/* layer.open({
+					content: '/user/credentials/' + id,
+					title: "详情",
+					area: ['50%', '80%'],
 					type: 2,
 					maxmin: true,
-					shadeClose: true,
-					end: function () {
-						table.reload('user-table');
-					}
+					shadeClose: true
+				}); */
+				layer.open({
+					content: '/user/detail/' + id,
+					title: "详情",
+					area: ['50%', '80%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true
 				});
 			}
 			
