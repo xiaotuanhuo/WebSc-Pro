@@ -359,20 +359,27 @@
         from WSC_BUREAU
         <where>
         	<choose>
-     			<when test="city_code != null and city_code != ''">
-     				AND province = #{province_code} AND city = #{city_code}
-     			</when>
-     			<otherwise>
-     				<choose>
-     					<when test="province_code != null and province_code != ''">
-     						AND province = #{province_code} AND city is null
-						</when>
-						<otherwise>
-							AND bureau_pid = '0'
+        		<when test="area_code != null and area_code != ''">
+        			AND area = #{area_code}
+        		</when>
+        		<otherwise>
+        			<choose>
+		     			<when test="city_code != null and city_code != ''">
+		     				AND city = #{city_code} AND area is null
+		     			</when>
+		     			<otherwise>
+		     				<choose>
+		     					<when test="province_code != null and province_code != ''">
+		     						AND province = #{province_code} AND city is null
+								</when>
+								<otherwise>
+									AND bureau_pid = '0'
+								</otherwise>
+							</choose>
 						</otherwise>
 					</choose>
-				</otherwise>
-			</choose>
+        		</otherwise>
+        	</choose>
         </where>
     </select>
     

@@ -29,6 +29,8 @@ public interface UserMapper {
 
     int updateByPrimaryKey(WebScUser user);
 
+    int updateByUser(WebScUser user);
+    
     /**
      * 获取用户所拥有的所有权限
      */

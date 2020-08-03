@@ -12,7 +12,8 @@ public class UploadUtil {
 		
 	public static ResultBean upload(MultipartFile mFile, String uploadPath) {
 		String fileName = mFile.getOriginalFilename();
-//		String fileName = UUID19.uuid();	// 重命名文件名称，防止重复
+		String suffix = fileName.substring(fileName.lastIndexOf("."));
+		String newFileName = UUID19.uuid() + suffix;	// 重命名文件名称，防止重复
 		try {
 			// 创建文件存放路径实例
 			File pFile = new File(uploadPath);
@@ -21,14 +22,14 @@ public class UploadUtil {
 				pFile.mkdirs();
 			}
 			// 创建文件实例
-			File file = new File(uploadPath + fileName);
+			File file = new File(uploadPath + newFileName);
 			// 判断文件已经存在，则删除该文件
 	        if (file.exists()) {
 	        	file.delete();
 	        }
 	        FileCopyUtils.copy(mFile.getBytes(), file);
 	        logger.info("文件上传成功：" + fileName);
-        	return ResultBean.success(fileName);
+        	return ResultBean.success(newFileName);
 		} catch (Exception e) {
 			logger.info("文件上传失败：" + fileName + "," + e.getMessage());
 			return ResultBean.error(e.getMessage());

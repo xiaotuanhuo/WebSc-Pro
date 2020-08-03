@@ -118,6 +118,12 @@ public class UserService {
 		if (user.getProvince().equals("")) {
 			user.setProvince(null);
 		}
+		if (user.getTitlesNo().equals("")) {
+			user.setTitlesNo(null);
+		}
+		if (user.getTitles().equals("")) {
+			user.setTitles(null);
+		}
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
 			case YS:
 			case HS:
@@ -202,7 +208,36 @@ public class UserService {
 	@Transactional
 	public boolean update(WebScUser user) {
 		checkLoginNameExistOnUpdate(user);
-		return userMapper.updateByPrimaryKey(user) == 1;
+		if (user.getArea().equals("")) {
+			user.setArea(null);
+		}
+		if (user.getCity().equals("")) {
+			user.setCity(null);
+		}
+		if (user.getProvince().equals("")) {
+			user.setProvince(null);
+		}
+		if (user.getTitlesNo().equals("")) {
+			user.setTitlesNo(null);
+		}
+		if (user.getTitles().equals("")) {
+			user.setTitles(null);
+		}
+		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
+			case YS:
+			case HS:
+				break;
+			default:
+				// 非医生护士角色清空项
+				user.setIdCard(null);
+				user.setCertificateNo(null);
+				user.setOccupationalNo(null);
+				user.setTitles(null);
+				user.setTitlesNo(null);
+				user.setPhoto(null);
+				break;
+		}
+		return userMapper.updateByUser(user) == 1;
 	}
 	
 	public WebScUser selectOne(Integer id) {
