@@ -15,6 +15,8 @@ import sc.system.model.WebScUser_Distribution;
 @Mapper
 public interface DocMapper {
 	
+	List<WebScDoc> selectImportDocsByConditions(Map<String, Object> paraMap);
+	
 	@Select("SELECT '1' FROM WSC_DOCUMENT WHERE org_id=#{orgId} AND operative_id=#{operativeId} AND operate_start_time=#{operativeDate} AND patient_name=#{patientName}")
 	String isExists(
 			@Param("patientName") String patientName, 

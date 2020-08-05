@@ -26,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -83,6 +84,12 @@ public class DocController {
 	@GetMapping("/docImport")
     public String docImport() {
         return "doc/doc-import";
+    }
+	
+	
+	@GetMapping("/toImportDocsView")
+    public String toImportDocsView() {
+        return "doc/doc-import-view";
     }
 	
 	@GetMapping("/release")
@@ -888,6 +895,24 @@ public class DocController {
 		
 		return rBean;
     }
+	
+	@PostMapping(value = "importDocsView")
+	@ResponseBody
+	public PageResultBean<WebScDoc> importDocsView(
+			@RequestBody Map<String, Object> paraMap){
+		
+		PageResultBean<WebScDoc> prb = new PageResultBean<WebScDoc>();
+		try {
+			
+			prb = docService.getImportDocsService(paraMap);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获取导入订单记录失败，"+e.getMessage());
+		}
+		
+		return prb;
+	}
 	
 	@OperationLog("添加团队成员")
     @PostMapping("/addQaTeamUser")

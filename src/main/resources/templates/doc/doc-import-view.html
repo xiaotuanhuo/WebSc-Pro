@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>导入单据查看</title>
+	<link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicon.ico}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon.ico}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</head>
+<body class="z-body">
+	<div class="importDocSearchDiv" style="margin-bottom:20px;">
+		<div class="layui-row" style="margin-bottom:10px;">
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+				手术医生：
+				<div class="layui-inline">
+					<input class="layui-input" name="importDocDoctorNameInput" id="importDocDoctorNameInput" autocomplete="off">
+				</div>
+			</div>
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+				医疗机构：
+				<div class="layui-inline">
+					<input class="layui-input" name="importDocOrgNameInput" id="importDocOrgNameInput" autocomplete="off">
+				</div>
+			</div>
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+				开始时间：
+				<div class="layui-inline">
+					<input type="text" class="layui-input" name="importDocStartDateInput" id="importDocStartDateInput" placeholder="yyyy-MM-dd HH:mm:ss">
+				</div>
+			</div>
+		</div>
+		<div class="layui-row">
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+				结束时间：
+				<div class="layui-inline">
+					<input type="text" class="layui-input" name="importDocEndDateInput" id="importDocEndDateInput" placeholder="yyyy-MM-dd HH:mm:ss">
+				</div>
+			</div>
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+				<button class="layui-btn" data-type="reload">
+					<i class="layui-icon layui-icon-search"></i>搜索
+				</button>
+			</div>
+		</div>
+	</div>
+	<table class="layui-hide" id="importDocTable"></table>
+	
+	<script th:src="@{/lib/layui/layui.js}"></script>
+    <script th:src="@{/lib/jquery/jquery.min.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+    <script th:inline="javascript">
+    	layui.use(['table','laydate'], function(){
+    	  var table = layui.table;
+    	  var laydate = layui.laydate;
+    	  var $ = layui.$;
+    	  
+    	  //开始时间
+    	  laydate.render({
+    	    elem: '#importDocStartDateInput'
+    	    ,type: 'datetime'
+    	  });
+    	  //结束时间
+    	  laydate.render({
+    	    elem: '#importDocEndDateInput'
+    	    ,type: 'datetime'
+    	  });
+    	  
+    	  table.render({
+    	    elem: '#importDocTable'
+    	    ,url:'/doc/importDocsView'
+    	    ,method : 'POST' //默认：get请求
+    	    ,where : {
+    			doctorName: $('#importDocDoctorNameInput').val(),
+		    	orgName: $('#importDocOrgNameInput').val(),
+		    	startDate: $('#importDocStartDateInput').val(),
+		    	endDate: $('#importDocEndDateInput').val()
+			}
+			,contentType : 'application/json'
+    	    ,cols: [
+    	    	[
+    	    	  {type: 'numbers', title: '序号', align: 'center', width:40, fixed: 'left'}
+	    	      ,{field:'documentId', width:120, title: '单据号'}
+	    	      ,{field:'patientName', width:80, title: '患者姓名'}
+	    	      ,{field:'patientAge', width:80, title: '患者年龄'}
+	    	      ,{field:'patientSex', width:80, title: '患者性别'}
+	    	      ,{field:'operativeName', width:120, title: '手术名称'}
+	    	      ,{field:'operateStartTime', width:120, title: '手术时间'}
+	    	      ,{field:'patientNum', width:120, title: '住院号'}
+	    	      ,{field:'patientBednum', width:120, title: '病床号'}
+	    	      ,{field:'documentTitle', width:200, title: '诊断'}
+	    	      ,{field:'operateUser', width:80, title: '手术医生'}
+	    	      ,{field:'operateQide', width:80, title: '手术助手'}
+	    	      ,{field:'anestheticName', width:80, title: '麻醉方法'}
+	    	      ,{field:'orgName', width:120, title: '医疗机构'}
+	    	      ,{field:'memo', width:120, title: '备注'}
+    	    	]
+    	    ]
+    	  	,id: 'importDocTableReload'
+    		,page: true
+    		,height: 400
+    	  });
+    	  
+    	  var active = {
+    		reload: function(){
+    			//执行重载
+    			table.reload('importDocTableReload', {
+    			    page: {
+    			       curr: 1 //重新从第 1 页开始
+    			    }
+	    			,where: {
+	    			    doctorName: $('#importDocDoctorNameInput').val().trim(),
+	    			    orgName: $('#importDocOrgNameInput').val().trim(),
+	    			    startDate: $('#importDocStartDateInput').val(),
+	    			    endDate: $('#importDocEndDateInput').val()
+	    			}
+    			});
+    		}
+    	  };
+    			  
+    	  $('.importDocSearchDiv .layui-btn').on('click', function(){
+    		var type = $(this).data('type');
+    		active[type] ? active[type].call(this) : '';
+    	  });
+    	});
+    </script>
+</body>
+</html>
