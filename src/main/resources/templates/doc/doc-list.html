@@ -29,53 +29,6 @@
     </div>
 
     <div class="z-body animated fadeIn">
-<!--        <form id="ReleaseForm" action="" method="post" class="layui-form" style="text-align: left !important;"> -->
-<!--         	<div class="layui-form-item"> -->
-<!--         		<div class="layui-row"> -->
-<!--         			<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
-<!-- 				   		<label for="loginName" class="layui-form-label">姓名</label> -->
-<!-- 	                    <div class="layui-input-inline"> -->
-<!-- 	                        <input type="text" name="userName" autocomplete="off" id="userName" class="layui-input"> -->
-<!-- 	                    </div> -->
-<!-- 				    </div> -->
-<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
-<!-- 	            		<label for=phone class="layui-form-label">手机</label> -->
-<!-- 	                    <div class="layui-input-inline"> -->
-<!-- 	                        <input type="text" name="phone" autocomplete="off" id="phone" class="layui-input"> -->
-<!-- 	                    </div> -->
-<!-- 	            	</div> -->
-<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
-<!-- 	            		<label for="status" class="layui-form-label">机构</label> -->
-<!-- 	                    <div class="layui-input-inline"> -->
-<!-- 	                        <select name="status" id="status"> -->
-<!-- 	                            <option value="">请选择</option> -->
-<!-- 	                            <option value="1">正常</option> -->
-<!-- 	                            <option value="0">锁定</option> -->
-<!-- 	                        </select> -->
-<!-- 	                    </div> -->
-<!-- 	            	</div> -->
-<!-- 	            </div> -->
-<!-- 	            <div class="layui-row"> -->
-<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
-<!-- 				   		<label for="loginName" class="layui-form-label">姓名</label> -->
-<!-- 	                    <div class="layui-input-inline"> -->
-<!-- 	                        <input type="text" name="userName" autocomplete="off" id="userName" class="layui-input"> -->
-<!-- 	                    </div> -->
-<!-- 				    </div> -->
-<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;"> -->
-<!-- 	            		<label for=phone class="layui-form-label">手机</label> -->
-<!-- 	                    <div class="layui-input-inline"> -->
-<!-- 	                        <input type="text" name="phone" autocomplete="off" id="phone" class="layui-input"> -->
-<!-- 	                    </div> -->
-<!-- 	            	</div> -->
-<!-- 	            	<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" align="right" style="padding-right:10px"> -->
-<!-- 	            	 	<button lay-submit="" lay-filter="search" class="layui-btn layui-btn-sm layui-btn-primary table-action"> -->
-<!-- 	                        <i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i> -->
-<!-- 	                    </button> -->
-<!-- 	            	</div> -->
-<!-- 	            </div> -->
-<!--             </div> -->
-<!--         </form> -->
 		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin-top: -20px;text-align: right !important;">
 				<ul class="layui-tab-title">
 					<shiro:hasPermission name="doc:admin">
@@ -88,10 +41,16 @@
 					    <li>已完成</li>
 					    <li>已取消</li>
 				    </shiro:hasPermission>
-				    <shiro:hasPermission name="doc:user">
+				    <shiro:hasPermission name="doc:dr">
 					    <li class="layui-this">待接单</li>
 					    <li>待手术</li>
 					    <li>已完成</li>
+				    </shiro:hasPermission>
+				    <shiro:hasPermission name="doc:hospital">
+						<li class="layui-this">待审核</li>
+					    <li>待手术</li>
+					    <li>已完成</li>
+					    <li>已取消</li>
 				    </shiro:hasPermission>
 				</ul>
 			<div class="layui-tab-content" style="height: 50px;">
@@ -121,7 +80,7 @@
 						<table class="layui-hide" id="doc-table-6" lay-filter="doc-table-6"></table>
 					</div>
 				</shiro:hasPermission>
-				<shiro:hasPermission name="doc:user">
+				<shiro:hasPermission name="doc:dr">
 					<div class="layui-tab-item layui-show">
 						<table class="layui-hide" id="doc-table-2" lay-filter="doc-table-2"></table>
 					</div>
@@ -130,6 +89,20 @@
 					</div>
 					<div class="layui-tab-item">
 						<table class="layui-hide" id="doc-table-5" lay-filter="doc-table-5"></table>
+					</div>
+				</shiro:hasPermission>
+				<shiro:hasPermission name="doc:hospital">
+					<div class="layui-tab-item layui-show">
+			    		<table class="layui-hide" id="doc-table-0" lay-filter="doc-table-0"></table>
+			    	</div>
+			    	<div class="layui-tab-item">
+						<table class="layui-hide" id="doc-table-123" lay-filter="doc-table-123"></table>
+					</div>
+					<div class="layui-tab-item">
+						<table class="layui-hide" id="doc-table-5" lay-filter="doc-table-5"></table>
+					</div>
+					<div class="layui-tab-item">
+						<table class="layui-hide" id="doc-table-6" lay-filter="doc-table-6"></table>
 					</div>
 				</shiro:hasPermission>
 		  	</div>
@@ -312,7 +285,35 @@
 		</div>
 	</script>
 	
+	<script type="text/html" id="doc-table-123-toolbar">
+		<div class="layui-row">
+		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+	     	<label for="operateStartTime" class="layui-form-label">手术日期</label>
+			<div class="layui-input-block">
+				<input type="text" id="doc_table_123_date" autocomplete="off" class="layui-input" >
+			</div>
+		</div>
+		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+	 		<label for="patientName" class="layui-form-label">患者姓名</label>
+			<div class="layui-input-block">
+				<input type="text" id="doc_table_123_patientName" lay-vertype="tips" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="text-align: left;padding-left: 10px;margin-top: 11px;">
+			<button class="layui-btn layui-btn-sm" lay-event="doc_table_123_search">
+				<i class="layui-icon layui-icon-search" style="font-size: 15px;"></i>  
+			</button>
+		</div>
+		</div>
+	</script>
+	
+	<!-- 操作按钮  -->
     <script type="text/html" id="sh-column-toolbar">
+		<shiro:hasPermission name="doc:info">
+			<a lay-event="docinfo_0">
+                <i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area zadmin-blue" title="订单信息"></i>
+            </a>
+        </shiro:hasPermission>
         <shiro:hasPermission name="doc:examine">
             <a lay-event="examine">
                 <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="确认订单"></i>
@@ -327,6 +328,11 @@
     </script>
     
     <script type="text/html" id="fp-column-toolbar">
+		<shiro:hasPermission name="doc:info">
+			<a lay-event="docinfo_0">
+                <i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area zadmin-blue" title="订单信息"></i>
+            </a>
+        </shiro:hasPermission>
         <shiro:hasPermission name="doc:distribution">
             <a lay-event="distribution">
                 <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="分配订单"></i>
@@ -341,6 +347,11 @@
     </script>
 
 	<script type="text/html" id="jd-column-toolbar">
+		<shiro:hasPermission name="doc:info">
+			<a lay-event="docinfo_0">
+                <i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area zadmin-blue" title="订单信息"></i>
+            </a>
+        </shiro:hasPermission>
         <shiro:hasPermission name="doc:ordertaking">
             <a lay-event="ordertaking">
                 <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="接单"></i>
@@ -361,6 +372,12 @@
     </script>
     
     <script type="text/html" id="op-column-toolbar">
+		<shiro:hasPermission name="doc:info">
+			<a lay-event="docinfo_0">
+                <i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area zadmin-blue" title="订单信息"></i>
+            </a>
+        </shiro:hasPermission>
+
         <shiro:hasPermission name="doc:surgicalrecords">
             <a lay-event="surgicalrecords">
                 <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-blue" title="填写手术详情"></i>
@@ -408,23 +425,47 @@
 	</script>
 	
  	<script type="text/html" id="ls-column-toolbar">
+		<shiro:hasPermission name="doc:allinfo">
+			<a lay-event="docinfo_3">
+                <i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area zadmin-blue" title="订单信息"></i>
+            </a>
+        </shiro:hasPermission>
     </script>
     
     <script type="text/html" id="evaluation-column-toolbar">
 		<shiro:hasPermission name="doc:JgEvaluation">
-            <a lay-event="JgEvaluation">
-                <i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-red" title="评价"></i>
-            </a>
-		</shiro:hasPermission>
-		<shiro:hasPermission name="doc:DrEvaluation">
-			{{# if(d.doctorEvaluate != '') { }}
-				<span>{{# d.doctorEvaluate}}</span>
-	    	{{# } else{ }}  
-            	<a lay-event="DrEvaluation">
+			{{#if(d.hospitalEvaluate != null &&  d.hospitalEvaluate != '') { }}
+				<span>{{d.hospitalEvaluate}}星</span>
+			{{# }else{ }}
+            	<a lay-event="JgEvaluation">
                 	<i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-red" title="评价"></i>
             	</a>
-			 {{# }}}  
+			{{# } }}
 		</shiro:hasPermission>
+		<shiro:hasPermission name="doc:DrEvaluation">
+			{{#if(d.doctorEvaluate != null &&  d.doctorEvaluate != '') { }}
+				<span>{{d.doctorEvaluate}}星</span>
+			{{# }else{ }}
+            	<a lay-event="DrEvaluation">
+       				<i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-red" title="评价"></i>
+         		</a>
+			{{# } }}
+      		
+		</shiro:hasPermission>
+    </script>
+    
+    <script type="text/html" id="jg-column-toolbar">
+		<shiro:hasPermission name="doc:info">
+			<a lay-event="remove">
+                <i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area zadmin-blue" title="订单信息"></i>
+            </a>
+        </shiro:hasPermission>
+
+		<shiro:hasPermission name="doc:remove">
+			<a lay-event="remove">
+                <i class="zadmin-icon zadmin-icon-delete zadmin-oper-area zadmin-red" title="取消订单"></i>
+            </a>
+        </shiro:hasPermission>
     </script>
     
     <script type="text/html" id="statusTpl">
@@ -450,10 +491,34 @@
     </script>
     
     <script type="text/html" id="qaTeamTpl">
-		<a class="layui-btn layui-btn-xs" lay-event="showTeam" style="background-color:transparent;color: #00BFFF;">详情</a>
+		<shiro:hasPermission name="doc:admin">
+			{{# if(d.qaTeamId != null && d.qaTeamId != '') { }}
+				<a class="layui-btn layui-btn-xs" lay-event="showTeam" style="background-color:transparent;color: #00BFFF;">详情</a>
+			{{# } else{ }}  
+		  		<span>无团队</span>
+	  		{{# }}} 
+		</shiro:hasPermission>
+		<shiro:hasPermission name="doc:dr">
+			{{# if(d.qaTeamId != null && d.qaTeamId != '') { }}
+				<a class="layui-btn layui-btn-xs" lay-event="showTeam" style="background-color:transparent;color: #00BFFF;">详情</a>
+			{{# } else{ }}  
+		  		<a class="layui-btn layui-btn-xs" lay-event="showTeam" style="background-color:transparent;color: #00BFFF;">创建</a>
+	  		{{# }}} 
+		</shiro:hasPermission>
     </script>
     
-
+    <script type="text/html" id="JgQaTpl">
+		{{ d.qaUserName == null || d.qaUserName == '' ? '' : d.qaUserName }}
+    </script>
+    
+	<script type="text/html" id="JgQaTeamTpl">
+		{{# if(d.qaTeamId != null && d.qaTeamId != '') { }}
+			<a class="layui-btn layui-btn-xs" lay-event="showTeam" style="background-color:transparent;color: #00BFFF;">详情</a>
+		{{# } else{ }}  
+		  <span>无团队</span>
+	    {{# }}}  
+    </script>
+    
     <script th:src="@{/lib/jquery/jquery.min.js}"></script>
     <script th:src="@{/lib/layui/layui.js}"></script>
     <script th:src="@{/js/common.js}"></script>
@@ -473,12 +538,57 @@
             
             //时间控件
             laydate.render({
-                elem: '#doc_table_0_date' //指定元素
+                elem: '#doc_table_0_date'
             	,type: 'date'
             	,calendar: true
         	});
             
+            laydate.render({
+                elem: '#doc_table_1_date'
+            	,type: 'date'
+            	,calendar: true
+        	});
             
+            laydate.render({
+                elem: '#doc_table_2_date'
+            	,type: 'date'
+            	,calendar: true
+        	});
+            
+            laydate.render({
+                elem: '#doc_table_3_date'
+            	,type: 'date'
+            	,calendar: true
+        	});
+            
+            laydate.render({
+                elem: '#doc_table_4_date'
+            	,type: 'date'
+            	,calendar: true
+        	});
+            
+            laydate.render({
+                elem: '#doc_table_5_date'
+            	,type: 'date'
+            	,calendar: true
+        	});
+            
+            laydate.render({
+                elem: '#doc_table_6_date'
+            	,type: 'date'
+            	,calendar: true
+        	});
+            
+            laydate.render({
+                elem: '#doc_table_9_date'
+            	,type: 'date'
+            	,calendar: true
+        	});
+            laydate.render({
+                elem: '#doc_table_123_date'
+            	,type: 'date'
+            	,calendar: true
+        	});
             
 			//表格控件
             table.render({
@@ -644,8 +754,55 @@
                         , {field: 'anestheticName', title: '麻醉方法', align: 'center',sort: true, width:'12%'}
                         , {field: 'orgName', title: '订单来源', align: 'center',sort: true, width:'15%'}
                         , {field: 'documentType', title: '订单类型', templet: '#documentTypeTpl', unresize: true, align: 'center',sort: true, width:'10%'}
-                        , {title: '评分', fixed: 'right', align: 'center', toolbar: '#ls-column-toolbar'}
+                        , {title: '评分', fixed: 'right', align: 'center', toolbar: '#evaluation-column-toolbar'}
                         , {title: '操作', fixed: 'right', align: 'center', toolbar: '#ls-column-toolbar'}
+                    ]
+                ]
+            });
+            
+            table.render({
+                elem: '#doc-table-6'
+                , url: '/doc/list'
+                , where: {state: '6'}
+                , page: true
+                , smartReloadModel: true
+                , toolbar: '#doc-table-6-toolbar'
+                , defaultToolbar:[]
+                , cols: [
+                    [
+                        {field: 'documentId', title: 'ID', align: 'center',sort: true, hide: true}
+                        , {field: 'operateStartTime', title: '手术时间', align: 'center',sort: true, width:'15%'}
+                        , {field: 'patientName', title: '姓名', align: 'center',sort: true, width:'8%'}
+                        , {field: 'patientAge', title: '年龄', align: 'center',sort: true, width:'5%'}
+                        , {field: 'patientSex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true, width:'5%'}
+                        , {field: 'operativeName', title: '手术名称', align: 'center',sort: true, width:'20%'}
+                        , {field: 'orgName', title: '订单来源', align: 'center',sort: true, width:'15%'}
+                        , {field: 'deleteReason', title: '取消原因', align: 'center',sort: true, width:'32%'}
+                    ]
+                ]
+            });
+            
+            table.render({
+                elem: '#doc-table-123'
+                , url: '/doc/list'
+                , where: {state: "'1','2','3'"}
+                , page: true
+                , smartReloadModel: true
+                , toolbar: '#doc-table-123-toolbar'
+             	, defaultToolbar:[]
+                , cols: [
+                    [
+                        {field: 'documentId', title: 'ID', align: 'center',sort: true, hide: true}
+                        , {field: 'operateStartTime', title: '手术时间', align: 'center',sort: true, width:'15%'}
+                        , {field: 'patientName', title: '姓名', align: 'center',sort: true, width:'8%'}
+                        , {field: 'patientAge', title: '年龄', align: 'center',sort: true, width:'5%'}
+                        , {field: 'patientSex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true, width:'5%'}
+                        , {field: 'operativeName', title: '手术名称', align: 'center',sort: true, width:'15%'}
+                        , {field: 'anestheticName', title: '麻醉方法', align: 'center',sort: true, width:'10%'}
+                        , {field: 'orgName', title: '订单来源', align: 'center',sort: true, width:'15%'}
+                        , {field: 'qaUserName', title: '主麻', templet: '#JgQaTpl', unresize: true, align: 'center',sort: true, width:'8%'}
+                        , {field: 'qaTeamId', title: '团队', templet: '#JgQaTeamTpl', unresize: true, align: 'center',sort: true, width:'8%'}
+                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#jg-column-toolbar'}
                     ]
                 ]
             });
@@ -827,6 +984,44 @@
                      		table.reload('doc-table-5');
                      	}
                 	});
+                }else if(event === 'completeorder'){
+                	layer.open({
+                		content: '/doc/docInfo?documentId=' + data.documentId + "&state=2",
+                     	title: "订单信息",
+                     	area: ['100%', '100%'],
+                     	type: 2,
+                     	maxmin: true,
+                     	shadeClose: true,
+                        move: false,
+                     	end: function () {
+                     		table.reload('doc-table-4');
+                     		table.reload('doc-table-5');
+                     	}
+                	});
+                }else if(event === 'docinfo_3'){
+                	layer.open({
+                		content: '/doc/docInfo?documentId=' + data.documentId + "&state=3",
+                     	title: "订单信息",
+                     	area: ['100%', '100%'],
+                     	type: 2,
+                     	maxmin: true,
+                     	shadeClose: true,
+                        move: false,
+                     	end: function () {
+                     	}
+                	});
+                }else if(event === 'docinfo_0'){
+                	layer.open({
+                		content: '/doc/docInfo?documentId=' + data.documentId + "&state=0",
+                     	title: "订单信息",
+                     	area: ['100%', '100%'],
+                     	type: 2,
+                     	maxmin: true,
+                     	shadeClose: true,
+                        move: false,
+                     	end: function () {
+                     	}
+                	});
                 }
             });
 
@@ -986,6 +1181,26 @@
      		       		state: '6', 
      		       		date: $('#doc_table_6_date').val(),
      		       		patientName: $('#doc_table_6_patientName').val()
+     		    	}
+     	      		});
+           		}
+          	};
+            
+            table.on('toolbar(doc-table-123)', function (obj) {
+            	var data = obj.data;
+            	if(obj.event === 'doc_table_123_search'){
+            		active_123["reload"] ? active_123["reload"].call(this) : '';
+                }
+            });
+            
+            var active_123 = {
+           		reload: function(){
+     	      		table.reload('doc-table-123', {
+     	      		url: '/doc/list',
+     		       	where: {
+     		       		state: "'1','2','3'", 
+     		       		date: $('#doc_table_123_date').val(),
+     		       		patientName: $('#doc_table_123_patientName').val()
      		    	}
      	      		});
            		}

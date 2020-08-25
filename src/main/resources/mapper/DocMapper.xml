@@ -462,7 +462,7 @@
       		and doc.qa_user_id = #{qaUserId,jdbcType=VARCHAR} 
       	</if>
       	<if test="documentState != null">
-      		and doc.document_state = #{documentState,jdbcType=VARCHAR} 
+      		and doc.document_state in (${documentState}) 
       	</if>
       	<if test="documentId != null">
       		and doc.document_id = #{documentId,jdbcType=VARCHAR} 

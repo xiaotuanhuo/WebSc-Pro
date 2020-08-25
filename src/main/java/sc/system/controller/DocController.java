@@ -19,8 +19,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -52,11 +50,7 @@ import com.github.pagehelper.PageInfo;
 @Controller
 @RequestMapping("/doc")
 public class DocController {
-
-	private static final Logger logger = LoggerFactory.getLogger(DocController.class);
-
-	private static String dirPath = "D:\\app";
-
+	private static String dirPath = "/home/photo";
 	
 	@Resource
 	DataController data;
@@ -78,11 +72,6 @@ public class DocController {
 		
 		model.addAttribute("role", user.getRoleId());
         return "doc/doc-list";
-    }
-	
-	@GetMapping("/docImport")
-    public String docImport() {
-        return "doc/doc-import";
     }
 	
 	@GetMapping("/release")
@@ -132,6 +121,27 @@ public class DocController {
 		model.addAttribute("anestheticls", anestheticls);
 		
 		return "doc/doc-ordertaking";
+    }
+	
+	@GetMapping("/docInfo")
+    public String docInfo(@RequestParam(value = "documentId") String documentId,
+    				      @RequestParam(value = "state") String state,
+		 	  			  Model model) {
+		//获取订单数据
+		WebScDoc doc = new WebScDoc();
+		doc.setDocumentId(documentId);
+		List<WebScDoc> docs = docService.selectWebScDocList(1, 1, doc);
+		if(docs != null)
+		model.addAttribute("doc", docs.get(0));
+		//获取手术名称
+		List<WebScOperative> operativels = data.getWebScOperativeList();
+		model.addAttribute("operativels", operativels);
+		//获取麻醉方法
+		List<WebScAnesthetic> anestheticls = data.getWebScAnestheticList();
+		model.addAttribute("anestheticls", anestheticls);
+		
+		model.addAttribute("htmlstate", state);
+		return "doc/doc-info";
     }
 	
 	/**
@@ -390,13 +400,13 @@ public class DocController {
 		if(docs != null){
 			WebScDoc d = docs.get(0);
 			String photo = "";
-			if(d.getPhoto_1() != null && d.getPhoto_1() != ""){
+			if(d.getPhoto_1() != null && !d.getPhoto_1().trim().equals("")){
 				photo = photo + d.getPhoto_1() + ",";
 			}
-			if(d.getPhoto_2() != null && d.getPhoto_2() != ""){
+			if(d.getPhoto_2() != null && !d.getPhoto_2().trim().equals("")){
 				photo = photo + d.getPhoto_2() + ",";
 			}
-			if(d.getPhoto_3() != null && d.getPhoto_3() != ""){
+			if(d.getPhoto_3() != null && !d.getPhoto_3().trim().equals("")){
 				photo = photo + d.getPhoto_3() + ",";
 			}
 			if(!photo.equals(""))	photo = photo.substring(0, photo.length() - 1);
@@ -433,12 +443,13 @@ public class DocController {
         	String filePath = "/" + documentId + "_"+originalFilename;
         	
         	File dir = new File(dirPath + filePath);
+        	System.out.println("路径:" + dirPath + filePath);
         	if (dir.exists()) {
         		object.put("code", "fail");
     			object.put("message", "同名文件已存在！");
         	}else{
-        		boolean b = new File(dirPath).mkdirs();
-    			file.transferTo(new File(dirPath + filePath).getAbsoluteFile());
+//        		boolean b = new File(dirPath).mkdirs();
+    			file.transferTo(new File(new File(dirPath).getAbsoluteFile() + filePath));
     			
     			object.put("title", originalFilename);
     			object.put("code", "success");
@@ -505,7 +516,6 @@ public class DocController {
     @ResponseBody
     public ResultBean save_surgicalrecordsDone(@Validated(Create.class) WebScDoc doc) {
 		try{
-			System.out.println(doc.getShblEx());
 			//数据整理
 			//checkbox
 			if(doc.getShblZw() != null)	
@@ -563,6 +573,51 @@ public class DocController {
 			}
 			
 			int iRet = docTmpService.insert(doc);
+			if(iRet > 0){
+				return ResultBean.success();
+			}else{
+				return ResultBean.error("保存草稿失败！");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return ResultBean.error("保存草稿失败！");
+		}
+	}
+	
+	@OperationLog("保存草稿照片")
+	@PostMapping("/save_surgicalrecordsPhoto")
+    @ResponseBody
+    public ResultBean save_surgicalrecordsPhoto(@Validated(Create.class) WebScDoc doc) {
+		try{
+			//照片
+			doc.setPhoto_1("");
+			doc.setPhoto_2("");
+			doc.setPhoto_3("");
+			String photo = doc.getPhoto();
+			if(photo != null && !photo.equals("")){
+				String[] photols = photo.split(",");
+				for(int i = 0; i< photols.length; i++){
+					if(i == 0){
+						doc.setPhoto_1(photols[0]);
+					}else if(i == 1){
+						doc.setPhoto_2(photols[1]);
+					}else if(i == 2){
+						doc.setPhoto_3(photols[2]);
+					}
+				}
+			}
+			
+			//草稿
+			doc.setStatus("0");
+			
+			int iRet = docTmpService.update(doc);
+			
+			//医生备注
+			WebScDoc tmpDoc = new WebScDoc();
+			tmpDoc.setQaMemo(doc.getQaMemo() == null ? "" : doc.getQaMemo());
+			tmpDoc.setDocumentId(doc.getDocumentId());
+			docService.updateByPrimaryKey(tmpDoc);
+			
 			if(iRet > 0){
 				return ResultBean.success();
 			}else{
@@ -873,22 +928,6 @@ public class DocController {
         return new PageResultBean<>(drPageInfo.getTotal(), drPageInfo.getList());
 	}
 	
-	@PostMapping(value = "importDocs")
-	@ResponseBody
-	public ResultBean importDocs(@RequestParam("file") MultipartFile file) {
-		ResultBean rBean = null;
-		try {
-			
-			rBean = ResultBean.success(docService.importDocsService(file));
-			
-		} catch (Exception e) {
-			logger.error("订单批量导入失败，"+e.getMessage());
-			rBean = ResultBean.error("订单批量导入失败，"+e.getMessage());
-		}
-		
-		return rBean;
-    }
-	
 	@OperationLog("添加团队成员")
     @PostMapping("/addQaTeamUser")
     @ResponseBody
@@ -954,6 +993,46 @@ public class DocController {
 		
         return ResultBean.success(docService.updateByPrimaryKey(doc));
     }
+	
+	@PostMapping(value = "importDocs")
+	@ResponseBody
+	public ResultBean importDocs(@RequestParam("file") MultipartFile file) {
+		ResultBean rBean = null;
+		try {
+			
+			rBean = ResultBean.success(docService.importDocsService(file));
+			
+		} catch (Exception e) {
+			rBean = ResultBean.error("订单批量导入失败，"+e.getMessage());
+		}
+		
+		return rBean;
+    }
+	
+	@OperationLog("完成订单")
+    @PostMapping("/commit_completeorder")
+    @ResponseBody
+    public ResultBean commitCompleteOrder(@RequestParam(value = "id") String documentId) {
+		WebScDoc doc = new WebScDoc();
+		doc.setDocumentId(documentId);
+		doc.setDocumentState("5");
+        return ResultBean.success(docService.updateByPrimaryKey(doc));
+    }
+	
+	@OperationLog("订单退回修改")
+    @PostMapping("/return_completeorder")
+    @ResponseBody
+    public ResultBean returnCompleteOrder(@RequestParam(value = "id") String documentId,
+    						  		      @RequestParam(value = "reason") String reason) {
+		WebScDoc doc = new WebScDoc();
+		doc.setDocumentId(documentId);
+		doc.setAdminMemo(reason);
+		doc.setDocumentState("3");
+		doc.setStatus("0");
+		
+		docService.updateByPrimaryKey(doc);
+		docTmpService.update(doc);
+		
+        return ResultBean.success(1);
+    }
 }
-
-

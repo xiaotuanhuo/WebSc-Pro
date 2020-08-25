@@ -20,7 +20,7 @@ public class DocTmpService {
 	public int insert(WebScDoc doc) {
 		int iRet = 0;
 		
-		if(docTmpMapper.count() > 0){
+		if(docTmpMapper.count(doc.getDocumentId()) > 0){
 			iRet = docTmpMapper.update(doc);
 		}else{
 			iRet = docTmpMapper.insert(doc);
@@ -28,5 +28,9 @@ public class DocTmpService {
 		
         return iRet;
     }
+	
+	public int update(WebScDoc doc){
+		return docTmpMapper.update(doc);
+	}
 
 }
