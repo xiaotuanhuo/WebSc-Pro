@@ -199,6 +199,30 @@
         </set>
         where user_id = #{userId,jdbcType=INTEGER}
     </update>
+
+    <update id="updateByUser" parameterType="sc.system.model.WebScUser">
+        update WSC_USER
+		    set login_name = #{loginName,jdbcType=VARCHAR},
+		      user_name = #{userName,jdbcType=VARCHAR},
+		      sex = #{sex,jdbcType=VARCHAR},
+		      age = #{age,jdbcType=INTEGER},
+		      phone = #{phone,jdbcType=VARCHAR},
+		      email = #{email,jdbcType=VARCHAR},
+		      id_card = #{idCard,jdbcType=VARCHAR},
+		      certificate_no = #{certificateNo,jdbcType=VARCHAR},
+		      occupational_no = #{occupationalNo,jdbcType=VARCHAR},
+		      titles = #{titles,jdbcType=VARCHAR},
+		      titles_no = #{titlesNo,jdbcType=VARCHAR},
+		      role_id = #{roleId,jdbcType=VARCHAR},
+		      role_type_id = #{roleTypeId,jdbcType=VARCHAR},
+		      province = #{province,jdbcType=VARCHAR},
+		      city = #{city,jdbcType=VARCHAR},
+		      area = #{area,jdbcType=VARCHAR},
+		      patient_type = #{patientType,jdbcType=VARCHAR},
+		      operation_type = #{operationType,jdbcType=VARCHAR},
+		      photo = #{photo,jdbcType=VARCHAR}
+		    where user_id = #{userId,jdbcType=INTEGER}
+    </update>
     
     <select id="selectPermsByLoginName" resultType="String" parameterType="String">
         select menu.perms

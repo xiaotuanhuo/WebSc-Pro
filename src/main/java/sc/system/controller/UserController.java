@@ -11,8 +11,6 @@ import sc.system.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -99,7 +97,14 @@ public class UserController {
 		WebScUser user = userService.selectOne(userId);
 		model.addAttribute("user", user);
 		model.addAttribute("roles", roleService.getRolesBytUserRole(Integer.parseInt(user.getRoleId())));
-		return "user/user-add";
+		return "user/user-edit";
+	}
+	
+	@OperationLog("新增用户")
+	@PostMapping
+	@ResponseBody
+	public ResultBean add(@Validated(Create.class) WebScUser user) {
+		return ResultBean.success(userService.add(user));
 	}
 	
 	@OperationLog("编辑角色")
@@ -108,13 +113,6 @@ public class UserController {
 	public ResultBean update(@Valid WebScUser user) {
 		userService.update(user);
 		return ResultBean.success();
-	}
-	
-	@OperationLog("新增用户")
-	@PostMapping
-	@ResponseBody
-	public ResultBean add(@Validated(Create.class) WebScUser user) {
-		return ResultBean.success(userService.add(user));
 	}
 	
 	@OperationLog("禁用账号")

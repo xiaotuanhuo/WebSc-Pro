@@ -142,6 +142,7 @@
 		admin_user_id,
 		qa_user_id,
 		qa_team_id,
+		org_id,
 		hospital_memo,
 		qa_memo,
 		admin_memo,
@@ -155,6 +156,31 @@
 		doctor_evaluate,
 		doctor_evaluate_memo
     </sql>
+    
+    <select id="selectImportDocsByConditions" resultMap="BaseResultMap" parameterType="hashmap">
+	  	select 
+	    <include refid="Base_Column_List" />
+	    from 
+	    WSC_DOCUMENT doc 
+	    where 
+	    apply_user_id = #{userId,jdbcType=VARCHAR}
+	    <if test="doctorName != null and doctorName != ''" >
+	    	and operate_user = #{doctorName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="orgId != null and orgId != ''" >
+	    	and org_id = #{orgId,jdbcType=VARCHAR}
+	    </if>
+	    <if test="startDate != null and startDate != ''" >
+	    	<![CDATA[
+	    		and operate_start_time >= #{startDate,jdbcType=VARCHAR}
+	    	]]>
+	    </if>
+	    <if test="endDate != null and endDate != ''" >
+	    	<![CDATA[
+	    		and operate_start_time <= #{endDate,jdbcType=VARCHAR}
+	    	]]>
+	    </if>
+	</select>
     
     <insert id="insert" parameterType="sc.system.model.WebScDoc">
     	insert into WSC_DOCUMENT(document_id,

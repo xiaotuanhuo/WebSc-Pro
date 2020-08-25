@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import sc.common.constants.DocumentTitleEnum;
+import sc.common.constants.SexEnum;
 import sc.common.util.DateUtils;
 import sc.common.util.ExcelUtil;
+import sc.common.util.PageResultBean;
 import sc.common.util.ShiroUtil;
 import sc.common.util.StringUtil;
 import sc.common.util.UUID19;
@@ -34,6 +36,7 @@ import sc.system.model.WebScUser_Distribution;
 import sc.system.model.vo.District;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 @Service
 public class DocService {
@@ -258,11 +261,11 @@ public class DocService {
     					doc.setPatientAge(new Double((double)rows.get(i).get(j)).intValue());
     				}else if (DocumentTitleEnum.patient_sex.getTxt().equals(rows.get(0).get(j))) {
     					
-    					if(StringUtil.isEmpty(rows.get(i).get(j).toString())) {
-    			    		throw new Exception("患者性别不能为空");
-    			    	}
+    					if(StringUtil.isNull(SexEnum.txtOf(rows.get(i).get(j).toString()))) {
+    						throw new Exception("患者性别为空或有误");
+    					}
     					
-    					doc.setPatientSex(rows.get(i).get(j).toString());
+    					doc.setPatientSex(SexEnum.txtOf(rows.get(i).get(j).toString()).getValue());
     				}else if (DocumentTitleEnum.patient_num.getTxt().equals(rows.get(0).get(j))) {
     					
     					if(StringUtil.isEmpty(rows.get(i).get(j).toString())) {
@@ -369,6 +372,44 @@ public class DocService {
 		}
     	
     	return "成功导入"+docs.size()+"条，失败"+(rows.size()-docs.size()-1)+"条："+msg;
+    }
+    
+    public PageResultBean<WebScDoc> getImportDocsService(Map<String, Object> paraMap){
+    	
+    	PageResultBean<WebScDoc> prb = new PageResultBean<WebScDoc>();
+		
+		PageHelper.startPage(paraMap.get("page")==null?1:(int)paraMap.get("page"), 
+				paraMap.get("limit")==null?10:(int)paraMap.get("limit"));
+		
+		if(StringUtil.isNotNull(paraMap.get("orgName"))) {
+			WebScOrganization webScOrganization = organizationMapper.selectWebScOrganization(paraMap.get("orgName").toString());
+			
+			paraMap.put("orgId", webScOrganization != null ? webScOrganization.getOrgId() : "");
+		}
+		
+		paraMap.put("userId", ShiroUtil.getCurrentUser().getUserId()+"");
+		
+		List<WebScDoc> importDocs = docMapper.selectImportDocsByConditions(paraMap);
+		
+		for (WebScDoc webScDoc : importDocs) {
+			webScDoc.setPatientSex(SexEnum.getvalueOf(webScDoc.getPatientSex()).getTxt());
+			webScDoc.setOrgName(organizationMapper.selectByPrimaryKey(webScDoc.getOrgId()).getOrgName());
+			webScDoc.setAnestheticName(anestheticMapper.selectAnestheticById(webScDoc.getAnestheticId()).getAnestheticName());
+			
+			String operativeIds [] = webScDoc.getOperativeId().split(",");
+			String operativeNames = "";
+			for (int i = 0; i < operativeIds.length; i++) {
+				operativeNames = operativeNames + "，" + operativeMapper.selectOperativeById(operativeIds[i]).getOperativeName();
+			}
+			webScDoc.setOperativeName(operativeNames.substring(1));
+		}
+		
+		PageInfo<WebScDoc> pageInfo = new PageInfo<>(importDocs);
+		
+		prb.setCount(Long.valueOf(pageInfo.getTotal()).intValue());
+		prb.setData(importDocs);
+		
+		return prb;
     }
     
     public List<WebScUser> getQaUserInfo(Map<String, String> searchMap){

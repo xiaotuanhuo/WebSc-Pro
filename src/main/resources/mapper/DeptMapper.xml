@@ -103,7 +103,7 @@
             useGeneratedKeys="true">
 	insert into WSC_DEPT (dept_id, dept_name, parent_id, dept_address,
 	dept_tel, leader_name, leader_tel, province, city, order_num,
-	create_time, modify_time, status)
+	create_time, modify_time)
 	values (#{deptId,jdbcType=VARCHAR},
 	#{deptName,jdbcType=VARCHAR},
 	#{parentId,jdbcType=INTEGER},

@@ -19,11 +19,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -50,6 +53,7 @@ import com.github.pagehelper.PageInfo;
 @Controller
 @RequestMapping("/doc")
 public class DocController {
+	private static final Logger log = LoggerFactory.getLogger(DocController.class);
 	private static String dirPath = "/home/photo";
 	
 	@Resource
@@ -72,6 +76,17 @@ public class DocController {
 		
 		model.addAttribute("role", user.getRoleId());
         return "doc/doc-list";
+    }
+	
+	@GetMapping("/docImport")
+    public String docImport() {
+        return "doc/doc-import";
+    }
+	
+	
+	@GetMapping("/toImportDocsView")
+    public String toImportDocsView() {
+        return "doc/doc-import-view";
     }
 	
 	@GetMapping("/release")
@@ -928,6 +943,40 @@ public class DocController {
         return new PageResultBean<>(drPageInfo.getTotal(), drPageInfo.getList());
 	}
 	
+	@PostMapping(value = "importDocs")
+	@ResponseBody
+	public ResultBean importDocs(@RequestParam("file") MultipartFile file) {
+		ResultBean rBean = null;
+		try {
+			
+			rBean = ResultBean.success(docService.importDocsService(file));
+			
+		} catch (Exception e) {
+			log.error("订单批量导入失败，"+e.getMessage());
+			rBean = ResultBean.error("订单批量导入失败，"+e.getMessage());
+		}
+		
+		return rBean;
+    }
+	
+	@PostMapping(value = "importDocsView")
+	@ResponseBody
+	public PageResultBean<WebScDoc> importDocsView(
+			@RequestBody Map<String, Object> paraMap){
+		
+		PageResultBean<WebScDoc> prb = new PageResultBean<WebScDoc>();
+		try {
+			
+			prb = docService.getImportDocsService(paraMap);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("获取导入订单记录失败，"+e.getMessage());
+		}
+		
+		return prb;
+	}
+	
 	@OperationLog("添加团队成员")
     @PostMapping("/addQaTeamUser")
     @ResponseBody
@@ -992,21 +1041,6 @@ public class DocController {
 		}
 		
         return ResultBean.success(docService.updateByPrimaryKey(doc));
-    }
-	
-	@PostMapping(value = "importDocs")
-	@ResponseBody
-	public ResultBean importDocs(@RequestParam("file") MultipartFile file) {
-		ResultBean rBean = null;
-		try {
-			
-			rBean = ResultBean.success(docService.importDocsService(file));
-			
-		} catch (Exception e) {
-			rBean = ResultBean.error("订单批量导入失败，"+e.getMessage());
-		}
-		
-		return rBean;
     }
 	
 	@OperationLog("完成订单")
