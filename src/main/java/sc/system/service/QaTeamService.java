@@ -30,10 +30,23 @@ public class QaTeamService {
 	}
 	
 	public int insertQaUser(Map<String, String> insertMap){
+		WebScDoc doc = new WebScDoc();
+		doc.setDocumentId(insertMap.get("documentId"));
+		doc.setQaTeamId(insertMap.get("documentId"));
+		docMapper.updateByPrimaryKey(doc);
 		return qaTeamMapper.insertQaUser(insertMap);
 	}
 	
 	public int deleteQaUser(Map<String, String> deleteMap){
-		return qaTeamMapper.deleteQaUser(deleteMap);
+		int iRet = qaTeamMapper.deleteQaUser(deleteMap);
+		
+		List<WebScUser> userls = qaTeamMapper.getQaTeamInfo(deleteMap.get("documentId"));
+		if(userls.size() == 0){
+			WebScDoc doc = new WebScDoc();
+			doc.setDocumentId(deleteMap.get("documentId"));
+			doc.setQaTeamId("");
+			docMapper.updateByPrimaryKey(doc);
+		}
+		return iRet;
 	}
 }

@@ -1,6 +1,7 @@
 package sc.system.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import sc.system.model.WebScDoc;
 
@@ -10,5 +11,5 @@ public interface DocTmpMapper {
 	
 	int update(WebScDoc doc);
 	
-	int count();
+	int count(@Param("documentId") String documentId);
 }

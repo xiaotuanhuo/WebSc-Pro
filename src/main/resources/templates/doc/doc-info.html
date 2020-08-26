@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>订单提交</title>
+    <title>订单信息</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -24,8 +24,55 @@
     <div class="animated fadeIn">
     	<div class="layui-tab" lay-filter="test">
 			<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="padding:0 10px 0 10px;">
+			<div class="layui-carousel" id="distribution-tab">
+  				<div carousel-item>
+        		<div style="background-color: white;text-align: center;padding:0 10px 0 10px;overflow-y: auto;">
 				<form id="SurgicalrecordForm" action="" method="post" class="layui-form" style="text-align: left !important;">
 					<input type="hidden" name="documentId" class="layui-input" th:value="${doc?.documentId}">
+					<!-- 机构信息 -->
+			       	<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
+						<legend>医院信息</legend>
+					</fieldset>
+	        		<div class="layui-row">
+	        			<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
+	        				<label for="operateStartTime" class="layui-form-label">医院名称</label>
+			                <div class="layui-input-block">
+			             		<input type="text" id="doc_orgName" class="layui-input"  th:value="${doc?.orgName}" Readonly="true">
+			                </div>
+		                </div>
+		                
+		                <div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
+	        				<label for="operateStartTime" class="layui-form-label">医院电话</label>
+			                <div class="layui-input-block">
+			             		<input type="text" id="doc_orgTel" class="layui-input"  th:value="${doc?.orgTel}" Readonly="true">
+			                </div>
+		                </div>
+		           	</div>
+		           	
+		           	<div class="layui-row">
+	        			<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;">
+	        				<label for="operateStartTime" class="layui-form-label">医院地址</label>
+			                <div class="layui-input-block">
+			             		<input type="text" id="doc_orgAddress" class="layui-input"  th:value="${doc?.orgAddress}" Readonly="true">
+			                </div>
+		                </div>
+		           	</div>
+		           	
+		           	<div class="layui-row">
+	        			<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
+	        				<label for="operateStartTime" class="layui-form-label">联系人</label>
+			                <div class="layui-input-block">
+			             		<input type="text" id="doc_leaderName" class="layui-input"  th:value="${doc?.leaderName}" Readonly="true">
+			                </div>
+		                </div>
+		                <div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
+	        				<label for="operateStartTime" class="layui-form-label">联系电话</label>
+			                <div class="layui-input-block">
+			             		<input type="text" id="doc_leaderTel" class="layui-input"  th:value="${doc?.leaderTel}" Readonly="true">
+			                </div>
+		                </div>
+		           	</div>
+		           	
 					<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
 						<legend>患者信息</legend>
 					</fieldset>
@@ -97,7 +144,7 @@
 			       	
 			       	<div class="layui-row" style="margin-top: 8px;">
 			       		<div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
-			       			<label for="operativeName" class="layui-form-label zadmin-red">手术名称</label>
+			       			<label for="operativeName" class="layui-form-label">手术名称</label>
 			       			<div class="layui-input-block">
 			             		 <select id="doc_operativeId" name="operativeId" xm-select="operative-select" xm-select-max="3" xm-select-search="" xm-select-skin="normal" 
 			                            lay-verify="required" lay-search="">
@@ -129,7 +176,7 @@
 			       	
 			       	<div class="layui-row" style="margin-top: 8px;">
 			       		<div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
-			       			<label for="anestheticId" class="layui-form-label zadmin-red">麻醉方法</label>
+			       			<label for="anestheticId" class="layui-form-label">麻醉方法</label>
 			       			<div class="layui-input-block">
 			             		 <select name="anestheticId" xm-select-radio xm-select="anesthetic-select"  xm-select-search=""
 			                            lay-verify="required" lay-search="">
@@ -152,14 +199,14 @@
 			       	
 			       	<div class="layui-row" style="margin-top: 8px;">
 			       		<div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
-			       			<label for="operativeId" class="layui-form-label zadmin-red">医生备注</label>
+			       			<label for="operativeId" class="layui-form-label">医生备注</label>
 			       			<div class="layui-input-block">
-			             		 <textarea placeholder="请输入内容" class="layui-textarea" id="doc_qaMemo"></textarea>
+			             		 <textarea placeholder="请输入内容" class="layui-textarea" id="doc_qaMemo" disabled="disabled"></textarea>
 			                </div>
 			       		</div>
 			       	</div>
-			       	
-			       	<div class="layui-row" style="margin-top: 8px;">
+					
+					<div class="layui-row" style="margin-top: 8px;">
 			       		<div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
 			       			<label for="doc_adminMemo" class="layui-form-label">退回原因</label>
 			       			<div class="layui-input-block">
@@ -167,20 +214,22 @@
 			                </div>
 			       		</div>
 			       	</div>
-					
+			       	
+					<!-- 手术信息 -->
+					<div id="operativeDiv">
 					<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
 						<legend>手术信息</legend>
 					</fieldset>
 	        		<div class="layui-row">
 	        			<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-	        				<label for="height" class="layui-form-label zadmin-red">身高</label>
+	        				<label for="height" class="layui-form-label">身高</label>
 			                <div class="layui-input-block">
 			             		<input type="text" id="doc_height" name="height" lay-verify="required" autocomplete="off" class="layui-input"  th:value="${doc?.height}">
 			                </div>
 		                </div>
 		                
 		                <div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-	        				<label for="weight" class="layui-form-label zadmin-red">体重</label>
+	        				<label for="weight" class="layui-form-label">体重</label>
 			                <div class="layui-input-block">
 			             		 <input type="text" id="doc_weight"
 			                           lay-verify="required" lay-vertype="tips" name="weight"
@@ -189,7 +238,7 @@
 		                </div>
 		                
 		                <div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-	        				<label for="asa" class="layui-form-label zadmin-red">ASA</label>
+	        				<label for="asa" class="layui-form-label">ASA</label>
 			                <div class="layui-input-block">
 			                	<select name="asa" xm-select-radio xm-select="asa-select"  xm-select-search=""  lay-search="">
 			                        <option value="0">I</option>
@@ -205,7 +254,7 @@
 							
 					<div class="layui-row">
 						<div class="layui-col-xs12 layui-col-sm8 layui-col-md8" style="margin-top: 8px;">
-	        				<label for="xtbs" class="layui-form-label zadmin-red">系统病史</label>
+	        				<label for="xtbs" class="layui-form-label">系统病史</label>
 			                <div class="layui-input-block">
 			             		 <input type="text" id="doc_xtbs" name="xtbs"
 			                           lay-vertype="tips" autocomplete="off" class="layui-input" th:value="${doc?.xtbs}" >
@@ -213,7 +262,7 @@
 		                </div>
 		                
 						<div class="layui-col-xs12 layui-col-sm3 layui-col-md3" style="margin-top: 8px;padding-right: 5px;">
-	        				<label for="shs" class="layui-form-label zadmin-red">手术史</label>
+	        				<label for="shs" class="layui-form-label">手术史</label>
 	        				<div class="layui-input-block">
 			                	<select name="shs" xm-select-radio xm-select="shs-select"  xm-select-search=""  lay-search="">
 			                        <option value="0">无</option>
@@ -228,21 +277,21 @@
 					       	
 			       	<div class="layui-row" style="margin-top: 8px;">
 			       		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-			       			<label for="sskssj" class="layui-form-label zadmin-red">手术开始</label>
+			       			<label for="sskssj" class="layui-form-label">手术开始</label>
 			       			<div class="layui-input-block">
 			             		<input type="text" id="doc_sskssj" name="sskssj" lay-verify="required" autocomplete="off" class="layui-input"   >
 			                </div>
 			       		</div>
 			       		
 			       		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-			       			<label for="ssjssj" class="layui-form-label zadmin-red">手术结束</label>
+			       			<label for="ssjssj" class="layui-form-label">手术结束</label>
 			       			<div class="layui-input-block">
 			             		<input type="text" id="doc_ssjssj" name="ssjssj" lay-verify="required" autocomplete="off" class="layui-input"   >
 			                </div>
 			       		</div>
 			       		
 			       		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-			       			<label for="sssc" class="layui-form-label zadmin-red">时长(分)</label>
+			       			<label for="sssc" class="layui-form-label">时长(分)</label>
 			       			<div class="layui-input-block">
 			             		<input type="text" id="doc_sssc" name="sssc" lay-verify="required" autocomplete="off" class="layui-input"  th:value="${doc?.sssc}" disabled="disabled">
 			                </div>
@@ -251,7 +300,7 @@
 			       	
 			       	<div class="layui-row" style="margin-top: 8px;">
 			       		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4">
-			       			<label for="operativeName" class="layui-form-label zadmin-red">局麻技术</label>
+			       			<label for="operativeName" class="layui-form-label">局麻技术</label>
 			       			<div class="layui-input-block">
 			       				<select name="jmjs" xm-select-radio xm-select="jmjs-select"  xm-select-search=""  lay-search="">
 			                        <option value="0">好</option>
@@ -269,7 +318,7 @@
 					       	
 			       	<div class="layui-row">
 						<div class="layui-col-xs12 layui-col-sm8 layui-col-md8" style="margin-top: 8px;">
-	        				<label for="ywsjHxxt" class="layui-form-label zadmin-red">呼吸系统</label>
+	        				<label for="ywsjHxxt" class="layui-form-label">呼吸系统</label>
 			                <div class="layui-input-block">
 			            		<select name="ywsjHxxt" xm-select="ywsjHxxt-select"  xm-select-search=""  lay-search="">
 			                        <option value="0">频繁舌后坠（≥3次）</option>
@@ -283,7 +332,7 @@
 			                </div>
 		                </div>
 						<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-	        				<label for="ywsjHxxtQt" class="layui-form-label zadmin-red">(其他)</label>
+	        				<label for="ywsjHxxtQt" class="layui-form-label">(其他)</label>
 			                <div class="layui-input-block">
 			             		 <input type="text" id="doc_ywsjHxxtQt" name="ywsjHxxtQt" lay-vertype="tips" autocomplete="off" class="layui-input" th:value="${doc?.ywsjHxxtQt}" disabled="disabled">
 			                </div>
@@ -291,7 +340,7 @@
 			       	</div>
 			       	<div class="layui-row">
 						<div class="layui-col-xs12 layui-col-sm8 layui-col-md8" style="margin-top: 8px;">
-	        				<label for="ywsjXhxt" class="layui-form-label zadmin-red">循环系统</label>
+	        				<label for="ywsjXhxt" class="layui-form-label">循环系统</label>
 			                <div class="layui-input-block">
 			             		 <select name="ywsjXhxt" xm-select="ywsjXhxt-select"  xm-select-search=""  lay-search="">
 			                        <option value="0">需纠正的低血压</option>
@@ -304,7 +353,7 @@
 			                </div>
 		                </div>
 						<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-	        				<label for="ywsjXhxtQt" class="layui-form-label zadmin-red">(其他)</label>
+	        				<label for="ywsjXhxtQt" class="layui-form-label">(其他)</label>
 			                <div class="layui-input-block">
 			             		 <input type="text" id="doc_ywsjXhxtQt" name="ywsjXhxtQt" lay-vertype="tips" autocomplete="off" class="layui-input" th:value="${doc?.ywsjXhxtQt}" >
 			                </div>
@@ -312,7 +361,7 @@
 			       	</div>
 			       	<div class="layui-row">
 						<div class="layui-col-xs12 layui-col-sm3 layui-col-md3" style="margin-top: 8px;padding-right: 5px;">
-	        				<label for="ywsjGm" class="layui-form-label zadmin-red">过敏源</label>
+	        				<label for="ywsjGm" class="layui-form-label">过敏源</label>
 			                <div class="layui-input-block">
 			             		 <select name="ywsjGm" xm-select-radio xm-select="ywsjGm-select"  xm-select-search=""  lay-search="">
 			                        <option value="1">No</option>
@@ -326,7 +375,7 @@
 			       	</div>
 			       	<div class="layui-row">
 						<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;">
-							<label for="ywsjQt" class="layui-form-label zadmin-red">其他</label>
+							<label for="ywsjQt" class="layui-form-label">其他</label>
 			                <div class="layui-input-block">
 			             		 <input type="text" id="doc_ywsjQt" name="ywsjQt" lay-vertype="tips" autocomplete="off" class="layui-input" th:value="${doc?.ywsjQt}">
 			                </div>
@@ -339,7 +388,7 @@
 					
 					<div class="layui-row">
 						<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;">
-							<label for="" class="layui-form-label zadmin-red">不良反应</label>
+							<label for="" class="layui-form-label">不良反应</label>
 			                <div class="layui-input-block" style="padding-top: 9px;">
 			             		<input id="doc_shblZw" type="checkbox" name="shblZw" title="谵妄" lay-skin="primary">
 								<input id="doc_shblHbtt" type="checkbox" name="shblHbtt" title="喉部疼痛" lay-skin="primary"> 
@@ -351,7 +400,7 @@
 			       	</div>
 			       	<div class="layui-row">
 						<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;">
-	        				<label for="shttzl" class="layui-form-label zadmin-red">疼痛治疗</label>
+	        				<label for="shttzl" class="layui-form-label">疼痛治疗</label>
 			                <div class="layui-input-block">
 			             		 <select name="shttzl" xm-select-radio xm-select="shttzl-select"  xm-select-search=""  lay-search="">
 									<option value="1">口服药</option>
@@ -364,32 +413,108 @@
 		                </div>
 			       	</div>
 			       	
+			       	<!-- 照片 -->
 			       	<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
-						<legend>照片上传</legend>
+						<legend>照片</legend>
 					</fieldset>
 					<input id="doc_photo" type="hidden" name="photo" class="layui-input" th:value="${doc?.photo}">
 					<div class="layui-row">
-						<div class="layui-upload">
-							<div id="uppic" style="width: 150px;height: 200px;cursor: pointer;float: left;">
-								<div style="position: relative;height: 200px;border: 1px dashed #aaa;border-radius: 4px;text-align: center;">
-									<span style="position: absolute;top: 30px;left: 50px;color: #aaa;">
-										点击上传
-									</span>
-									<span style="position: absolute;top: 60px;left: 25px;">
-										<i class="layui-icon layui-icon-picture" style="font-size: 100px;color: #aaa;"></i>
-									</span>
-								</div>
-							</div>
-							<div class="layui-upload-list" id="photo_list" style="height: 200px;"></div>
-						</div>
+						<div class="layui-upload-list" id="photo_list" style="height: 200px;"></div>
 					</div>
-					<div class="layui-row" id="divBtn">
-						<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 15px;text-align: center;">
-							<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="commit_surgicalrecords">提交订单</button>
-							<button class="layui-btn layui-btn-danger" lay-submit="" data-th-lay-filter="save_surgicalrecords">保存草稿</button>
+					</div>
+					
+					<!-- 评价 -->
+					<div id="evaluationDiv">
+					<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
+						<legend>术后评价</legend>
+					</fieldset>
+					<shiro:hasPermission name="doc:admin">
+						<div class="layui-row" style="margin-top: 8px;">
+							<label for="hospitalEvaluate" class="layui-form-label">主麻评价</label>
+							<div class="layui-input-block">
+								<div id="dr_star"></div>
+								<input type="hidden" id="dr_store">
+							</div>
+						</div>	
+						<div class="layui-row" style="margin-top: 8px;">
+				     		<label for="doctorEvaluate" class="layui-form-label">主麻备注</label>
+				     		<div class="layui-input-block">
+				          		<textarea placeholder="请输入内容" class="layui-textarea" id="doc_doctorEvaluateMemo" th:value="${doc?.doctorEvaluateMemo}"></textarea>
+				       		</div>
+				     	</div>
+				     	
+				     	<div class="layui-row" style="margin-top: 8px;">
+							<label for="hospitalEvaluate" class="layui-form-label">机构评价</label>
+							<div class="layui-input-block">
+								<div id="jg_star"></div>
+								<input type="hidden" id="jg_store">
+							</div>
 						</div>
-					</div>       	
+						<div class="layui-row" style="margin-top: 8px;">
+				     		<label for="operativeId" class="layui-form-label">机构备注</label>
+				     		<div class="layui-input-block">
+				          		<textarea placeholder="请输入内容" class="layui-textarea" id="doc_hospitalEvaluateMemo" th:value="${doc?.hospitalEvaluateMemo}"></textarea>
+				       		</div>
+				     	</div>
+				    </shiro:hasPermission>
+				    <shiro:hasPermission name="doc:dr">
+						<div class="layui-row" style="margin-top: 8px;">
+							<label for="hospitalEvaluate" class="layui-form-label">主麻评价</label>
+							<div class="layui-input-block">
+								<div id="dr_star"></div>
+								<input type="hidden" id="dr_store">
+							</div>
+						</div>	
+						<div class="layui-row" style="margin-top: 8px;">
+				     		<label for="doctorEvaluate" class="layui-form-label">主麻备注</label>
+				     		<div class="layui-input-block">
+				          		<textarea placeholder="请输入内容" class="layui-textarea" id="doc_doctorEvaluateMemo" th:value="${doc?.doctorEvaluateMemo}"></textarea>
+				       		</div>
+				     	</div>
+				    </shiro:hasPermission>
+				    <shiro:hasPermission name="doc:hospital">
+				     	<div class="layui-row" style="margin-top: 8px;">
+							<label for="hospitalEvaluate" class="layui-form-label">机构评价</label>
+							<div class="layui-input-block">
+								<div id="jg_star"></div>
+								<input type="hidden" id="jg_store">
+							</div>
+						</div>
+						<div class="layui-row" style="margin-top: 8px;">
+				     		<label for="operativeId" class="layui-form-label">机构备注</label>
+				     		<div class="layui-input-block">
+				          		<textarea placeholder="请输入内容" class="layui-textarea" id="doc_hospitalEvaluateMemo" th:value="${doc?.hospitalEvaluateMemo}"></textarea>
+				       		</div>
+				     	</div>
+				    </shiro:hasPermission>
+			     	</div>
+			     	
+			     	<!-- 操作按钮 -->
+			     	<div class="layui-row" id="divBtn">
+						<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 15px;margin-bottom: 15px;text-align: center;">
+							<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="commit_completeorder">确认完成</button>
+							<button class="layui-btn layui-btn-danger" lay-submit="" data-th-lay-filter="btnNext">退回修改</button>
+						</div>
+					</div> 
 				</form>
+				</div>
+				<div style="background-color: white;padding: 10px;">
+        			<div class="layui-row">
+	        			<label for="operativeId" class="layui-form-label">退回原因</label>
+		       			<div class="layui-input-block">
+		             		 <textarea placeholder="请输入内容" class="layui-textarea" id="doc_returnReason"></textarea>
+		                </div>
+	                </div>
+	                
+	            	<div class="layui-row">
+		            	<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;text-align: center;">
+		            		<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="return_completeorder">确认退回</button>
+			            	<button class="layui-btn layui-btn-normal" lay-submit="" data-th-lay-filter="btnSub">订单详情</button>
+		                </div>
+	            	</div>
+				</div>
+				</div>
+				</div>
 	        </div>
 		</div>
     </div>
@@ -401,6 +526,7 @@
     <script th:inline="javascript">
     	//基础数值
     	var doc = [[${doc}]];
+    	var htmlstate = [[${htmlstate}]];
     	
     	$('#doc_memo').val(doc.memo);
     	$('#doc_qaMemo').val(doc.qaMemo);
@@ -414,14 +540,23 @@
             base: '/lib/layui/extend/'
         }).extend({
             formSelects: 'formSelects-v4'
-        }).use(['form', 'layer', 'formSelects','laydate', 'upload'], function () {
+        }).use(['form', 'layer', 'formSelects','laydate', 'rate', 'carousel'], function () {
             $ = layui.jquery;
             var form = layui.form
                 , layer = layui.layer
                 , formSelects = layui.formSelects
                 , laydate = layui.laydate
-                , upload = layui.upload;
-            
+                , rate = layui.rate
+                , carousel = layui.carousel;
+          	//轮播
+            fptab = carousel.render({
+                elem: '#distribution-tab'
+                ,autoplay: false
+                ,full: true
+                ,arrow: 'none' 
+                ,indicator: 'none' 
+       		});
+          
             //时间控件
             laydate.render({
                 elem: '#doc_operateStartTime' //指定元素
@@ -496,6 +631,7 @@
             var an = doc.anestheticId.split(",");
             formSelects.value('operative-select', op, true);
             formSelects.value('anesthetic-select', an, true);
+            $("input[name='doc_operativeId']").attr("disabled","disabled");
             $("input[name='doc_patientSex']").attr("disabled","disabled");
             
             if(doc.asa != null){
@@ -546,6 +682,42 @@
             if(doc.shblOt == '1')	$("#doc_shblOt").prop("checked", true);
             form.render('checkbox');
             
+            //评分
+            rate.render({
+	      		elem: '#jg_star'
+	      		, text: true
+	      		, value: doc.hospitalEvaluate
+	      		, readonly: true
+	      		, setText: function(value){ //自定义文本的回调
+	      			 var arrs = {
+	      			        '1': '极差'
+	      			        ,'2': '差'
+	      			        ,'3': '中等'
+	      			        ,'4': '好'
+	      			        ,'5': '极好'
+	      			};
+	      		}
+		      	, choose: function (value) {
+	        	}
+	      	})
+            rate.render({
+	      		elem: '#dr_star'
+	      		, text: true
+	      		, value: doc.doctorEvaluate
+	      		, readonly: true
+	      		, setText: function(value){ //自定义文本的回调
+	      			 var arrs = {
+	      			        '1': '极差'
+	      			        ,'2': '差'
+	      			        ,'3': '中等'
+	      			        ,'4': '好'
+	      			        ,'5': '极好'
+	      			};
+	      		}
+		      	, choose: function (value) {
+	        	}
+	      	})
+		      	
             //select 事件
             formSelects.on('shs-select', function(id, vals, val, isAdd, isDisabled){
             	$("#doc_shcs").val("");
@@ -610,67 +782,11 @@
 	           			$('#photo_list').append(html);
 	            		photoCount++;
 	    				photoIdx++;
-	    				if(photoCount > 2){
-	    					$("#uppic").css("display", "none");
-	    				}
             		}
             	}
             }
             
-          	//上传照片
-            var uploadpic = upload.render({
-                elem: '#uppic' //绑定元素
-                ,url: '/doc/upload?documentId=' + doc.documentId
-        		,multiple: true
-        		,number:3
-        		,before: function(obj){
-        			layer.msg('图片上传中...', {icon: 16, shade: 0.01, time: 0})
-        			
-        			if(photoCount > 2){
-        				layer.msg("只能上传3张照片！");
-        				stopPropagation();
-        			}
-        		}
-        		,done: function(res, index){
-        			//上传完毕
-        			if(res.code == 'success'){
-        				$('#photo_list').append('<div id="photo_' + photoIdx + '" name="'+ res.title +'" class="file-iteme" style="width: 150px; height: 180px; float: left;margin-left:10px;"">' +
-        											'<div id="delPhotoBtn_' + photoIdx + '" style="float: right;" onclick="deletePhoto(' + photoIdx + ')"><i class="layui-icon layui-icon-delete"></i></div>' +
-			        						 		'<img style="width: 150px;height: 180px;" src="/doc/getPhotoByFileName?documentId=' + doc.documentId + '&FileName='+ res.title +'">' +
-        											'</div>'
-        						 	 				);
-        				layer.msg(res.message);
-        				photoCount++;
-        				photoIdx++;
-        				if(photoCount > 2){
-        					$("#uppic").css("display", "none");
-        				}
-        				
-        				var photo = $("#doc_photo").val();
-        				if(photo != '')
-        					photo = photo + "," + res.title;
-        				else
-        					photo = res.title;
-        				$("#doc_photo").val(photo);
-        				
-        				$.post('/doc/save_surgicalrecordsPhoto', {'documentId':doc.documentId, 'photo':$("#doc_photo").val()});
-        				
-        			}else{
-        				layer.msg(res.message);
-        			}
-        		}
-                ,error: function(){
-                  //请求异常回调
-                }
- 			});
-            
-          	//提交订单
-            form.on('submit(commit_surgicalrecords)', function (form) {
-                $.post('/doc/commit_surgicalrecords', form.field, function (result) {
-                    handlerResult(result, commit_surgicalrecordsDone);
-                });
-                return false;
-            });
+          	
 
             function commit_surgicalrecordsDone(data) {
             	var index = parent.layer.getFrameIndex(window.name); 
@@ -678,76 +794,71 @@
                 parent.layer.msg("已提交", {icon: 6});
             }
             
-          	//保存草稿
-            form.on('submit(save_surgicalrecords)', function (form) {
-            	$.post('/doc/save_surgicalrecordsDone', form.field, function (result) {
-                    handlerResult(result, save_surgicalrecordsDone);
+            form.on('submit(btnNext)', function (form) {
+            	fptab.slide("add"); 
+                return false;
+            });
+            form.on('submit(btnSub)', function (form) {
+            	fptab.slide("sub"); 
+                return false;
+            });
+          	//确认完成
+            form.on('submit(commit_completeorder)', function (form) {
+            	$.post('/doc/commit_completeorder', {'id' : doc.documentId}, function (result) {
+            		var index = parent.layer.getFrameIndex(window.name); 
+                    parent.layer.close(index); 
+                    parent.layer.msg("已完成", {icon: 6});
                 });
                 return false;
             });
-          	function save_surgicalrecordsDone(data){
-          		layer.msg("草稿已保存", {icon: 6});
-          	}
+          	//退回修改
+            form.on('submit(return_completeorder)', function (form) {
+                $.post('/doc/return_completeorder', {'id' : doc.documentId, 'reason' : $('#doc_returnReason').val()}, function (result) {
+                	var index = parent.layer.getFrameIndex(window.name); 
+                    parent.layer.close(index); 
+                    parent.layer.msg("已退回", {icon: 6});
+                });
+                return false;
+            });
           	
-          	if(doc.status == '1'){
-          		$("#uppic").css("display", "none");
-          		$("#divBtn").css("display", "none");
-          		
-				$("#doc_qaMemo").attr("disabled","disabled");
-				$("#doc_height").attr("disabled","disabled");
-				$("#doc_weight").attr("disabled","disabled");
-				$("#doc_xtbs").attr("disabled","disabled");
-				$("#doc_shcs").attr("disabled","disabled");
-				$("#doc_sskssj").attr("disabled","disabled");
-				$("#doc_ssjssj").attr("disabled","disabled");
-				$("#doc_ywsjHxxtQt").attr("disabled","disabled");
-				$("#doc_ywsjXhxtQt").attr("disabled","disabled");
-				$("#doc_ywsjGmAocre").attr("disabled","disabled");
-				$("#doc_ywsjQt").attr("disabled","disabled");
-				$("#doc_shblZw").attr("disabled","disabled");
-				$("#doc_shblHbtt").attr("disabled","disabled");
-				$("#doc_shblEx").attr("disabled","disabled");
-				$("#doc_shblXy").attr("disabled","disabled");
-				$("#doc_shblOt").attr("disabled","disabled");
-          		formSelects.disabled();
-          	}
+          	
+			$("#doc_qaMemo").attr("disabled","disabled");
+			$("#doc_height").attr("disabled","disabled");
+			$("#doc_weight").attr("disabled","disabled");
+			$("#doc_xtbs").attr("disabled","disabled");
+			$("#doc_shcs").attr("disabled","disabled");
+			$("#doc_sskssj").attr("disabled","disabled");
+			$("#doc_ssjssj").attr("disabled","disabled");
+			$("#doc_ywsjHxxtQt").attr("disabled","disabled");
+			$("#doc_ywsjXhxtQt").attr("disabled","disabled");
+			$("#doc_ywsjGmAocre").attr("disabled","disabled");
+			$("#doc_ywsjQt").attr("disabled","disabled");
+			$("#doc_shblZw").attr("disabled","disabled");
+			$("#doc_shblHbtt").attr("disabled","disabled");
+			$("#doc_shblEx").attr("disabled","disabled");
+			$("#doc_shblXy").attr("disabled","disabled");
+			$("#doc_shblOt").attr("disabled","disabled");
+         	formSelects.disabled();
+         	
+         	if(htmlstate == 1){
+         		$("#operativeDiv").css("display", "");
+         		$("#evaluationDiv").css("display", "none");
+         		$("#divBtn").css("display", "none");
+         	}else if(htmlstate == 2){
+         		$("#operativeDiv").css("display", "");
+         		$("#evaluationDiv").css("display", "none");
+         		$("#divBtn").css("display", "");
+         	}else if(htmlstate == 3){
+         		$("#operativeDiv").css("display", "");
+         		$("#evaluationDiv").css("display", "");
+         		$("#divBtn").css("display", "none");
+         	}else{
+         		$("#operativeDiv").css("display", "none");
+         		$("#evaluationDiv").css("display", "none");
+         		$("#divBtn").css("display", "none");
+         	}
         });
         
-        //删除照片
-        function deletePhoto(id){
-        	var fileName = $("#photo_" + id).attr("name");
-        	
-        	$.ajax({
-    		    type: 'post',
-    		    url: '/doc/deletePhotoByFileName',
-    		    data: 'documentId=' + doc.documentId + '&FileName='+ fileName,
-    		    success: function(data) {
-    		    	$("#photo_" + id).remove();
-    	        	photoCount--;
-    	        	
-    	        	var photo_tmp = "";
-    	        	var photo = $("#doc_photo").val();
-    	        	var photols = photo.split(",");
-    	        	var count = 0;
-    	        	for(var i = 0; i< photols.length; i++){
-    	        		if(photols[i] != fileName){
-    	        			if(photo_tmp != ''){
-    	        				photo_tmp = photo_tmp + "," + photols[i];
-    	        				count++;
-    	        			}else
-    	    					photo_tmp = photols[i];
-    	        		}
-    	        	}
-    				$("#doc_photo").val(photo_tmp);
-    				
-    				$.post('/doc/save_surgicalrecordsPhoto', {'documentId':doc.documentId, 'photo':$("#doc_photo").val()});
-    				
-    				if(count < 3){
-    					$("#uppic").css("display", "");
-    				}
-    		    }
-    		});
-        }
     </script>
 </body>
 

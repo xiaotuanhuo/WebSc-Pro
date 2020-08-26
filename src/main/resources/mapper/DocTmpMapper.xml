@@ -78,8 +78,12 @@
 							   )
 	</insert>
 	
-	<select id="count" resultType="int">
-		select count(*) from WSC_DOCUMENT_TMP
+	<select id="count" resultType="int" parameterType="java.lang.String">
+		select count(*) from WSC_DOCUMENT_TMP 
+		where 1=1
+		<if test="documentId != null and documentId != ''">
+        	and document_id = #{documentId,jdbcType=VARCHAR} 
+     	</if>
 	</select>
 	
 	<update id="update" parameterType="sc.system.model.WebScDoc">
@@ -193,7 +197,7 @@
             <if test="photo_5 != null">
             	photo_5 = #{photo_5,jdbcType=VARCHAR},
             </if>
-            <if test="patientName != null">
+            <if test="status != null">
             	status = #{status,jdbcType=VARCHAR},
             </if>
       	</set>

@@ -24,6 +24,7 @@ import sc.common.util.StringUtil;
 import sc.common.util.UUID19;
 import sc.system.mapper.AnestheticMapper;
 import sc.system.mapper.DocMapper;
+import sc.system.mapper.DocTmpMapper;
 import sc.system.mapper.OperativeMapper;
 import sc.system.mapper.OrganizationMapper;
 import sc.system.mapper.UserMapper;
@@ -82,6 +83,19 @@ public class DocService {
     			d.setOperativeName(d.getTmpOperativeName());
     			d.setAnestheticId(d.getTmpAnestheticId());
     			d.setAnestheticName(d.getTmpAnestheticName());
+
+    			String photo = "";
+    			if(d.getPhoto_1() != null && !d.getPhoto_1().trim().equals("")){
+    				photo = photo + d.getPhoto_1() + ",";
+    			}
+    			if(d.getPhoto_2() != null && !d.getPhoto_2().trim().equals("")){
+    				photo = photo + d.getPhoto_2() + ",";
+    			}
+    			if(d.getPhoto_3() != null && !d.getPhoto_3().trim().equals("")){
+    				photo = photo + d.getPhoto_3() + ",";
+    			}
+    			if(!photo.equals(""))	photo = photo.substring(0, photo.length() - 1);
+    			d.setPhoto(photo);
     		}
     	}
     	
