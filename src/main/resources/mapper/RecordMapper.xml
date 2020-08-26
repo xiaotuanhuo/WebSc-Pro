@@ -33,6 +33,7 @@
     	and org_name like concat(#{orgName,jdbcType=VARCHAR},'%')
     </if>
     and doctor_city like concat(#{cityPre,jdbcType=VARCHAR},'%')
+    order by create_date desc
   </select>
   
   <insert id="insert" parameterType="sc.system.model.Record" >

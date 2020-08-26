@@ -12,10 +12,10 @@ import sc.system.model.WebScUser;
 @Mapper
 public interface OrganizationMapper {
 	
-	@Select("SELECT org_name FROM WSC_ORGANIZATION WHERE area LIKE CONCAT(#{cityPre},'%')")
+	@Select("SELECT org_name FROM WSC_ORGANIZATION WHERE leaf = 1 AND area LIKE CONCAT(#{cityPre},'%')")
 	List<String> selectOrgsByQy(@Param("cityPre") String cityPre);
 
-	@Select("SELECT * FROM WSC_ORGANIZATION WHERE org_name=#{orgName}")
+	@Select("SELECT * FROM WSC_ORGANIZATION WHERE leaf = 1 AND org_name=#{orgName}")
 	WebScOrganization selectWebScOrganization(@Param("orgName") String orgName);
 	
 	WebScOrganization selectByPrimaryKey(@Param("orgId") String orgId);

@@ -161,6 +161,12 @@
 					}
 				},
 				dateClick: function(info) {
+					var nowDate = dateFormat('yyyy-MM-dd', new Date())
+					if(info.dateStr < nowDate){
+						layer.alert("不可操作今天之前日期")
+						return;
+					}
+					
 					var calendarEvents = calendar.getEvents();
 					for(var i=0;i<calendarEvents.length;i++){
 						if(info.dateStr == dateFormat('yyyy-MM-dd',calendarEvents[i].start)){
@@ -228,6 +234,12 @@
 					form.render('select');
 				},
 				eventClick: function(info) {
+					var nowDate = dateFormat('yyyy-MM-dd', new Date());
+					var eventDate = dateFormat('yyyy-MM-dd', info.event.start);
+					if(eventDate < nowDate){
+						layer.alert("不可操作今天之前日期")
+						return;
+					}
 					
 					var editContent = '<div class="layui-form" action="" style="margin-top:20px;">'+
 						'<div class="layui-form-item">'+
@@ -261,7 +273,7 @@
 		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search>'+
 		    							'<option value="8-12">上午</option>'+
 		    							'<option value="13-17">下午</option>'+
-		    							'<option value="8-17" selected>全天</option>'+
+		    							'<option value="8-17">全天</option>'+
 		    						'</select>'+
 								'</div>'+
 							'</div>'+
@@ -282,11 +294,23 @@
 						content: editContent
 					});
 					
+					var period = convertDateToPeriod(info.event.allDay, info.event.start, info.event.end)
+					console.log("period:"+period);
+					$("#calendarType option[value='"+period+"']").attr("selected",true);
+					
 					form.render('select');
 				}
 			});
 			calendar.render();
 	    });
+	    
+	    var convertDateToPeriod = function(allDay, startDate, endDate){
+	    	if(allDay){
+	    		return "8-17";
+	    	}else{
+	    		return startDate.getHours()+"-"+endDate.getHours();
+	    	}
+	    }
 	    
     </script>
 </body>

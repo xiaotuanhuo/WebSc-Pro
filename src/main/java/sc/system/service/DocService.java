@@ -26,6 +26,7 @@ import sc.system.mapper.AnestheticMapper;
 import sc.system.mapper.DocMapper;
 import sc.system.mapper.OperativeMapper;
 import sc.system.mapper.OrganizationMapper;
+import sc.system.mapper.UserMapper;
 import sc.system.model.WebScAnesthetic;
 import sc.system.model.WebScDoc;
 import sc.system.model.WebScOperative;
@@ -47,6 +48,8 @@ public class DocService {
 	private AnestheticMapper anestheticMapper;
 	@Resource
 	private OrganizationMapper organizationMapper;
+	@Resource
+	private UserMapper userMapper;
 	
 	@Autowired
 	private District district;
@@ -272,8 +275,8 @@ public class DocService {
 							throw new Exception("手术名称不能为空");
 						}
     					
-    					//多个手术名称以"，"（中文逗号）分隔
-    					String operativeNames[] = rows.get(i).get(j).toString().split("，");
+    					//多个手术名称以";"（英文分号）分隔
+    					String operativeNames[] = rows.get(i).get(j).toString().split(";");
     					String operativeIds = "";
     					for (String operativeName : operativeNames) {
     						WebScOperative operative = operativeMapper.selectOperative(operativeName.trim());
@@ -295,6 +298,10 @@ public class DocService {
 						
 						if(StringUtil.isEmpty(rows.get(i).get(j).toString())) {
 							throw new Exception("手术医生不能为空");
+						}
+						
+						if(0 == userMapper.isExistByDoctorName(rows.get(i).get(j).toString())) {
+							throw new Exception("姓名为："+rows.get(i).get(j).toString()+"的医生不存在");
 						}
 						
 						doc.setOperateUser(rows.get(i).get(j).toString());
