@@ -1,9 +1,9 @@
 package sc.common.constants;
 
 public enum DayPeriodEnum {
-	AM("8-12", "上午"),
-	PM("13-17", "下午"),
-	ALLDAY("8-17", "全天");
+	AM("0-12", "上午"),
+	PM("12-23", "下午"),
+	ALLDAY("0-23", "全天");
 	
 	private String value;
 	private String txt;

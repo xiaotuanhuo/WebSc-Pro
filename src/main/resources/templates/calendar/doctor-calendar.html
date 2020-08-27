@@ -28,24 +28,27 @@
     	var form;
     	var laydate;
     	var layerIndex;
+    	const am = '0-12';
+    	const pm = '12-23';
+    	const dayPeriod = '0-23';
 		layui.use(['layer','laydate','form'], function(){
 			laydate = layui.laydate;
 			form = layui.form;			
 			
 			form.on('submit(addCalendarForm)', function(data){
 				var calendarType = data.field.calendarType;
-				if(calendarType == '8-12'){
+				if(calendarType == am){
 					data.field.allDay = false;
-					data.field.start = data.field.calendarDate + " 08:00:00";
+					data.field.start = data.field.calendarDate + " 00:00:00";
 					data.field.end = data.field.calendarDate + " 12:00:00";
-				}else if(calendarType == '13-17'){
+				}else if(calendarType == pm){
 					data.field.allDay = false;
-					data.field.start = data.field.calendarDate + " 13:00:00";
-					data.field.end = data.field.calendarDate + " 17:00:00";
+					data.field.start = data.field.calendarDate + " 12:00:01";
+					data.field.end = data.field.calendarDate + " 23:59:59";
 				}else{
 					data.field.allDay = true;
-					data.field.start = data.field.calendarDate + " 08:00:00";
-					data.field.end = data.field.calendarDate + " 17:00:00";
+					data.field.start = data.field.calendarDate + " 00:00:00";
+					data.field.end = data.field.calendarDate + " 23:59:59";
 				}
 				
 		  		$.ajax({
@@ -70,18 +73,18 @@
 			
 			form.on('submit(updCalendarForm)', function(data){
 				var calendarType = data.field.calendarType;
-				if(calendarType == '8-12'){
+				if(calendarType == am){
 					data.field.allDay = false;
-					data.field.start = data.field.calendarDate + " 08:00:00";
+					data.field.start = data.field.calendarDate + " 00:00:00";
 					data.field.end = data.field.calendarDate + " 12:00:00";
-				}else if(calendarType == '13-17'){
+				}else if(calendarType == pm){
 					data.field.allDay = false;
-					data.field.start = data.field.calendarDate + " 13:00:00";
-					data.field.end = data.field.calendarDate + " 17:00:00";
+					data.field.start = data.field.calendarDate + " 12:00:01";
+					data.field.end = data.field.calendarDate + " 23:59:59";
 				}else{
 					data.field.allDay = true;
-					data.field.start = data.field.calendarDate + " 08:00:00";
-					data.field.end = data.field.calendarDate + " 17:00:00";
+					data.field.start = data.field.calendarDate + " 00:00:00";
+					data.field.end = data.field.calendarDate + " 23:59:59";
 				}
 				
 		  		$.ajax({
@@ -204,9 +207,9 @@
 								'<label class="layui-form-label" style="width:110px;">空闲类型</label>'+
 								'<div class="layui-input-inline">'+
 		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search>'+
-		    							'<option value="8-12">上午</option>'+
-		    							'<option value="13-17">下午</option>'+
-		    							'<option value="8-17" selected>全天</option>'+
+			    						'<option value="'+am+'">上午</option>'+
+		    							'<option value="'+pm+'">下午</option>'+
+		    							'<option value="'+dayPeriod+'" selected>全天</option>'+	
 		    						'</select>'+
 								'</div>'+
 							'</div>'+
@@ -271,9 +274,9 @@
 								'<label class="layui-form-label" style="width:110px;">空闲类型</label>'+
 								'<div class="layui-input-inline">'+
 		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search>'+
-		    							'<option value="8-12">上午</option>'+
-		    							'<option value="13-17">下午</option>'+
-		    							'<option value="8-17">全天</option>'+
+		    							'<option value="'+am+'">上午</option>'+
+		    							'<option value="'+pm+'">下午</option>'+
+		    							'<option value="'+dayPeriod+'">全天</option>'+
 		    						'</select>'+
 								'</div>'+
 							'</div>'+
@@ -306,7 +309,7 @@
 	    
 	    var convertDateToPeriod = function(allDay, startDate, endDate){
 	    	if(allDay){
-	    		return "8-17";
+	    		return dayPeriod;
 	    	}else{
 	    		return startDate.getHours()+"-"+endDate.getHours();
 	    	}
