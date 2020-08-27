@@ -107,6 +107,16 @@
 			   });
 		  	});
 			
+			form.on('select(calendarTypeFilter)', function(data){
+				  if(am == data.value){
+					  $("#title").val("上午（备休日）");
+				  }else if(pm == data.value){
+					  $("#title").val("下午（备休日）");
+				  }else{
+					  $("#title").val("全天（备休日）");
+				  }
+			});
+			
 			form.on('submit(delCalendarForm)', function(data){
 				var paraData = {"calendarId" : data.field.id};
 		  		$.ajax({
@@ -139,6 +149,13 @@
 				height: 450,
 				aspectRatio: 1,
 				locale: 'zh-cn',
+				displayEventTime: false,
+				/* eventTimeFormat: {
+					hour: 'numeric',
+					minute: '2-digit',
+					second: '2-digit',
+					meridiem: 'short'
+				}, */
 				/* eventDidMount: function(info) {
 					var tooltip = new Tooltip(info.el, {
 						//title: info.event.extendedProps.description,
@@ -190,7 +207,7 @@
 							'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">日程标题</label>'+
 			                    '<div class="layui-input-inline">'+
-			                        '<input id="title" name="title" value="备休日" lay-verify="required" class="layui-input" type="text" placeholder="日程标题" readonly="readonly"/>'+
+			                        '<input id="title" name="title" value="全天（备休日）" lay-verify="required" class="layui-input" type="text" placeholder="日程标题" readonly="readonly"/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
@@ -206,7 +223,7 @@
 		  					'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">空闲类型</label>'+
 								'<div class="layui-input-inline">'+
-		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search>'+
+		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search lay-filter="calendarTypeFilter">'+
 			    						'<option value="'+am+'">上午</option>'+
 		    							'<option value="'+pm+'">下午</option>'+
 		    							'<option value="'+dayPeriod+'" selected>全天</option>'+	
@@ -273,7 +290,7 @@
 		  					'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">空闲类型</label>'+
 								'<div class="layui-input-inline">'+
-		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search>'+
+		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search lay-filter="calendarTypeFilter">'+
 		    							'<option value="'+am+'">上午</option>'+
 		    							'<option value="'+pm+'">下午</option>'+
 		    							'<option value="'+dayPeriod+'">全天</option>'+
