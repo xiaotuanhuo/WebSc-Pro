@@ -87,7 +87,7 @@ public class UserController {
      */
     @GetMapping("/picture")
     public void picture(String p, HttpServletResponse response) throws IOException {
-    	File file = new File(uploadPath + p);
+    	File file = new File((uploadPath.endsWith("/") ? uploadPath : uploadPath + "/") + p);
     	FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
     }
     

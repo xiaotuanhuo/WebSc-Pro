@@ -14,6 +14,9 @@ public class UploadUtil {
 		String fileName = mFile.getOriginalFilename();
 		String suffix = fileName.substring(fileName.lastIndexOf("."));
 		String newFileName = UUID19.uuid() + suffix;	// 重命名文件名称，防止重复
+		if (!uploadPath.endsWith("/")) {
+            uploadPath = uploadPath + "/";
+        }
 		try {
 			// 创建文件存放路径实例
 			File pFile = new File(uploadPath);

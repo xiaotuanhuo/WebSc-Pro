@@ -18,7 +18,6 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,6 +89,9 @@ public class UserService {
 		uvo.setName(userQuery.getUserName());
 		uvo.setPhone(userQuery.getPhone());
 		uvo.setRole(RoleEnum.valueOf(Integer.parseInt(user.getRoleId())).getType());
+		uvo.setProvince(user.getProvince());
+		uvo.setCity(user.getCity());
+		uvo.setArea(user.getArea());
 		return userMapper.selectWithRoleAndDist(uvo);
 	}
 	

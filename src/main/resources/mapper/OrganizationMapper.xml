@@ -282,6 +282,7 @@
     <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScMenu">
         update WSC_ORGANIZATION
         set org_pid = #{orgPid,jdbcType=VARCHAR},
+        	credentials = #{credentials,jdbcType=VARCHAR},
         	org_name = #{orgName,jdbcType=VARCHAR},
         	org_address = #{orgAddress,jdbcType=VARCHAR},
         	org_tel = #{orgTel,jdbcType=VARCHAR},

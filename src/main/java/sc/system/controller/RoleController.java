@@ -2,7 +2,6 @@ package sc.system.controller;
 
 import com.github.pagehelper.PageInfo;
 import sc.common.annotation.OperationLog;
-import sc.common.constants.RoleEnum;
 import sc.common.util.PageResultBean;
 import sc.common.util.ResultBean;
 import sc.system.model.WebScRole;

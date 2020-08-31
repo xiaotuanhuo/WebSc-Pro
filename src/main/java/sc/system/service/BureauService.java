@@ -112,6 +112,13 @@ public class BureauService {
 	public List<WebScBureau> getTree() {
 		Subject subject = SecurityUtils.getSubject();
 		WebScUser user = (WebScUser) subject.getPrincipal();
+		List<WebScBureau> bureaus = bureauMapper.selectTree(null, user.getProvince(), user.getCity(), user.getArea());
+		return bureaus;
+	}
+	
+	public List<WebScBureau> getUnleafTree() {
+		Subject subject = SecurityUtils.getSubject();
+		WebScUser user = (WebScUser) subject.getPrincipal();
 		List<WebScBureau> bureaus = bureauMapper.selectUnleafTree(user.getProvince(), user.getCity(), user.getArea());
 		// 区域管理员用户需要查询其所属区划的上级卫监局，用以新增、编辑卫监局时的上级卫监局
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {

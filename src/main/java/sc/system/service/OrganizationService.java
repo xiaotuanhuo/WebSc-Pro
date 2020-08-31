@@ -2,11 +2,9 @@ package sc.system.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.poi.poifs.crypt.dsig.DSigRelation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -14,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.github.pagehelper.PageHelper;
 
 import sc.common.constants.DistType;
 import sc.common.constants.RoleEnum;
@@ -40,7 +40,8 @@ public class OrganizationService {
 	@Autowired
 	private District district;
 	
-	public List<WebScOrganization> getList(WebScOrganization wso) {
+	public List<WebScOrganization> getList(int page, int rows, WebScOrganization wso) {
+		PageHelper.startPage(page, rows);
 		Subject subject = SecurityUtils.getSubject();
 		WebScUser user = (WebScUser) subject.getPrincipal();
 		List<WebScOrganization> wsoList = new ArrayList<>();

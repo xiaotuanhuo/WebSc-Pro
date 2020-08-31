@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.github.pagehelper.PageInfo;
 
 import sc.common.annotation.OperationLog;
 import sc.common.util.PageResultBean;
@@ -62,10 +65,12 @@ public class OrganizationController {
 	@OperationLog("获取医疗机构列表")
 	@GetMapping("/list")
 	@ResponseBody
-	public PageResultBean<WebScOrganization> getList(WebScOrganization wso) {
+	public PageResultBean<WebScOrganization> getList(@RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "limit", defaultValue = "10") int limit, WebScOrganization wso) {
 		// 数据查询
-		List<WebScOrganization> wsoList = organizationService.getList(wso);
-		return new PageResultBean<>(wsoList.size(), wsoList);
+		List<WebScOrganization> wsoList = organizationService.getList(page, limit, wso);
+		PageInfo<WebScOrganization> organizationPageList = new PageInfo<>(wsoList);
+		return new PageResultBean<>(organizationPageList.getTotal(), organizationPageList.getList());
 	}
 	
 	@OperationLog("获取所有医疗机构根节点")

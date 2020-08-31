@@ -63,6 +63,16 @@ public class BureauController {
 	}
 	
 	/**
+	 * 根据当前用户行政区划查询节点及其非叶子子节点（树形）
+	 * @return
+	 */
+	@GetMapping("/unleafTree")
+	@ResponseBody
+	public ResultBean lsitUnleafTree() {
+		return ResultBean.success(bureauService.getUnleafTree());
+	}
+    
+	/**
 	 * 根据当前用户区划查询子节点（列表）
 	 * @return
 	 */
