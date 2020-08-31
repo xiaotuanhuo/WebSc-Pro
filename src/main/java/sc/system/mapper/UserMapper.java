@@ -14,6 +14,14 @@ import java.util.Set;
 public interface UserMapper {
 	
 	/**
+	 * 判断指定姓名的医生是否存在
+	 * @param doctorName 医生姓名
+	 * @return 大于0表示存在
+	 */
+	@Select("SELECT COUNT(*) FROM WSC_USER WHERE role_id='5' AND user_name=#{doctorName}")
+	int isExistByDoctorName(@Param("doctorName") String doctorName);
+	
+	/**
 	 * 获取指定区域的医生
 	 * @param cityPre 区域编码，包括province和city
 	 * @return
