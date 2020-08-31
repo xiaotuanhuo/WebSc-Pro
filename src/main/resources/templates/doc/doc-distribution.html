@@ -368,6 +368,14 @@
        						layer.close(index);
        					}
         			);
+                }else if (event === 'userinfo'){
+                	layer.open({
+    					content: '/user/credentials/' + data.userId,
+    					title: "详情",
+    					area: ['70%', '100%'],
+    					type: 2,
+    					shadeClose: true
+    				});
                 }
             });
             

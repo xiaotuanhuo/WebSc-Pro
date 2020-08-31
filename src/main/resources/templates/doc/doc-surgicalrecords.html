@@ -78,8 +78,8 @@
 	        			<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
 			                <label for="sex" class="layui-form-label">性别</label>
 			                <div class="layui-input-block">
-								<input type="radio" id="sex_0" name="patientSex" value="0" title="女" {{# if(doc.patientSex == 0) }} checked>
-						 		<input type="radio" id="sex_1" name="patientSex" value="1" title="男" {{# if(doc.patientSex == 1) }} checked>
+								<input type="radio" id="sex_0" name="patientSex" value="0" title="女" {{# if(doc.patientSex == 0) }} checked disabled="disabled">
+						 		<input type="radio" id="sex_1" name="patientSex" value="1" title="男" {{# if(doc.patientSex == 1) }} checked disabled="disabled">
 			                </div>
 				     	</div>
 			       	</div>
@@ -154,7 +154,7 @@
 			       		<div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
 			       			<label for="operativeId" class="layui-form-label zadmin-red">医生备注</label>
 			       			<div class="layui-input-block">
-			             		 <textarea placeholder="请输入内容" class="layui-textarea" id="doc_qaMemo"></textarea>
+			             		 <textarea placeholder="请输入内容" class="layui-textarea" id="doc_qaMemo" name="qaMemo"></textarea>
 			                </div>
 			       		</div>
 			       	</div>
@@ -434,7 +434,7 @@
                 elem: '#doc_sskssj' //指定元素
             	,type: 'datetime'
             	,min: 0
-            	,value: new Date(doc.sskssj)
+            	,value: doc.sskssj != null ? new Date(doc.sskssj):''
             	,calendar: true
             	,done: function(value, date, endDate){
             		var doc_ssjssj_val = $("#doc_ssjssj").val();
@@ -458,7 +458,7 @@
                 elem: '#doc_ssjssj' //指定元素
             	,type: 'datetime'
             	,min: 0
-            	,value: new Date(doc.ssjssj)
+            	,value: doc.ssjssj != null ? new Date(doc.ssjssj):''
             	,calendar: true
             	,done: function(value, date, endDate){
             		var doc_sskssj_val = $("#doc_sskssj").val();

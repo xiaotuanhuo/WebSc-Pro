@@ -1,9 +1,9 @@
 package sc.system.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +24,9 @@ import sc.common.util.StringUtil;
 import sc.common.util.UUID19;
 import sc.system.mapper.AnestheticMapper;
 import sc.system.mapper.DocMapper;
-import sc.system.mapper.DocTmpMapper;
 import sc.system.mapper.OperativeMapper;
 import sc.system.mapper.OrganizationMapper;
+import sc.system.model.StateCount;
 import sc.system.model.WebScAnesthetic;
 import sc.system.model.WebScDoc;
 import sc.system.model.WebScOperative;
@@ -97,6 +97,32 @@ public class DocService {
     	}
     	
     	return ls;
+    }
+    
+    public StateCount getStateCount(WebScDoc doc){
+    	StateCount sc = new StateCount();
+    	List<WebScDoc> ls = docMapper.selectWebScDocList(doc);
+    	
+    	for(WebScDoc td : ls){
+    		if(td.getDocumentState().equals("0")){
+    			sc.setiCount_0(sc.getiCount_0() + 1);
+    		}else if(td.getDocumentState().equals("1")){
+    			sc.setiCount_1(sc.getiCount_1() + 1);
+    			sc.setiCount_123(sc.getiCount_123() + 1);
+    		}else if(td.getDocumentState().equals("2")){
+    			sc.setiCount_2(sc.getiCount_2() + 1);
+    			sc.setiCount_123(sc.getiCount_123() + 1);
+    		}else if(td.getDocumentState().equals("3")){
+    			sc.setiCount_3(sc.getiCount_3() + 1);
+    			sc.setiCount_123(sc.getiCount_123() + 1);
+    		}else if(td.getDocumentState().equals("4")){
+    			sc.setiCount_4(sc.getiCount_4() + 1);
+    		}else if(td.getDocumentState().equals("9")){
+    			sc.setiCount_9(sc.getiCount_9() + 1);
+    		}
+    	}
+    	
+    	return sc;
     }
     
     public List<WebScUser_Distribution> getDistributionDrGridList(String documentId, String qaName, WebScUser user){

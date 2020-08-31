@@ -38,6 +38,7 @@ import sc.common.util.ResultBean;
 import sc.common.util.ShiroUtil;
 import sc.common.util.UUID19;
 import sc.common.validate.groups.Create;
+import sc.system.model.StateCount;
 import sc.system.model.WebScAnesthetic;
 import sc.system.model.WebScDoc;
 import sc.system.model.WebScOperative;
@@ -74,7 +75,38 @@ public class DocController {
 		//当前用户信息
 		WebScUser user = ShiroUtil.getCurrentUser();
 		
-		model.addAttribute("role", user.getRoleId());
+		//用户角色
+		String roleId = user.getRoleId();
+		
+		model.addAttribute("role", roleId);
+		
+		//单子数量
+		WebScDoc docQuery = new WebScDoc();	
+		docQuery.setRoleId(roleId);
+		//更具不同角色,查询内容不同
+		if(roleId.equals("1")){
+			//系统管理员, 查询所有单据
+			
+		}else if(roleId.equals("2")){
+			//医疗机构人员，查询本机构发布订单
+			docQuery.setApplyUserId(String.valueOf(user.getUserId()));
+		}else if(roleId.equals("3")){
+			//卫监局人员，查询所有订单？？？？？？
+			
+		}else if(roleId.equals("5")){
+			//医生，查询主治医生
+			docQuery.setQaUserId(String.valueOf(user.getUserId()));
+		}
+				
+		//省，市，区   查询范围
+		docQuery.setProvince(user.getProvince());
+		docQuery.setCity(user.getCity());
+		docQuery.setArea(user.getArea());
+				
+		StateCount sc = docService.getStateCount(docQuery);
+		
+		model.addAttribute("sc", sc);
+		
         return "doc/doc-list";
     }
 	
@@ -933,7 +965,7 @@ public class DocController {
 					for(WebScUser tu : userls){
 						if(tu.getUserId() == u.getUserId()){
 							userls.remove(tu);
-							continue;
+							break;
 						}
 					}
 				}

@@ -125,8 +125,8 @@
 	        			<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
 			                <label for="sex" class="layui-form-label">性别</label>
 			                <div class="layui-input-block">
-								<input type="radio" id="sex_0" name="patientSex" value="0" title="女" {{# if(doc.patientSex == 0) }} checked>
-						 		<input type="radio" id="sex_1" name="patientSex" value="1" title="男" {{# if(doc.patientSex == 1) }} checked>
+								<input type="radio" id="sex_0" name="patientSex" value="0" title="女" {{# if(doc.patientSex == 0) }} checked disabled="disabled">
+						 		<input type="radio" id="sex_1" name="patientSex" value="1" title="男" {{# if(doc.patientSex == 1) }} checked disabled="disabled">
 			                </div>
 				     	</div>
 			       	</div>
@@ -466,7 +466,7 @@
 							</div>
 						</div>	
 						<div class="layui-row" style="margin-top: 8px;">
-				     		<label for="doctorEvaluate" class="layui-form-label">主麻备注</label>
+				     		<label for="doctorEvaluateateMem" class="layui-form-label">主麻备注</label>
 				     		<div class="layui-input-block">
 				          		<textarea placeholder="请输入内容" class="layui-textarea" id="doc_doctorEvaluateMemo" th:value="${doc?.doctorEvaluateMemo}"></textarea>
 				       		</div>
@@ -481,7 +481,7 @@
 							</div>
 						</div>
 						<div class="layui-row" style="margin-top: 8px;">
-				     		<label for="operativeId" class="layui-form-label">机构备注</label>
+				     		<label for="hospitalEvaluateMemo" class="layui-form-label">机构备注</label>
 				     		<div class="layui-input-block">
 				          		<textarea placeholder="请输入内容" class="layui-textarea" id="doc_hospitalEvaluateMemo" th:value="${doc?.hospitalEvaluateMemo}"></textarea>
 				       		</div>
@@ -838,6 +838,7 @@
 			$("#doc_shblEx").attr("disabled","disabled");
 			$("#doc_shblXy").attr("disabled","disabled");
 			$("#doc_shblOt").attr("disabled","disabled");
+			
          	formSelects.disabled();
          	
          	if(htmlstate == 1){
@@ -857,6 +858,9 @@
          		$("#evaluationDiv").css("display", "none");
          		$("#divBtn").css("display", "none");
          	}
+         	
+         	$("#doc_doctorEvaluateMemo").attr("disabled","disabled");
+         	$("#doc_hospitalEvaluateMemo").attr("disabled","disabled");
         });
         
     </script>

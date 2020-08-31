@@ -32,23 +32,23 @@
 		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin-top: -20px;text-align: right !important;">
 				<ul class="layui-tab-title">
 					<shiro:hasPermission name="doc:admin">
-						<li class="layui-this">待审核</li>
-					    <li>待分配</li>
-					    <li>待接单</li>
-					    <li>待手术</li>
-					    <li>待完成</li>
-					    <li>待取消</li>
+						<li class="layui-this">待审核(<span th:text="${sc.iCount_0}"></span>)</li>
+					    <li>待分配(<span th:text="${sc.iCount_1}"></span>)</li>
+					    <li>待接单(<span th:text="${sc.iCount_2}"></span>)</li>
+					    <li>待手术(<span th:text="${sc.iCount_3}"></span>)</li>
+					    <li>待完成(<span th:text="${sc.iCount_4}"></span>)</li>
+					    <li>待取消(<span th:text="${sc.iCount_9}"></span>)</li>
 					    <li>已完成</li>
 					    <li>已取消</li>
 				    </shiro:hasPermission>
 				    <shiro:hasPermission name="doc:dr">
-					    <li class="layui-this">待接单</li>
-					    <li>待手术</li>
+					    <li class="layui-this">待接单(<span th:text="${sc.iCount_2}"></span>)</li>
+					    <li>待手术(<span th:text="${sc.iCount_3}"></span>)</li>
 					    <li>已完成</li>
 				    </shiro:hasPermission>
 				    <shiro:hasPermission name="doc:hospital">
-						<li class="layui-this">待审核</li>
-					    <li>待手术</li>
+						<li class="layui-this">待审核(<span th:text="${sc.iCount_0}"></span>)</li>
+					    <li>待手术(<span th:text="${sc.iCount_123}"></span>)</li>
 					    <li>已完成</li>
 					    <li>已取消</li>
 				    </shiro:hasPermission>

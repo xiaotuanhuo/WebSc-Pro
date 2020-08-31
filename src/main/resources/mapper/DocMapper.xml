@@ -507,6 +507,7 @@
       	<if test="patientName != null and patientName != ''">
       		and doc.patient_name like concat(#{patientName,jdbcType=VARCHAR}, '%')
       	</if>
+      	order by doc.operate_start_time desc
     </select>
     
     <select id="findWebScDocOrg" parameterType="java.lang.String" resultType="sc.system.model.WebScOrganization">
@@ -538,13 +539,16 @@
     <![CDATA[
     	select wu.user_id,
     		   wu.user_name,
-    		   (select 1 
+    		   (select DISTINCT(1) 
     		   	from WSC_RECORD wr
     		   	where wr.user_id = wu.user_id 
+    		   	and date_format(wr.record_date, '%Y-%m-%d %h:%i:%s') <= #{operate_start_time,jdbcType=VARCHAR} 
+    		   	and date_format(wr.end_date, '%Y-%m-%d %h:%i:%s') >= #{operate_start_time,jdbcType=VARCHAR} 
    		   		and org_id = #{org_id,jdbcType=VARCHAR}
     			) as isrecord,
     		   (
-				select 1 from WSC_CALENDAR wc 
+				select DISTINCT(1) 
+				from WSC_CALENDAR wc 
 				where wc.user_id = wu.user_id 
 				and date_format(wc.start_time, '%Y-%m-%d %h:%i:%s') <= #{operate_start_time,jdbcType=VARCHAR} 
 				and date_format(wc.end_time, '%Y-%m-%d %h:%i:%s') >= #{operate_start_time,jdbcType=VARCHAR} 
