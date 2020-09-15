@@ -122,8 +122,6 @@ public class UserService {
 		}
 		if (user.getTitlesNo().equals("")) {
 			user.setTitlesNo(null);
-		}
-		if (user.getTitles().equals("")) {
 			user.setTitles(null);
 		}
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
@@ -221,8 +219,6 @@ public class UserService {
 		}
 		if (user.getTitlesNo().equals("")) {
 			user.setTitlesNo(null);
-		}
-		if (user.getTitles().equals("")) {
 			user.setTitles(null);
 		}
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
