@@ -50,7 +50,7 @@
 						</div>
 					</div> -->
 					<div class="layui-form-item">
-						<label for="bureauName" class="layui-form-label">卫监局名称</label>
+						<label for="bureauName" class="layui-form-label">名称</label>
 						<div class="layui-input-block">
 							<input type="text" id="bureauName" name="bureauName"
 								th:value="${bureau.bureauName}" lay-verify="required" lay-vertype="tips" autocomplete="off"
@@ -58,7 +58,7 @@
 						</div>
 					</div>
 					<div class="layui-form-item">
-						<label for="bureauAddress" class="layui-form-label">卫监局地址</label>
+						<label for="bureauAddress" class="layui-form-label">地址</label>
 						<div class="layui-input-block">
 							<input type="text" id="bureauAddress" name="bureauAddress"
 								th:value="${bureau.bureauAddress}" lay-verify="required" lay-vertype="tips" autocomplete="off"
@@ -66,7 +66,7 @@
 						</div>
 					</div>
 					<div class="layui-form-item">
-						<label for="bureauTel" class="layui-form-label">卫监局电话</label>
+						<label for="bureauTel" class="layui-form-label">电话</label>
 						<div class="layui-input-block">
 							<input type="text" id="bureauTel" name="bureauTel"
 								th:value="${bureau.bureauTel}" lay-verify="required|telPhone" lay-vertype="tips" autocomplete="off"
@@ -82,7 +82,7 @@
 						</div>
 					</div>
 					<div class="layui-form-item">
-						<label for="leaderTel" class="layui-form-label">负责人电话</label>
+						<label for="leaderTel" class="layui-form-label" style="padding: 8px 2px;">负责人电话</label>
 						<div class="layui-input-block">
 							<input type="text" id="leaderTel" name="leaderTel"
 								th:value="${bureau.leaderTel}" lay-verify="required|phone" lay-vertype="tips" autocomplete="off"

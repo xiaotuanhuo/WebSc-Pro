@@ -77,7 +77,7 @@
 						</div>
 					</div>
 					<div class="layui-form-item">
-						<label for="leaderName" class="layui-form-label">负责人</label>
+						<label for="leaderName" class="layui-form-label" style="padding: 8px 2px;">机构负责人</label>
 						<div class="layui-input-block">
 							<input type="text" id="leaderName" name="leaderName"
 								th:value="${organization.leaderName}" lay-verify="required" lay-vertype="tips" autocomplete="off"
@@ -85,7 +85,7 @@
 						</div>
 					</div>
 					<div class="layui-form-item">
-						<label for="leaderTel" class="layui-form-label">负责人电话</label>
+						<label for="leaderTel" class="layui-form-label" style="padding: 8px 2px;">负责人电话</label>
 						<div class="layui-input-block">
 							<input type="text" id="leaderTel" name="leaderTel"
 								th:value="${organization.leaderTel}" lay-verify="required|phone" lay-vertype="tips" autocomplete="off"

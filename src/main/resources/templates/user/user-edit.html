@@ -81,12 +81,12 @@
 					</div>
 				</div>
 				<div id="organziation" class="layui-form-item" th:style="${user.roleId} eq '1' ? 'display: none;' : ''">
-					<label for="orgTree" class="layui-form-label">机构</label>
+					<label for="orgTree" class="layui-form-label">所属机构</label>
 					<div class="layui-input-block">
 						<ul id="orgTree" class="dtree" data-id="0" data-value="请选择机构"></ul>
 					</div>
 				</div>
-				<div id="doctorEle" style="display: none;">
+				<div id="doctorEle_part1" style="display: none;">
 					<div class="layui-form-item">
 						<label for="patientType" class="layui-form-label">病人类型</label>
 						<div class="layui-input-block">
@@ -100,7 +100,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="doctorAndNurseEle" style="display: none;">
+				<div id="doctorAndNurseEle_part1" style="display: none;">
 					<div class="layui-form-item">
 						<label for="idCard" class="layui-form-label">身份证</label>
 						<div class="layui-input-block">
@@ -109,16 +109,20 @@
 								class="layui-input">
 						</div>
 					</div>
+				</div>
+				<div id="doctorEle_part2" style = "display: none;">
 					<div class="layui-form-item">
-						<label for="certificateNo" class="layui-form-label">资格证号</label>
+						<label for="certificateNo" class="layui-form-label" style="padding: 8px 2px;">资格证编号</label>
 						<div class="layui-input-block">
 							<input type="text" id="certificateNo" name="certificateNo"
 								th:value="${user.certificateNo}" lay-vertype="tips"
 								autocomplete="off" class="layui-input">
 						</div>
 					</div>
+				</div>
+				<div id="doctorAndNurseEle_part2" style = "display: none;">
 					<div class="layui-form-item">
-						<label for="occupationalNo" class="layui-form-label">职业证号</label>
+						<label for="occupationalNo" class="layui-form-label" style="padding: 8px 2px;">执业证编号</label>
 						<div class="layui-input-block">
 							<input type="text" id="occupationalNo" name="occupationalNo"
 								th:value="${user.occupationalNo}" lay-vertype="tips"
@@ -126,19 +130,31 @@
 						</div>
 					</div>
 					<div class="layui-form-item">
-						<label for="titlesNo" class="layui-form-label">职称证号</label>
+						<label for="titlesNo" class="layui-form-label" style="padding: 8px 2px;">职称证编号</label>
 						<div class="layui-input-block">
 							<input type="text" id="titlesNo" name="titlesNo"
 								th:value="${user.titlesNo}" lay-vertype="tips"
 								autocomplete="off" class="layui-input">
 						</div>
 					</div>
+				</div>
+				<div id="doctorEle_part3" style = "display: none;">
 					<div class="layui-form-item">
-						<label for="titles" class="layui-form-label">职称</label>
+						<label for="doctorTitles" class="layui-form-label">职称</label>
 						<div class="layui-input-block">
-							<div id="titles" class="xm-select-demo"></div>
+							<div id="doctorTitles" class="xm-select-demo"></div>
 						</div>
 					</div>
+				</div>
+				<div id="nurseEle_part" style = "display: none;">
+					<div class="layui-form-item">
+						<label for="nurseTitles" class="layui-form-label">职称</label>
+						<div class="layui-input-block">
+							<div id="nurseTitles" class="xm-select-demo"></div>
+						</div>
+					</div>
+				</div>
+				<div id="doctorAndNurseEle_part3" style = "display: none;">
 					<div class="layui-form-item">
 						<label for="fileName" class="layui-form-label">证件照</label>
 						<div class="layui-inline">
@@ -271,14 +287,17 @@
 						// 选择医疗机构管理员角色时加载当前区划及下属医疗机构组织
 						loadTree('/organization/tree');
 						hideDoctor();
+						hideNurse();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 3) {
 						// 选择卫监局角色时加载当前区划及下属卫监局组织
 						loadTree('/bureau/tree');
 						hideDoctor();
+						hideNurse();
 					} else if (isAdd && arr.length != 0 && (arr[0].roleId == 4)) {
 						// 选择区域管理员角色时加载当前区划下属医疗集团组织
 						loadTree('/dept/subTree/' + $('#currentRoleTypeId').text());
 						hideDoctor();
+						hideNurse();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 5) {
 						// 选择医生角色时加载当前用户所属组织及其下属组织
 						loadTree('/dept/tree/city');
@@ -293,14 +312,17 @@
 						// 选择超级管理员时加载医疗集团根节点
 						loadTree('/dept/tree/root');
 						hideDoctor();
+						hideNurse();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 8) {
 						// 选择区域订单录入员角色时加载当前区划及其下属医疗机构组织
 						loadTree('/dept/tree');
 						hideDoctor();
+						hideNurse();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 9) {
 						// 选择医疗机构订单录入员角色时加载当前用户区划及其下属医疗机构组织
 						loadTree('/organization/tree');
 						hideDoctor();
+						hideNurse();
 					}
 				}
 			});
@@ -375,9 +397,9 @@
 				]
 			});
 			
-			// 职称类型
-			var titlesKit = xmSelect.render({
-				el: '#titles',
+			// 医生职称类型
+			var doctorTitlesKit = xmSelect.render({
+				el: '#doctorTitles',
 				radio: true,
 				clickClose: true,
 				repeat: true,
@@ -394,9 +416,37 @@
 					}
 				},
 				data: [
-					{name: '初级', value: 1},
-					{name: '中级', value: 2},
-					{name: '高级', value: 3}
+					{name: '执业医师', value: 1},
+					{name: '主治医师', value: 2},
+					{name: '副主任医师', value: 3},
+					{name: '主任医师', value: 4}
+				]
+			});
+			
+			// 职称类型
+			var nurseTitlesKit = xmSelect.render({
+				el: '#nurseTitles',
+				radio: true,
+				clickClose: true,
+				repeat: true,
+				initValue: [$('#titlesLeave').val()],
+				model: {
+					label: {
+						type: 'block',
+						block: {
+							//最大显示数量, 0:不限制
+							showCount: 0,
+							//是否显示删除图标
+							showIcon: false
+						}
+					}
+				},
+				data: [
+					{name: '护士', value: 1},
+					{name: '护师', value: 2},
+					{name: '主管护师', value: 3},
+					{name: '副主任护师', value: 4},
+					{name: '主任护师', value: 5}
 				]
 			});
 			
@@ -426,9 +476,13 @@
 			
 			// 选择医生角色时显示
 			var showDoctor = function() {
-				// 控件显示及隐藏
-				$('#doctorEle').show();
-				$('#doctorAndNurseEle').show();
+				// 控件显示
+				$('#doctorEle_part1').show();
+				$('#doctorEle_part2').show();
+				$('#doctorEle_part3').show();
+				$('#doctorAndNurseEle_part1').show();
+				$('#doctorAndNurseEle_part2').show();
+				$('#doctorAndNurseEle_part3').show();
 				
 				// 校验规则
 				$('#idCard').attr('lay-verify', 'identity');
@@ -438,9 +492,15 @@
 			
 			// 选择非医生角色隐藏
 			var hideDoctor = function() {
+				// 清空职称选项卡内容
+				doctorTitlesKit.setValue([]);
 				// 隐藏
-				$('#doctorEle').hide();
-				$('#doctorAndNurseEle').hide();
+				$('#doctorEle_part1').hide();
+				$('#doctorEle_part2').hide();
+				$('#doctorEle_part3').hide();
+				$('#doctorAndNurseEle_part1').hide();
+				$('#doctorAndNurseEle_part2').hide();
+				$('#doctorAndNurseEle_part3').hide();
 				
 				// 移除校验规则
 				$('#idCard').removeAttr('lay-verify');
@@ -450,30 +510,37 @@
 			
 			// 选择护士角色时显示
 			var showNurse = function() {
-				$('#doctorAndNurseEle').show();
+				$('#nurseEle_part').show();
+				$('#doctorAndNurseEle_part1').show();
+				$('#doctorAndNurseEle_part2').show();
+				$('#doctorAndNurseEle_part3').show();
 				
 				$('#idCard').attr('lay-verify', 'identity');
-				$('#certificateNo').attr('lay-verify', 'required');
+				$('#certificateNo').removeAttr('lay-verify');
 				$('#occupationalNo').attr('lay-verify', 'required');
 			}
 			
 			// 选择非护士角色隐藏
 			var hideNurse = function() {
-				$('#doctorAndNurseEle').hide();
+				nurseTitlesKit.setValue([]);
+				$('#nurseEle_part').hide();
+				$('#doctorAndNurseEle_part1').hide();
+				$('#doctorAndNurseEle_part2').hide();
+				$('#doctorAndNurseEle_part3').hide();
 				
 				// 移除校验规则
 				$('#idCard').removeAttr('lay-verify');
-				$('#certificateNo').removeAttr('lay-verify');
 				$('#occupationalNo').removeAttr('lay-verify');
 			}
 			
 			//监听提交
 			form.on('submit(edit)', function (form) {
+				var titleLeave = '';
 				if ($('#roleTypeId').val() == '') {
 					layer.alert('请选择机构', {icon: 5});
 					return false;
 				}
-				if (roleKit.getValue('valueStr') == '5') {	// 医生
+				/* if (roleKit.getValue('valueStr') == '5') {	// 医生
 					if (patientKit.getValue('valueStr') == '') {
 						layer.alert('病人类型不能为空', {icon: 5});
 						return false;
@@ -484,8 +551,11 @@
 					}
 					form.field.patientType = patientKit.getValue('valueStr');
 					form.field.operationType = operationKit.getValue('valueStr');
-				}
-				if ($('#titlesNo').val() != '' && titlesKit.getValue('valueStr') == '') {
+				} */
+				if (roleKit.getValue('valueStr') == '5' && $('#titlesNo').val() != '' && doctorTitlesKit.getValue('valueStr') == '') {
+					layer.alert('请选择职称', {icon: 5});
+					return false;
+				} else if (roleKit.getValue('valueStr') == '6' && $('#titlesNo').val() != '' && nurseTitlesKit.getValue('valueStr') == '') {
 					layer.alert('请选择职称', {icon: 5});
 					return false;
 				}
@@ -497,9 +567,14 @@
 					layer.alert('证件照上传失败', {icon: 5});
 					return false;
 				}
+				if (roleKit.getValue('valueStr') == '5') {
+					titleLeave = doctorTitlesKit.getValue('valueStr');
+				} else if (roleKit.getValue('valueStr') == '6') {
+					titleLeave = nurseTitlesKit.getValue('valueStr');
+				}
 				form.field.roleId = roleKit.getValue('valueStr');
 				form.field.photo = $('#credential_hide').val();
-				form.field.titles = titlesKit.getValue('valueStr');
+				form.field.titles = titleLeave;
 				form.field._method = 'PUT';
 				$.post('/user', form.field, function (result) {
 					handlerResult(result, editDone);
