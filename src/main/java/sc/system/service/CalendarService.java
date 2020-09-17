@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
-import sc.common.constants.DayPeriodEnum;
 import sc.common.util.DateUtils;
 import sc.common.util.PageResultBean;
 import sc.common.util.ShiroUtil;
@@ -24,6 +23,8 @@ import sc.system.model.vo.CalendarEventVO;
 
 @Service
 public class CalendarService {
+	
+	private final static String allDayPeriod = "00:00:00 - 23:59:59";
 	
 	@Resource
     private WebScCalendarMapper webScCalendarMapper;
@@ -47,13 +48,12 @@ public class CalendarService {
 			webScCalendarAid.setCalendarDate(DateUtils.parseDateToStr("yyyy-MM-dd", 
 					webScCalendarAid.getStartTime()));
 			
-			DayPeriodEnum dayPeriodEnum = DayPeriodEnum.getvalueOf(
-					DateUtils.getHour(webScCalendarAid.getStartTime())
-					+"-"+
-					DateUtils.getHour(webScCalendarAid.getEndTime())
-			);
-			webScCalendarAid.setCalendarPeriod(
-					dayPeriodEnum.getTxt());
+			String timePeriod = 
+					DateUtils.getTime(webScCalendarAid.getStartTime())
+					+" - "+
+					DateUtils.getTime(webScCalendarAid.getEndTime());
+			
+			webScCalendarAid.setCalendarPeriod(timePeriod);
 		}
 		
 		PageInfo<WebScCalendarAid> pageInfo = new PageInfo<>(webScCalendarAids);
@@ -79,13 +79,13 @@ public class CalendarService {
 			calendarEventVO.setEnd(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", 
 					webScCalendar.getEndTime()));
 			
-			DayPeriodEnum dayPeriodEnum = DayPeriodEnum.getvalueOf(
-					DateUtils.getHour(webScCalendar.getStartTime())
-					+"-"+
-					DateUtils.getHour(webScCalendar.getEndTime())
-			);
+			String timePeriod = 
+			DateUtils.getTime(webScCalendar.getStartTime())
+			+" - "+
+			DateUtils.getTime(webScCalendar.getEndTime());
+			
 			calendarEventVO.setAllDay(
-					dayPeriodEnum.getValue().equals(DayPeriodEnum.ALLDAY.getValue()) ? true : false);
+					timePeriod.equals(allDayPeriod) ? true : false);
 			
 			calendarEventVOs.add(calendarEventVO);
 		}

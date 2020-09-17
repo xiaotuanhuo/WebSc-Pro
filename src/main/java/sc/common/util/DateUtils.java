@@ -170,7 +170,16 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		return calendar.get(Calendar.SECOND);
 	}
 	
+	/**
+	 * 获取时分秒
+	 * @param date
+	 * @return
+	 */
+	public static String getTime(Date date) {
+		return parseDateToStr("HH:mm:ss", date);
+	}
+	
 	public static void main(String[] args) {
-		System.out.println(getHour(new Date()));
+		System.out.println(getTime(new Date()));
 	}
 }

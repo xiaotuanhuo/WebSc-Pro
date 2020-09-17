@@ -29,9 +29,7 @@
     	var laydate;
     	var layerIndex;
     	var layer;
-    	const am = '0-12';
-    	const pm = '12-23';
-    	const dayPeriod = '0-23';
+    	const allDayPeriod = '00:00:00 - 23:59:59';
 		layui.use(['layer','laydate','form'], function(){
 			laydate = layui.laydate;
 			form = layui.form;
@@ -39,19 +37,15 @@
 			
 			form.on('submit(addCalendarForm)', function(data){
 				var calendarType = data.field.calendarType;
-				if(calendarType == am){
-					data.field.allDay = false;
-					data.field.start = data.field.calendarDate + " 00:00:00";
-					data.field.end = data.field.calendarDate + " 12:00:00";
-				}else if(calendarType == pm){
-					data.field.allDay = false;
-					data.field.start = data.field.calendarDate + " 12:00:01";
-					data.field.end = data.field.calendarDate + " 23:59:59";
-				}else{
+				
+				if(calendarType == allDayPeriod){
 					data.field.allDay = true;
-					data.field.start = data.field.calendarDate + " 00:00:00";
-					data.field.end = data.field.calendarDate + " 23:59:59";
+				}else{
+					data.field.allDay = false;
 				}
+				var calendarTypeArr = calendarType.split(" - ");
+				data.field.start = data.field.calendarDate + " " + calendarTypeArr[0];
+				data.field.end = data.field.calendarDate + " " + calendarTypeArr[1];
 				
 		  		$.ajax({
 					type: "POST",
@@ -75,19 +69,15 @@
 			
 			form.on('submit(updCalendarForm)', function(data){
 				var calendarType = data.field.calendarType;
-				if(calendarType == am){
-					data.field.allDay = false;
-					data.field.start = data.field.calendarDate + " 00:00:00";
-					data.field.end = data.field.calendarDate + " 12:00:00";
-				}else if(calendarType == pm){
-					data.field.allDay = false;
-					data.field.start = data.field.calendarDate + " 12:00:01";
-					data.field.end = data.field.calendarDate + " 23:59:59";
-				}else{
+				
+				if(calendarType == allDayPeriod){
 					data.field.allDay = true;
-					data.field.start = data.field.calendarDate + " 00:00:00";
-					data.field.end = data.field.calendarDate + " 23:59:59";
+				}else{
+					data.field.allDay = false;
 				}
+				var calendarTypeArr = calendarType.split(" - ");
+				data.field.start = data.field.calendarDate + " " + calendarTypeArr[0];
+				data.field.end = data.field.calendarDate + " " + calendarTypeArr[1];
 				
 		  		$.ajax({
 					type: "POST",
@@ -108,16 +98,6 @@
 				 	}
 			   });
 		  	});
-			
-			form.on('select(calendarTypeFilter)', function(data){
-				  if(am == data.value){
-					  $("#title").val("上午（备休日）");
-				  }else if(pm == data.value){
-					  $("#title").val("下午（备休日）");
-				  }else{
-					  $("#title").val("全天（备休日）");
-				  }
-			});
 			
 			form.on('submit(delCalendarForm)', function(data){
 				var paraData = {"calendarId" : data.field.id};
@@ -209,27 +189,23 @@
 							'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">日程标题</label>'+
 			                    '<div class="layui-input-inline">'+
-			                        '<input id="title" name="title" value="全天（备休日）" lay-verify="required" class="layui-input" type="text" placeholder="日程标题" readonly="readonly"/>'+
+			                        '<input id="title" name="title" value="备休日" lay-verify="required" class="layui-input" type="text" placeholder="日程标题"/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
 						'<div class="layui-form-item">'+
 							'<div class="layui-inline">'+
-								'<label class="layui-form-label" style="width:110px;">日程时间</label>'+
+								'<label class="layui-form-label" style="width:110px;">空闲日程</label>'+
 								'<div class="layui-input-inline">'+
-		    						'<input id="calendarDate" name="calendarDate" value="'+info.dateStr+'" lay-verify="required" class="layui-input" type="text" placeholder="日程时间" autocomplete="off"/>'+
+		    						'<input id="calendarDate" name="calendarDate" value="'+info.dateStr+'" lay-verify="required" class="layui-input" type="text" placeholder="空闲日程" autocomplete="off"/>'+
 								'</div>'+
 							'</div>'+
 						'</div>'+
 						'<div class="layui-form-item">'+
 		  					'<div class="layui-inline">'+
-								'<label class="layui-form-label" style="width:110px;">空闲类型</label>'+
+								'<label class="layui-form-label" style="width:110px;">空闲时间段</label>'+
 								'<div class="layui-input-inline">'+
-		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search lay-filter="calendarTypeFilter">'+
-			    						'<option value="'+am+'">上午</option>'+
-		    							'<option value="'+pm+'">下午</option>'+
-		    							'<option value="'+dayPeriod+'" selected>全天</option>'+	
-		    						'</select>'+
+									'<input id="calendarType" name="calendarType" lay-verify="required" class="layui-input" type="text" placeholder="空闲时间段" autocomplete="off"/>'+
 								'</div>'+
 							'</div>'+
 						'</div>'+
@@ -251,6 +227,24 @@
 					laydate.render({
 						elem: '#calendarDate'
 						,type: 'date'
+						,trigger: 'click'
+					});
+					
+					laydate.render({
+						elem: '#calendarType'
+						,position: 'fixed'
+						,type: 'time'
+						,range: true
+						,trigger: 'click'
+						,done: function(value, date, endDate){
+							if(value == ''){
+								$("#title").val("备休日");
+							}if(value == allDayPeriod){
+								$("#title").val("全天（备休日）");
+							}else{
+								$("#title").val("备休时段："+value);
+							}
+						}
 					});
 					
 					form.render('select');
@@ -276,13 +270,13 @@
 							'<div class="layui-inline">'+
 								'<label class="layui-form-label" style="width:110px;">日程标题</label>'+
 			                    '<div class="layui-input-inline">'+
-			                        '<input id="title" name="title" value="'+info.event.title+'" lay-verify="required" class="layui-input" type="text" placeholder="日程标题" readonly="readonly"/>'+
+			                        '<input id="title" name="title" value="'+info.event.title+'" lay-verify="required" class="layui-input" type="text" placeholder="日程标题"/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
 						'<div class="layui-form-item">'+
 							'<div class="layui-inline">'+
-								'<label class="layui-form-label" style="width:110px;">日程时间</label>'+
+								'<label class="layui-form-label" style="width:110px;">空闲日程</label>'+
 								'<div class="layui-input-inline">'+
 		    						'<input id="calendarDate" name="calendarDate" value="'+dateFormat('yyyy-MM-dd',info.event.start)+'" lay-verify="required" class="layui-input" type="text" placeholder="日程时间" readonly="readonly" autocomplete="off"/>'+
 								'</div>'+
@@ -290,13 +284,9 @@
 						'</div>'+
 						'<div class="layui-form-item">'+
 		  					'<div class="layui-inline">'+
-								'<label class="layui-form-label" style="width:110px;">空闲类型</label>'+
+								'<label class="layui-form-label" style="width:110px;">空闲时间段</label>'+
 								'<div class="layui-input-inline">'+
-		    						'<select id="calendarType" name="calendarType" lay-verify="required" lay-search lay-filter="calendarTypeFilter">'+
-		    							'<option value="'+am+'">上午</option>'+
-		    							'<option value="'+pm+'">下午</option>'+
-		    							'<option value="'+dayPeriod+'">全天</option>'+
-		    						'</select>'+
+									'<input id="calendarType" name="calendarType" value="'+convertDateToPeriod(info.event.allDay, info.event.start, info.event.end)+'" lay-verify="required" class="layui-input" type="text" placeholder="空闲时间段" autocomplete="off"/>'+
 								'</div>'+
 							'</div>'+
 						'</div>'+
@@ -316,9 +306,22 @@
 						content: editContent
 					});
 					
-					var period = convertDateToPeriod(info.event.allDay, info.event.start, info.event.end)
-					console.log("period:"+period);
-					$("#calendarType option[value='"+period+"']").attr("selected",true);
+					laydate.render({
+						elem: '#calendarType'
+						,position: 'fixed'
+						,type: 'time'
+						,range: true
+						,trigger: 'click'
+						,done: function(value, date, endDate){
+							if(value == ''){
+								$("#title").val("备休日");
+							}if(value == allDayPeriod){
+								$("#title").val("全天（备休日）");
+							}else{
+								$("#title").val("备休时段："+value);
+							}
+						}
+					});
 					
 					form.render('select');
 				}
@@ -328,9 +331,11 @@
 	    
 	    var convertDateToPeriod = function(allDay, startDate, endDate){
 	    	if(allDay){
-	    		return dayPeriod;
+	    		return allDayPeriod;
 	    	}else{
-	    		return startDate.getHours()+"-"+endDate.getHours();
+	    		return startDate.getHours()+":"+startDate.getMinutes()+":"+startDate.getSeconds()
+	    		+" - "+
+	    		endDate.getHours()+":"+endDate.getMinutes()+":"+endDate.getSeconds();
 	    	}
 	    }
 	    
