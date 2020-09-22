@@ -52,6 +52,7 @@
     		and cal.start_time <= str_to_date( #{endDate},'%Y-%m-%d %H:%i:%s')
     	]]>
     </if>
+    order by cal.start_time desc
   </select>
   
   <insert id="insert" parameterType="sc.system.model.WebScCalendar" >

@@ -155,9 +155,9 @@ public class RecordService {
 	 */
 	private Record checkRecord(Record record) throws Exception {
 		
-		if(!MailTelValidateUtil.isMobileNO(record.getDoctorPhone())) {
-			throw new Exception("手机号格式有误");
-		}
+//		if(!MailTelValidateUtil.isMobileNO(record.getDoctorPhone())) {
+//			throw new Exception("手机号格式有误");
+//		}
 		
 		WebScUser user = userMapper.selectOneByLoginName(record.getDoctorPhone());
 		//校验医生是否注册
