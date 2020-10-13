@@ -15,4 +15,37 @@
   		and anesthetic_name like concat(#{anestheticName,jdbcType=VARCHAR}, '%')
  	</if>
   </select>
+  
+  <select id="selectOnPage" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select anesthetic_id,
+  		   anesthetic_name
+    from WSC_ANESTHETIC wa
+    <where>
+    	<choose>
+    		<when test="anesthetic.anestheticName != null and anesthetic.anestheticName != ''">
+    			AND wa.anesthetic_name like CONCAT('%', #{anesthetic.anestheticName, jdbcType=VARCHAR}, '%')
+    		</when>
+    		<otherwise>
+    			1 = 1
+    		</otherwise>
+    	</choose>
+    </where>
+    order by anesthetic_id asc
+  </select>
+  
+  <insert id="insert" parameterType="sc.system.model.WebScAnesthetic" >
+    insert into WSC_ANESTHETIC (anesthetic_id, anesthetic_name)
+    values (#{anestheticId,jdbcType=VARCHAR}, #{anestheticName,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScAnesthetic" >
+    update WSC_ANESTHETIC
+    set anesthetic_name = #{anestheticName,jdbcType=VARCHAR}
+    where anesthetic_id = #{anestheticId,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from WSC_ANESTHETIC
+    where anesthetic_id = #{anestheticId,jdbcType=VARCHAR}
+  </delete>
 </mapper>

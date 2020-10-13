@@ -17,4 +17,17 @@ public interface OperativeMapper {
 	WebScOperative selectOperative(@Param("operativeName") String operativeName);
 	
 	List<WebScOperative> getWebScOperativeList(String operativeName);
+	
+	/**
+	 * 分页条件查询
+	 * @param query
+	 * @return
+	 */
+	List<WebScOperative> selectOnPage(@Param("operative") WebScOperative query);
+	
+	int insert(WebScOperative record);
+	
+	int updateByPrimaryKey(WebScOperative record);
+	
+	int deleteByPrimaryKey(String operativeId);
 }

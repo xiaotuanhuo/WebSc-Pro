@@ -17,4 +17,17 @@ public interface AnestheticMapper {
 	WebScAnesthetic selectAnesthetic(@Param("anestheticName") String anestheticName);
 	
 	public List<WebScAnesthetic> getWebScAnestheticList(String anestheticName);
+	
+	/**
+	 * 分页条件查询
+	 * @param query
+	 * @return
+	 */
+	List<WebScAnesthetic> selectOnPage(@Param("anesthetic") WebScAnesthetic query);
+	
+	int insert(WebScAnesthetic record);
+	
+	int updateByPrimaryKey(WebScAnesthetic record);
+	
+	int deleteByPrimaryKey(String anestheticId);
 }

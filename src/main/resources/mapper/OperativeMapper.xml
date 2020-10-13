@@ -17,4 +17,38 @@
   		and operative_name like concat(#{operativeName,jdbcType=VARCHAR}, '%')
  	</if>
   </select>
+  
+  <select id="selectOnPage" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select operative_id,
+  		   operative_name
+    from WSC_OPERATIVE wo
+    <where>
+    	<choose>
+    		<when test="operative.operativeName != null and operative.operativeName != ''">
+    			AND wo.operative_name like CONCAT('%', #{operative.operativeName, jdbcType=VARCHAR}, '%')
+    		</when>
+    		<otherwise>
+    			1 = 1
+    		</otherwise>
+    	</choose>
+    </where>
+    order by operative_id asc
+  </select>
+  
+  <insert id="insert" parameterType="sc.system.model.WebScOperative" >
+    insert into WSC_OPERATIVE (operative_id, operative_name, urgenttime)
+    values (#{operativeId,jdbcType=VARCHAR}, #{operativeName,jdbcType=VARCHAR}, #{urgenttime,jdbcType=INTEGER})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScOperative" >
+    update WSC_OPERATIVE
+    set operative_name = #{operativeName,jdbcType=VARCHAR},
+      urgenttime = #{urgenttime,jdbcType=INTEGER}
+    where operative_id = #{operativeId,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from WSC_OPERATIVE
+    where operative_id = #{operativeId,jdbcType=VARCHAR}
+  </delete>
 </mapper>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="UTF-8">
+    <title>麻醉管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.min.css}">
+    <link rel="stylesheet" th:href="@{/iconfont/iconfont.css}">
+</head>
+
+<body>
+	<div class="page-loading">
+		<div class="rubik-loader"></div>
+	</div>
+	<div class="z-body animated fadeIn">
+		<form class="layui-form zadmin-search-area input">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label for="anestheticName" class="layui-form-label">名称</label>
+					<div class="layui-input-inline">
+						<input type="text" name="anestheticName" autocomplete="off"
+							id="anestheticName" class="layui-input">
+					</div>
+					<button lay-submit="" lay-filter="search"
+						class="layui-btn layui-btn-sm layui-btn-primary table-action">
+						<i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i>
+					</button>
+				</div>
+			</div>
+		</form>
+		<table class="layui-hide" id="anesthetic-table"></table>
+	</div>
+	
+	<script type="text/html" id="toolbar">
+		<shiro:hasPermission name="anesthetic:add">
+			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">
+				<i class="zadmin-icon zadmin-icon-xinzeng zadmin-oper-area"></i>
+					 新增
+			</button>
+		</shiro:hasPermission>
+	</script>
+	
+	<script type="text/html" id="column-toolbar">
+		<shiro:hasPermission name="anesthetic:update">
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
+		</shiro:hasPermission>
+
+		<shiro:hasPermission name="anesthetic:delete">
+			<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="delete">删除</a>
+		</shiro:hasPermission>
+	</script>
+	
+	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
+	<script th:src="@{/lib/layui/layui.js}"></script>
+	<script th:src="@{/js/common.js}"></script>
+	
+	<script>
+        layui.config({
+			base: '/lib/layui/extend/'
+		}).use(['table', 'element', 'form', 'dtree', 'tablePlug'], function () {
+			var $ = layui.$;
+			var table = layui.table;
+			var form = layui.form;
+			var dtree = layui.dtree;
+			var tablePlug = layui.tablePlug;
+			
+			tablePlug.smartReload.enable(true);
+			
+			table.render({
+				elem: '#anesthetic-table',
+				url: '/anesthetic/list',
+				page: true,
+				defaultToolbar: null,
+				toolbar: '#toolbar',
+				smartReloadModel: true,
+				cols: [
+					[
+						{type:'numbers', title:'序号', fixed:'left', width:'5%'},
+						{field:'anestheticId', title:'id', hide:true},
+						{field:'anestheticName', title:'名称', sort:true},
+						{title:'操作', fixed:'right', align:'center', toolbar:'#column-toolbar', width:'20%'}
+					]
+				]
+			});
+			
+			// 工具条点击事件
+			table.on('toolbar', function (obj) {
+				var event = obj.event;
+				switch (event) {
+					case 'add':
+						add();
+						break;
+					default:
+						break;
+				}
+            });
+			
+			// 行点击事件 重置密码
+			table.on('tool', function (obj) {
+				var data = obj.data;
+				var event = obj.event;
+				if (event === 'edit') {
+					edit(data.anestheticId);
+				} else if (event === 'delete') {
+					del(data.anestheticId);
+				}
+			});
+			
+			function add() {
+				layer.open({
+					content: "/anesthetic",
+					title: "新增",
+					area: ['60%', '90%'],
+					type: 2,
+					end: function () {
+						table.reload('anesthetic-table');
+					}
+				});
+			}
+			
+			function edit(id) {
+				layer.open({
+					content: '/anesthetic/' + id,
+					title: "编辑",
+					area: ['60%', '90%'],
+					type: 2,
+					end: function () {
+						table.reload('anesthetic-table');
+					}
+				});
+			}
+			
+			function del(id) {
+				layer.confirm("确定删除吗?", {icon: 3, title: '提示'},
+					function (index) {//确定回调
+						$.post('/anesthetic/' + id, {_method: "DELETE"}, function (data) {
+						layer.close(index);
+							handlerResult(data, deleteDone);
+						});
+					}, function (index) {//取消回调
+						layer.close(index);
+					}
+				);
+			}
+			
+			function deleteDone(data) {
+				parent.layer.msg("删除成功", {icon: 6});
+				table.reload('anesthetic-table');
+			}
+			
+			form.on('submit(search)', function (form) {
+				table.reload('anesthetic-table', {
+					where: form.field
+				});
+				return false;
+			});
+		});
+	</script>
+</body>
+</html>
