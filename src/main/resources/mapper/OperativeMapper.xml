@@ -51,4 +51,17 @@
     delete from WSC_OPERATIVE
     where operative_id = #{operativeId,jdbcType=VARCHAR}
   </delete>
+  
+  <select id="countByName" resultType="java.lang.Integer">
+    select count(*)
+    from WSC_OPERATIVE
+    where operative_name = #{operativeName}
+  </select>
+
+  <select id="countByNameNotIncludeId" resultType="java.lang.Integer">
+    select count(*)
+    from WSC_OPERATIVE
+    where operative_name = #{operativeName}
+    and operative_id != #{operativeId}
+  </select>
 </mapper>

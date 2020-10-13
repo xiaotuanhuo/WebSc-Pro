@@ -30,4 +30,14 @@ public interface OperativeMapper {
 	int updateByPrimaryKey(WebScOperative record);
 	
 	int deleteByPrimaryKey(String operativeId);
+	
+	/**
+     * 统计已经有几个此手术名称, 用来检测是否重复.
+     */
+    int countByName(@Param("operativeName") String operativeName);
+
+    /**
+     * 统计已经有几个此手术名称, 用来检测是否重复 (不包含某当前id).
+     */
+    int countByNameNotIncludeId(@Param("operativeName") String operativeName, @Param("operativeId") String operativeId);
 }

@@ -48,4 +48,17 @@
     delete from WSC_ANESTHETIC
     where anesthetic_id = #{anestheticId,jdbcType=VARCHAR}
   </delete>
+  
+  <select id="countByName" resultType="java.lang.Integer">
+    select count(*)
+    from WSC_ANESTHETIC
+    where anesthetic_name = #{anestheticName}
+  </select>
+
+  <select id="countByNameNotIncludeId" resultType="java.lang.Integer">
+    select count(*)
+    from WSC_ANESTHETIC
+    where anesthetic_name = #{anestheticName}
+    and anesthetic_id != #{anestheticId}
+  </select>
 </mapper>

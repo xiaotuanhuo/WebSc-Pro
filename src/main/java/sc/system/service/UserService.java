@@ -18,6 +18,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,7 +48,6 @@ import com.github.pagehelper.PageHelper;
 
 @Service
 public class UserService {
-
 	private static final Logger log = LoggerFactory.getLogger(UserService.class);
 	
 	@Resource
@@ -79,6 +79,9 @@ public class UserService {
 	
 	@Resource
 	private ShiroActionProperties shiroActionProperties;
+	
+	@Value("${default-image}")
+	private String defaultImage;	// 默认头像名称
 	
 	public List<WebScUser> selectAllWithGroup(int page, int rows, WebScUser userQuery) {
 		PageHelper.startPage(page, rows);
@@ -127,6 +130,9 @@ public class UserService {
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
 			case YS:
 			case HS:
+				if (user.getPhoto().equals("")) {
+					user.setPhoto(defaultImage);
+				}
 				break;
 			default:
 				// 非医生护士角色清空项
@@ -224,6 +230,9 @@ public class UserService {
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
 			case YS:
 			case HS:
+				if (user.getPhoto().equals("")) {
+					user.setPhoto(defaultImage);
+				}
 				break;
 			default:
 				// 非医生护士角色清空项

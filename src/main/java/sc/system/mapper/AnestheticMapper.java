@@ -30,4 +30,14 @@ public interface AnestheticMapper {
 	int updateByPrimaryKey(WebScAnesthetic record);
 	
 	int deleteByPrimaryKey(String anestheticId);
+	
+	/**
+     * 统计已经有几个此麻醉名称, 用来检测是否重复.
+     */
+    int countByName(@Param("anestheticName") String anestheticName);
+
+    /**
+     * 统计已经有几个此麻醉名称, 用来检测是否重复 (不包含某当前id).
+     */
+    int countByNameNotIncludeId(@Param("anestheticName") String anestheticName, @Param("anestheticId") String anestheticId);
 }
