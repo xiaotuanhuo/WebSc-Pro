@@ -62,25 +62,25 @@ public class OperativeController {
 	}
 	
 	@OperationLog("新增手术名称")
-    @PostMapping
-    @ResponseBody
-    public ResultBean add(WebScOperative operative) {
+	@PostMapping
+	@ResponseBody
+	public ResultBean add(WebScOperative operative) {
 		operativeService.add(operative);
 		return ResultBean.success();
 	}
 	
 	@OperationLog("修改手术名称")
-    @PutMapping
-    @ResponseBody
-    public ResultBean update(WebScOperative operative) {
+	@PutMapping
+	@ResponseBody
+	public ResultBean update(WebScOperative operative) {
 		operativeService.update(operative);
 		return ResultBean.success();
 	}
 	
 	@OperationLog("删除手术名称")
-    @DeleteMapping("/{operativeId}")
-    @ResponseBody
-    public ResultBean delete(@PathVariable("operativeId") String operativeId) {
+	@DeleteMapping("/{operativeId}")
+	@ResponseBody
+	public ResultBean delete(@PathVariable("operativeId") String operativeId) {
 		operativeService.delete(operativeId);
 		return ResultBean.success();
 	}

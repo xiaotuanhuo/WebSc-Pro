@@ -62,25 +62,25 @@ public class AnestheticController {
 	}
 	
 	@OperationLog("新增麻醉名称")
-    @PostMapping
-    @ResponseBody
-    public ResultBean add(WebScAnesthetic anesthetic) {
+	@PostMapping
+	@ResponseBody
+	public ResultBean add(WebScAnesthetic anesthetic) {
 		anestheticService.add(anesthetic);
 		return ResultBean.success();
 	}
 	
 	@OperationLog("修改麻醉名称")
-    @PutMapping
-    @ResponseBody
-    public ResultBean update(WebScAnesthetic anesthetic) {
+	@PutMapping
+	@ResponseBody
+	public ResultBean update(WebScAnesthetic anesthetic) {
 		anestheticService.update(anesthetic);
 		return ResultBean.success();
 	}
 	
 	@OperationLog("删除麻醉名称")
-    @DeleteMapping("/{anestheticId}")
-    @ResponseBody
-    public ResultBean delete(@PathVariable("anestheticId") String anestheticId) {
+	@DeleteMapping("/{anestheticId}")
+	@ResponseBody
+	public ResultBean delete(@PathVariable("anestheticId") String anestheticId) {
 		anestheticService.delete(anestheticId);
 		return ResultBean.success();
 	}
