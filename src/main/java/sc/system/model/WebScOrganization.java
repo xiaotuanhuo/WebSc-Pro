@@ -23,6 +23,7 @@ public class WebScOrganization {
 	private String rootId;
 	private String rootName;
 	private String credentials;
+	private String narcoticCard;
 	private int leaf;
 	
 	private String orgAddress;
@@ -86,6 +87,14 @@ public class WebScOrganization {
 	
 	public void setCredentials(String credentials) {
 		this.credentials = credentials;
+	}
+	
+	public String getNarcoticCard() {
+		return narcoticCard;
+	}
+	
+	public void setNarcoticCard(String narcoticCard) {
+		this.narcoticCard = narcoticCard;
 	}
 	
 	public int getLeaf() {

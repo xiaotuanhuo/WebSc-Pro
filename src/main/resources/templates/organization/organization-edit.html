@@ -42,6 +42,12 @@
 								<div id="xmCredentials" class="xm-select-demo"></div>
 							</div>
 					</div>
+					<div class="layui-form-item">
+							<label for="xmNarcoticCard" class="layui-form-label">麻醉卡</label>
+							<div class="layui-input-block">
+								<div id="xmNarcoticCard" class="xm-select-demo"></div>
+							</div>
+					</div>
 					<div id="districtDiv" class="layui-form-item">
 						<label for="province" class="layui-form-label">区域</label>
 						<div class="layui-inline">
@@ -80,7 +86,7 @@
 						<label for="leaderName" class="layui-form-label" style="padding: 8px 2px;">机构负责人</label>
 						<div class="layui-input-block">
 							<input type="text" id="leaderName" name="leaderName"
-								th:value="${organization.leaderName}" lay-verify="required" lay-vertype="tips" autocomplete="off"
+								th:value="${organization.leaderName}" lay-vertype="tips" autocomplete="off"
 								placeholder="请输入机构负责人" class="layui-input">
 						</div>
 					</div>
@@ -88,7 +94,7 @@
 						<label for="leaderTel" class="layui-form-label" style="padding: 8px 2px;">负责人电话</label>
 						<div class="layui-input-block">
 							<input type="text" id="leaderTel" name="leaderTel"
-								th:value="${organization.leaderTel}" lay-verify="required|phone" lay-vertype="tips" autocomplete="off"
+								th:value="${organization.leaderTel}" lay-verify="mandatoryfieldPhone" lay-vertype="tips" autocomplete="off"
 								placeholder="请输入负责人电话" class="layui-input">
 						</div>
 					</div>
@@ -101,6 +107,7 @@
 								<input type="hidden" id="rootId" name="rootId" th:value="${organization.rootId}">
 								<input type="hidden" id="rootName" name="rootName" th:value="${organization.rootName}">
 								<input type="hidden" id="credentials" name="credentials" th:value="${organization.credentials}">
+								<input type="hidden" id="narcoticCard" name="narcoticCard" th:value="${organization.narcoticCard}">
 								<button class="layui-btn layui-btn-blue" lay-submit=""
 									data-th-lay-filter="edit">修改</button>
 							</div>
@@ -131,7 +138,12 @@
 				address = layui.address(userProvince, userCity, userArea);
 			
 			form.verify({
-				telPhone: [/^0\d{2,3}[-]?\d{7,8}$|^0\d{2,3}\s?\d{7,8}$|^1[3-9][0-9]\d{8}$/, '请输入正确的固定电话或者手机号码']
+				telPhone: [/^0\d{2,3}[-]?\d{7,8}$|^0\d{2,3}\s?\d{7,8}$|^1[3-9][0-9]\d{8}$/, '请输入正确的固定电话或者手机号码'],
+				mandatoryfieldPhone: function(value, item) { //邮箱的非必填校验
+					if (!new RegExp("(^$)|^1[3-9][0-9]\d{8}$").test(value)) {
+						return '请输入正确的手机号码';
+					}
+				}
 			});
 			
 			// 医疗机构根节点组件
@@ -196,12 +208,41 @@
 				]
 			});
 			
+			// 麻醉资质
+			var narcoticCardKit = xmSelect.render({
+				el: '#xmNarcoticCard',
+				radio: true,
+				clickClose: true,
+				repeat: true,
+				initValue: [$('#narcoticCard').val()],
+				model: {
+					label: {
+						type: 'block',
+						block: {
+							//最大显示数量, 0:不限制
+							showCount: 0,
+							//是否显示删除图标
+							showIcon: false
+						}
+					}
+				},
+				data: [
+					{name: '无', value: 0},
+					{name: '有', value: 1}
+				]
+			});
+			
 			setTimeout(initDist, '300');
 			
 			//监听提交
 			form.on('submit(edit)', function (form) {
+				if (form.field.area == '') {
+					layer.alert('请检查省市区是否完整', {icon: 5});
+					return false;
+				}
 				form.field.rootId = rootKit.getValue('valueStr');
 				form.field.credentials = credentialsKit.getValue('valueStr');
+				form.field.narcoticCard = narcoticCardKit.getValue('valueStr');
 				form.field._method = 'PUT';
 				$.post('/organization', form.field, function (result) {
 					handlerResult(result, editDone);

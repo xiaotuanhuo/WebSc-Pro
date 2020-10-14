@@ -558,6 +558,7 @@ public class OrganizationService {
 			leafWso.setArea(area);
 			leafWso.setLeaf(1);
 			leafWso.setCredentials(wso.getCredentials());
+			leafWso.setNarcoticCard(wso.getNarcoticCard());
 			leafWso.setOrgAddress(wso.getOrgAddress());
 			leafWso.setOrgTel(wso.getOrgTel());
 			leafWso.setLeaderName(wso.getLeaderName());
@@ -599,6 +600,7 @@ public class OrganizationService {
 				leafWso.setArea(area);
 				leafWso.setLeaf(1);
 				leafWso.setCredentials(wso.getCredentials());
+				leafWso.setNarcoticCard(wso.getNarcoticCard());
 				leafWso.setOrgAddress(wso.getOrgAddress());
 				leafWso.setOrgTel(wso.getOrgTel());
 				leafWso.setLeaderName(wso.getLeaderName());
@@ -631,6 +633,7 @@ public class OrganizationService {
 					leafWso.setArea(area);
 					leafWso.setLeaf(1);
 					leafWso.setCredentials(wso.getCredentials());
+					leafWso.setNarcoticCard(wso.getNarcoticCard());
 					leafWso.setOrgAddress(wso.getOrgAddress());
 					leafWso.setOrgTel(wso.getOrgTel());
 					leafWso.setLeaderName(wso.getLeaderName());
@@ -648,6 +651,7 @@ public class OrganizationService {
 					leafWso.setArea(area);
 					leafWso.setLeaf(1);
 					leafWso.setCredentials(wso.getCredentials());
+					leafWso.setNarcoticCard(wso.getNarcoticCard());
 					leafWso.setOrgAddress(wso.getOrgAddress());
 					leafWso.setOrgTel(wso.getOrgTel());
 					leafWso.setLeaderName(wso.getLeaderName());

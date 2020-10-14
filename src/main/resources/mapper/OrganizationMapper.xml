@@ -7,6 +7,7 @@
         <result column="org_pid" jdbcType="VARCHAR" property="orgPid"/>
         <result column="root_id" jdbcType="VARCHAR" property="rootId"/>
         <result column="credentials" jdbcType="VARCHAR" property="credentials"/>
+        <result column="narcotic_card" jdbcType="VARCHAR" property="narcoticCard"/>
         <result column="leaf" jdbcType="INTEGER" property="leaf"/>
         <result column="org_name" jdbcType="INTEGER" property="orgName"/>
         <result column="org_address" jdbcType="INTEGER" property="orgAddress"/>
@@ -24,6 +25,7 @@
         <result column="org_pid" jdbcType="VARCHAR" property="orgPid"/>
         <result column="root_id" jdbcType="VARCHAR" property="rootId"/>
         <result column="credentials" jdbcType="VARCHAR" property="credentials"/>
+        <result column="narcotic_card" jdbcType="VARCHAR" property="narcoticCard"/>
         <result column="leaf" jdbcType="INTEGER" property="leaf"/>
         <result column="org_name" jdbcType="INTEGER" property="orgName"/>
         <result column="org_address" jdbcType="INTEGER" property="orgAddress"/>
@@ -42,6 +44,7 @@
 		org_pid,
 		root_id,
 		credentials,
+		narcotic_card,
 		leaf,
 		org_name,
 		org_address,
@@ -60,6 +63,7 @@
          wo.org_pid,
          wo.root_id,
          wo.credentials,
+         wo.narcotic_card,
          wo.leaf,
          wo.org_name,
          wo.org_address,
@@ -171,6 +175,7 @@
 		    org.org_id,
 			org.org_pid,
 			org.credentials,
+			org.narcotic_card,
 			org.leaf,
 			org.org_name,
 			org.org_address,
@@ -274,8 +279,8 @@
     </select>
     
     <insert id="insert" parameterType="sc.system.model.WebScOrganization" >
-        insert into WSC_ORGANIZATION (org_id, org_pid, root_id, credentials, leaf, org_name, org_address, org_tel, leader_name, leader_tel, province, city, area)
-        values (#{orgId,jdbcType=VARCHAR}, #{orgPid,jdbcType=VARCHAR}, #{rootId,jdbcType=VARCHAR}, #{credentials,jdbcType=VARCHAR}, #{leaf,jdbcType=INTEGER}, #{orgName,jdbcType=VARCHAR}, #{orgAddress,jdbcType=VARCHAR}, #{orgTel,jdbcType=VARCHAR},
+        insert into WSC_ORGANIZATION (org_id, org_pid, root_id, credentials, narcotic_card, leaf, org_name, org_address, org_tel, leader_name, leader_tel, province, city, area)
+        values (#{orgId,jdbcType=VARCHAR}, #{orgPid,jdbcType=VARCHAR}, #{rootId,jdbcType=VARCHAR}, #{credentials,jdbcType=VARCHAR}, #{narcoticCard,jdbcType=VARCHAR}, #{leaf,jdbcType=INTEGER}, #{orgName,jdbcType=VARCHAR}, #{orgAddress,jdbcType=VARCHAR}, #{orgTel,jdbcType=VARCHAR},
         		#{leaderName,jdbcType=VARCHAR},#{leaderTel,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{area,jdbcType=VARCHAR})
     </insert>
     
@@ -283,6 +288,7 @@
         update WSC_ORGANIZATION
         set org_pid = #{orgPid,jdbcType=VARCHAR},
         	credentials = #{credentials,jdbcType=VARCHAR},
+        	narcotic_card = #{narcoticCard,jdbcType=VARCHAR},
         	org_name = #{orgName,jdbcType=VARCHAR},
         	org_address = #{orgAddress,jdbcType=VARCHAR},
         	org_tel = #{orgTel,jdbcType=VARCHAR},
@@ -388,6 +394,7 @@
 		da.org_pid,
 		da.root_id,
 		da.credentials,
+		da.narcotic_card,
 		da.leaf,
 		da.org_name,
 		da.org_address,
@@ -506,6 +513,7 @@
 		da.org_pid,
 		da.root_id,
 		da.credentials,
+		da.narcotic_card,
 		da.leaf,
 		da.org_name,
 		da.org_address,
