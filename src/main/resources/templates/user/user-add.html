@@ -319,7 +319,7 @@
 						hideNurse();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 9) {
 						// 选择医疗机构订单录入员角色时加载当前用户区划及其下属医疗机构组织
-						loadTree('/organization/tree');
+						loadTree('/organization/tree/isLeaf');
 						hideDoctor();
 						hideNurse();
 					}

@@ -160,6 +160,29 @@ public class OrganizationService {
 	}
 	
 	/**
+	 * 新增或修改录入员角色时查询机构树（非叶子节点被禁用）
+	 * @return
+	 */
+	public List<WebScOrganization> selectTreeLeaf() {
+		List<WebScOrganization> organizations = new ArrayList<WebScOrganization>();
+		Subject subject = SecurityUtils.getSubject();
+		WebScUser user = (WebScUser) subject.getPrincipal();
+		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
+			case CJGLY:
+			case QYGLY:
+				organizations = organizationMapper.selectAllTree(null, user.getProvince(), user.getCity(), user.getArea());
+				break;
+			case YLJGGLY:
+				organizations = organizationMapper.selectAllTree(user.getRoleTypeId(), user.getProvince(), user.getCity(), user.getArea());
+				break;
+			default:
+				break;
+		}
+		List<WebScOrganization> sos = noLeafDisabled(organizations);
+		return sos;
+	}
+	
+	/**
 	 * 删除没有麻醉资质的医疗机构
 	 * @param orgs
 	 * @return
@@ -776,5 +799,22 @@ public class OrganizationService {
 		if (organizationMapper.countByName(orgId, name) > 0) {
 			throw new DuplicateNameException("机构名称已存在");
 		}
+	}
+	
+	/**
+	 * 非叶子节点禁用
+	 * @param organizations
+	 * @return
+	 */
+	private List<WebScOrganization> noLeafDisabled(List<WebScOrganization> organizations) {
+		for (WebScOrganization wso : organizations) {
+			if (wso.getLeaf() != 1) {
+				wso.setDisabled(true);
+			}
+			if (wso.getChildren().size() > 0) {
+				noLeafDisabled(wso.getChildren());
+			}
+		}
+		return organizations;
 	}
 }

@@ -91,6 +91,17 @@ public class OrganizationController {
 		return ResultBean.success(organizationService.selectTree());
 	}
 	
+	/**
+	 * 根据用户角色及当前区划查询医疗机构树
+	 * @param parentId
+	 * @return
+	 */
+	@GetMapping("/tree/isLeaf")
+	@ResponseBody
+	public ResultBean treeOfLeaf() {
+		return ResultBean.success(organizationService.selectTreeLeaf());
+	}
+	
 	@GetMapping("/dist/tree")
 	@ResponseBody
 	public ResultBean distTree() {

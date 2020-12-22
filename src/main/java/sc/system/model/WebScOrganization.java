@@ -39,6 +39,7 @@ public class WebScOrganization {
 	private String status;
 //	private String porgName;
 //	private String orgParentId;
+	private boolean disabled = false;	// 用于前端当前节点是否不可选中，默认fasle：可选中
 	private List<WebScOrganization> children;
 	
 	public String getOrgId() {
@@ -211,6 +212,14 @@ public class WebScOrganization {
 	
 	public List<WebScOrganization> getChildren() {
 		return children;
+	}
+	
+	public boolean isDisabled() {
+		return disabled;
+	}
+	
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 	
 	public void setChildren(List<WebScOrganization> children) {
