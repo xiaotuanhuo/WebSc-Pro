@@ -15,6 +15,7 @@
         <result column="id_card" jdbcType="VARCHAR" property="idCard"/>
        	<result column="certificate_no" jdbcType="VARCHAR" property="certificateNo"/>
         <result column="occupational_no" jdbcType="VARCHAR" property="occupationalNo"/>
+        <result column="work" jdbcType="INTEGER" property="work"/>
         <result column="role_id" jdbcType="VARCHAR" property="roleId"/>
         <result column="role_type_id" jdbcType="VARCHAR" property="roleTypeId"/>
         <result column="province" jdbcType="VARCHAR" property="province"/>
@@ -46,6 +47,7 @@
 			occupational_no,
 			titles,
 			titles_no,
+			work,
 			role_id,
 			role_type_id,
 			province,
@@ -89,6 +91,7 @@
 								occupational_no,
 								titles,
 								titles_no,
+								work,
 								role_id,
 								role_type_id,
 								province,
@@ -111,6 +114,7 @@
         					#{occupationalNo,jdbcType=VARCHAR},
         					#{titles,jdbcType=VARCHAR},
         					#{titlesNo,jdbcType=VARCHAR},
+        					#{work,jdbcType=INTEGER},
         					#{roleId,jdbcType=VARCHAR},
         					#{roleTypeId,jdbcType=VARCHAR},
         					#{province,jdbcType=VARCHAR},
@@ -213,6 +217,7 @@
 		      occupational_no = #{occupationalNo,jdbcType=VARCHAR},
 		      titles = #{titles,jdbcType=VARCHAR},
 		      titles_no = #{titlesNo,jdbcType=VARCHAR},
+		      work = #{work,jdbcType=INTEGER},
 		      role_id = #{roleId,jdbcType=VARCHAR},
 		      role_type_id = #{roleTypeId,jdbcType=VARCHAR},
 		      province = #{province,jdbcType=VARCHAR},

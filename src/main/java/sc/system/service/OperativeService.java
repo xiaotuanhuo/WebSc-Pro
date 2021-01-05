@@ -4,11 +4,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 
+import cn.hutool.http.Header;
+import cn.hutool.http.HttpRequest;
 import sc.common.exception.DuplicateNameException;
 import sc.common.util.UUID19;
 import sc.system.mapper.OperativeMapper;
@@ -18,6 +21,9 @@ import sc.system.model.WebScOperative;
 public class OperativeService {
 	@Resource
     private OperativeMapper operativeMapper;
+	
+	@Value("${notify-path-operative}")
+	private String indexUrl;	// 更新索引通知地址
 	
 	public List<WebScOperative> getWebScOperativeList(String operativeName){
 		return operativeMapper.getWebScOperativeList(operativeName);
@@ -39,7 +45,17 @@ public class OperativeService {
 		operative.setOperativeName(operativeName);
 		operative.setOperativeId(UUID19.uuid());
 		operative.setUrgenttime(0);
-		operativeMapper.insert(operative);
+		
+		int result = operativeMapper.insert(operative);
+		if (result == 1) {
+			String reqData = "{" + 
+	        		"\"token\":\"" + "operativeluceneupdtoken1234" + "\"}";
+			String data = HttpRequest.post(indexUrl)
+					.header(Header.CONTENT_TYPE, "application/json")
+					.header(Header.ACCEPT, "application/json")
+					.body(reqData)
+					.execute().body();
+		}
 	}
 	
 	@Transactional
@@ -47,7 +63,16 @@ public class OperativeService {
 		String operativeName = operative.getOperativeName().trim();	// 消除前后空格
 		operative.setOperativeName(operativeName);
 		checkNameExistOnUpdate(operative);
-		operativeMapper.updateByPrimaryKey(operative);
+		int result = operativeMapper.updateByPrimaryKey(operative);
+		if (result == 1) {
+			String reqData = "{" + 
+	        		"\"token\":\"" + "operativeluceneupdtoken1234" + "\"}";
+			String data = HttpRequest.post(indexUrl)
+					.header(Header.CONTENT_TYPE, "application/json")
+					.header(Header.ACCEPT, "application/json")
+					.body(reqData)
+					.execute().body();
+		}
 	}
 	
 	@Transactional

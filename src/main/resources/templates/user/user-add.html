@@ -85,6 +85,13 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
+					<label for="work" class="layui-form-label">工作性质</label>
+					<div class="layui-input-block">
+						<input type="radio" id="work_0" name="work" value="0" title="全职" checked>
+						<input type="radio" id="work_1" name="work" value="1" title="兼职">
+					</div>
+				</div>
+				<div class="layui-form-item">
 					<label for="role" class="layui-form-label">角色</label>
 					<div class="layui-input-block">
 						<div id="role" class="xm-select-demo"></div>
@@ -585,14 +592,14 @@
             });
 			
 			//监听提交
-			form.on('submit(edit)', function (form) {
+			/* form.on('submit(edit)', function (form) {
 				form.field._method = 'PUT';
 				form.field.roleId = roleKit.getValue('valueStr');
 				$.post('/user', form.field, function (result) {
 					handlerResult(result, editDone);
 				});
 				return false;
-			});
+			}); */
 			
 			function addDone(data) {
 				//$('#submitBtn').attr({'disabled': 'disabled'});

@@ -46,6 +46,9 @@ import sc.system.model.vo.UserVO;
 
 import com.github.pagehelper.PageHelper;
 
+import cn.hutool.http.Header;
+import cn.hutool.http.HttpRequest;
+
 @Service
 public class UserService {
 	private static final Logger log = LoggerFactory.getLogger(UserService.class);
@@ -83,6 +86,9 @@ public class UserService {
 	@Value("${default-image}")
 	private String defaultImage;	// 默认头像名称
 	
+	@Value("${notify-path-user}")
+	private String indexUrl;	// 更新索引通知地址
+	
 	public List<WebScUser> selectAllWithGroup(int page, int rows, WebScUser userQuery) {
 		PageHelper.startPage(page, rows);
 		Subject subject = SecurityUtils.getSubject();
@@ -108,6 +114,7 @@ public class UserService {
 	
 	@Transactional
 	public Integer add(WebScUser user) {
+		boolean index = false;	// 医生或者护士 更新索引文件
 		checkLoginNameExistOnCreate(user.getLoginName());
 		String salt = generateSalt();
 		String encryptPassword = new Md5Hash(user.getLoginPwd(), salt).toString();
@@ -130,6 +137,7 @@ public class UserService {
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
 			case YS:
 			case HS:
+				index = true;
 				if (user.getPhoto().equals("")) {
 					user.setPhoto(defaultImage);
 				}
@@ -144,7 +152,11 @@ public class UserService {
 				user.setPhoto(null);
 				break;
 		}
-		userMapper.insert(user);
+		int result = userMapper.insert(user);
+		if (index && result == 1) {
+			HttpRequest.post(indexUrl).header(Header.CONTENT_TYPE, "application/json")
+					.header(Header.ACCEPT, "application/json").execute();
+		}
 		return user.getUserId();
 	}
 	
@@ -213,6 +225,8 @@ public class UserService {
 	
 	@Transactional
 	public boolean update(WebScUser user) {
+		boolean index = false;
+		boolean result = false;
 		checkLoginNameExistOnUpdate(user);
 		if (user.getArea().equals("")) {
 			user.setArea(null);
@@ -230,6 +244,7 @@ public class UserService {
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
 			case YS:
 			case HS:
+				index = true;
 				if (user.getPhoto().equals("")) {
 					user.setPhoto(defaultImage);
 				}
@@ -244,7 +259,12 @@ public class UserService {
 				user.setPhoto(null);
 				break;
 		}
-		return userMapper.updateByUser(user) == 1;
+		result = userMapper.updateByUser(user) == 1;
+		if (index && result) {
+			HttpRequest.post(indexUrl).header(Header.CONTENT_TYPE, "application/json")
+			.header(Header.ACCEPT, "application/json").execute();
+		}
+		return result;
 	}
 	
 	public WebScUser selectOne(Integer id) {

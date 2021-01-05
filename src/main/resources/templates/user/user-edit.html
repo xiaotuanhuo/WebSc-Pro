@@ -73,6 +73,13 @@
 							autocomplete="off" class="layui-input">
 					</div>
 				</div>
+				<div class="layui-form-item">
+					<label for="work" class="layui-form-label">工作性质</label>
+					<div class="layui-input-block">
+						<input type="radio" id="work_0" name="work" value="0" title="全职" checked>
+						<input type="radio" id="work_1" name="work" value="1" title="兼职">
+					</div>
+				</div>
 				<!-- 系统管理员无法修改自身角色和机构 -->
 				<div class="layui-form-item" th:style="${user.roleId} eq '1' ? 'display: none;' : ''">
 					<label for="role" class="layui-form-label">角色</label>
@@ -236,7 +243,9 @@
 				upload = layui.upload,
 				dtree = layui.dtree;
 			var sex = [[${user.sex} + '']];
+			var work = [[${user.work} + '']];
 			$("input[name='sex'][value='" + sex + "']").attr('checked',true);
+			$("input[name='work'][value='" + work + "']").attr('checked',true);
 			form.render();
 			
 			//自定义校验

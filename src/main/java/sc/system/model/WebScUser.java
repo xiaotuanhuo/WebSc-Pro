@@ -1,72 +1,43 @@
 package sc.system.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class WebScUser implements Serializable {
 
     private static final long serialVersionUID = -3200103254689137288L;
     
 	private Integer userId;
- 
 	private String userName;
-	
 	private String loginName;
-	
 	private String loginPwd;
-	
 	private String salt;
-	
 	private String sex;
-	
 	private int age;
-	
 	private String phone;
-	
 	private String email;
-	
 	private String idCard;
-	
 	private String certificateNo;
-	
 	private String occupationalNo;
-	
 	private String titles;
-	
 	private String titlesNo;
-	
+	private int work;
 	private String roleId;
-	
 	private String roleName;
-	
 	private String roleTypeId;
-	
 	private String roleTypeName;
-	
 	private String province;
-	
 	private String city;
-	
 	private String area;
-	
 	private String patientType;
-	
 	private String operationType;
-	
 	private String status;
-	
 	private String lastLoginTime;
-	
 	private String createTime;
-	
 	private String modifyTime;
-	
 	private String photo;
-	
 	private String wxOpenid;
-	
 	private String wxUserid;
-
+	
 	public Integer getUserId() {
 		return userId;
 	}
@@ -177,6 +148,14 @@ public class WebScUser implements Serializable {
 
 	public void setTitlesNo(String titlesNo) {
 		this.titlesNo = titlesNo;
+	}
+
+	public int getWork() {
+		return work;
+	}
+
+	public void setWork(int work) {
+		this.work = work;
 	}
 
 	public String getRoleId() {
