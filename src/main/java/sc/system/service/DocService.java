@@ -340,10 +340,6 @@ public class DocService {
 							throw new Exception("手术医生不能为空");
 						}
 						
-						if(0 == userMapper.isExistByDoctorName(rows.get(i).get(j).toString())) {
-							throw new Exception("姓名为："+rows.get(i).get(j).toString()+"的医生不存在");
-						}
-						
 						doc.setOperateUser(rows.get(i).get(j).toString());
 					}else if (DocumentTitleEnum.operate_aide.getTxt().equals(rows.get(0).get(j))) {
 						doc.setOperateQide(rows.get(i).get(j).toString());
