@@ -58,20 +58,20 @@
 		                </div>
 		           	</div>
 		           	
-		           	<div class="layui-row">
-	        			<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
-	        				<label for="operateStartTime" class="layui-form-label">联系人</label>
-			                <div class="layui-input-block">
-			             		<input type="text" id="doc_leaderName" class="layui-input"  th:value="${doc?.leaderName}" Readonly="true">
-			                </div>
-		                </div>
-		                <div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
-	        				<label for="operateStartTime" class="layui-form-label">联系电话</label>
-			                <div class="layui-input-block">
-			             		<input type="text" id="doc_leaderTel" class="layui-input"  th:value="${doc?.leaderTel}" Readonly="true">
-			                </div>
-		                </div>
-		           	</div>
+<!-- 		           	<div class="layui-row"> -->
+<!-- 	        			<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;"> -->
+<!-- 	        				<label for="operateStartTime" class="layui-form-label">联系人</label> -->
+<!-- 			                <div class="layui-input-block"> -->
+<!-- 			             		<input type="text" id="doc_leaderName" class="layui-input"  th:value="${doc?.leaderName}" Readonly="true"> -->
+<!-- 			                </div> -->
+<!-- 		                </div> -->
+<!-- 		                <div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;"> -->
+<!-- 	        				<label for="operateStartTime" class="layui-form-label">联系电话</label> -->
+<!-- 			                <div class="layui-input-block"> -->
+<!-- 			             		<input type="text" id="doc_leaderTel" class="layui-input"  th:value="${doc?.leaderTel}" Readonly="true"> -->
+<!-- 			                </div> -->
+<!-- 		                </div> -->
+<!-- 		           	</div> -->
 		           	
 					<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
 						<legend>患者信息</legend>
@@ -125,8 +125,8 @@
 	        			<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
 			                <label for="sex" class="layui-form-label">性别</label>
 			                <div class="layui-input-block">
-								<input type="radio" id="sex_0" name="patientSex" value="0" title="女" {{# if(doc.patientSex == 0) }} checked disabled="disabled">
-						 		<input type="radio" id="sex_1" name="patientSex" value="1" title="男" {{# if(doc.patientSex == 1) }} checked disabled="disabled">
+								<input type="radio" id="sex_0" name="patientSex" value="0" title="女" disabled="disabled">
+						 		<input type="radio" id="sex_1" name="patientSex" value="1" title="男" disabled="disabled">
 			                </div>
 				     	</div>
 			       	</div>
@@ -321,6 +321,7 @@
 	        				<label for="ywsjHxxt" class="layui-form-label">呼吸系统</label>
 			                <div class="layui-input-block">
 			            		<select name="ywsjHxxt" xm-select="ywsjHxxt-select"  xm-select-search=""  lay-search="">
+			                        <option value="-1">无</option>
 			                        <option value="0">频繁舌后坠（≥3次）</option>
 									<option value="1">喉痉挛</option>
 									<option value="2">返流</option>
@@ -343,6 +344,7 @@
 	        				<label for="ywsjXhxt" class="layui-form-label">循环系统</label>
 			                <div class="layui-input-block">
 			             		 <select name="ywsjXhxt" xm-select="ywsjXhxt-select"  xm-select-search=""  lay-search="">
+			                        <option value="-1">无</option>
 			                        <option value="0">需纠正的低血压</option>
 									<option value="1">需纠正的高血压</option>
 									<option value="2">肺动脉栓塞</option>
@@ -364,6 +366,7 @@
 	        				<label for="ywsjGm" class="layui-form-label">过敏源</label>
 			                <div class="layui-input-block">
 			             		 <select name="ywsjGm" xm-select-radio xm-select="ywsjGm-select"  xm-select-search=""  lay-search="">
+			                        <option value="-1">无</option>
 			                        <option value="1">No</option>
 									<option value="2">Yes</option>
 			                    </select>
@@ -403,6 +406,7 @@
 	        				<label for="shttzl" class="layui-form-label">疼痛治疗</label>
 			                <div class="layui-input-block">
 			             		 <select name="shttzl" xm-select-radio xm-select="shttzl-select"  xm-select-search=""  lay-search="">
+									<option value="-1">无</option>
 									<option value="1">口服药</option>
 									<option value="2">静脉推注</option>
 									<option value="3">静脉镇痛泵</option>
@@ -531,6 +535,8 @@
     	$('#doc_memo').val(doc.memo);
     	$('#doc_qaMemo').val(doc.qaMemo);
     	$('#doc_adminMemo').val(doc.adminMemo);
+    	
+    	$("#sex_" + doc.patientSex).attr("checked", true);
     	
     	//图片参数
     	var photoCount = 0;

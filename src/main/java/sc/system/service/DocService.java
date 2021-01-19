@@ -76,13 +76,20 @@ public class DocService {
     	List<WebScDoc> ls = docMapper.selectWebScDocList(doc);
     	for(WebScDoc d : ls){
     		if(d.getStatus() != null && !d.getStatus().equals("")){
-    			d.setPatientName(d.getTmpPatientName());
-    			d.setPatientAge(d.getTmpPatientAge());
-    			d.setPatientSex(d.getTmpPatientSex());
-    			d.setOperativeId(d.getTmpOperativeId());
-    			d.setOperativeName(d.getTmpOperativeName());
-    			d.setAnestheticId(d.getTmpAnestheticId());
-    			d.setAnestheticName(d.getTmpAnestheticName());
+    			if(d.getTmpPatientName() != null)
+    				d.setPatientName(d.getTmpPatientName());
+    			if(d.getTmpPatientAge() != null)
+    				d.setPatientAge(d.getTmpPatientAge());
+    			if(d.getTmpPatientSex() != null)
+    				d.setPatientSex(d.getTmpPatientSex());
+    			if(d.getTmpOperativeId() != null)
+    				d.setOperativeId(d.getTmpOperativeId());
+    			if(d.getTmpOperativeName() != null)
+    				d.setOperativeName(d.getTmpOperativeName());
+    			if(d.getTmpAnestheticId() != null)
+    				d.setAnestheticId(d.getTmpAnestheticId());
+    			if(d.getTmpAnestheticName() != null)
+    				d.setAnestheticName(d.getTmpAnestheticName());
 
     			String photo = "";
     			if(d.getPhoto_1() != null && !d.getPhoto_1().trim().equals("")){

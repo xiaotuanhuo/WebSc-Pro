@@ -224,13 +224,29 @@
 		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
 	     	<label for="operateStartTime" class="layui-form-label">手术日期</label>
 			<div class="layui-input-block">
-				<input type="text" id="doc_table_5_date" autocomplete="off" class="layui-input" >
+				<input type="text" id="doc_table_5_operateStartTime" autocomplete="off" class="layui-input" >
 			</div>
 		</div>
+		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+	     	<label for="operateEndTime" class="layui-form-label">至</label>
+			<div class="layui-input-block">
+				<input type="text" id="doc_table_5_operateEndTime" autocomplete="off" class="layui-input" >
+			</div>
+		</div>
+		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+		</div>
+		</div>
+		<div class="layui-row">
 		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
 	 		<label for="patientName" class="layui-form-label">患者姓名</label>
 			<div class="layui-input-block">
 				<input type="text" id="doc_table_5_patientName" lay-vertype="tips" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+	 		<label for="qaUserName" class="layui-form-label">医生姓名</label>
+			<div class="layui-input-block">
+				<input type="text" id="doc_table_5_qaUserName" lay-vertype="tips" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="text-align: left;padding-left: 10px;margin-top: 11px;">
@@ -568,7 +584,12 @@
         	});
             
             laydate.render({
-                elem: '#doc_table_5_date'
+                elem: '#doc_table_5_operateStartTime'
+            	,type: 'date'
+            	,calendar: true
+        	});
+            laydate.render({
+                elem: '#doc_table_5_operateEndTime'
             	,type: 'date'
             	,calendar: true
         	});
@@ -752,8 +773,9 @@
                         , {field: 'patientSex', title: '性别', templet: '#sexTpl', unresize: true, align: 'center',sort: true, width:'5%'}
                         , {field: 'operativeName', title: '手术名称', align: 'center',sort: true, width:'20%'}
                         , {field: 'anestheticName', title: '麻醉方法', align: 'center',sort: true, width:'12%'}
-                        , {field: 'orgName', title: '订单来源', align: 'center',sort: true, width:'15%'}
-                        , {field: 'documentType', title: '订单类型', templet: '#documentTypeTpl', unresize: true, align: 'center',sort: true, width:'10%'}
+                        , {field: 'orgName', title: '订单来源', align: 'center',sort: true, width:'10%'}
+                        , {field: 'documentType', title: '订单类型', templet: '#documentTypeTpl', unresize: true, align: 'center',sort: true, width:'7%'}
+                        , {field: 'qaUserName', title: '主麻', templet: '#JgQaTpl', unresize: true, align: 'center',sort: true, width:'8%'}
                         , {title: '评分', fixed: 'right', align: 'center', toolbar: '#evaluation-column-toolbar'}
                         , {title: '操作', fixed: 'right', align: 'center', toolbar: '#ls-column-toolbar'}
                     ]
@@ -960,7 +982,7 @@
                 	});
                 }else if(event === 'DrEvaluation'){
                 	layer.open({
-                		content: '/doc/evaluation?documentId=' + data.documentId + "&type=1",
+                		content: '/doc/drevaluation?documentId=' + data.documentId + "&type=1",
                      	title: "医生评价",
                      	area: ['100%', '100%'],
                      	type: 2,
@@ -973,7 +995,7 @@
                 	});
                 }else if(event === 'JgEvaluation'){
                 	layer.open({
-                		content: '/doc/evaluation?documentId=' + data.documentId + "&type=0",
+                		content: '/doc/jgevaluation?documentId=' + data.documentId + "&type=0",
                      	title: "医生评价",
                      	area: ['100%', '100%'],
                      	type: 2,
@@ -1159,7 +1181,9 @@
      	      		url: '/doc/list',
      		       	where: {
      		       		state: '5', 
-     		       		date: $('#doc_table_5_date').val(),
+     		       		beginDate: $('#doc_table_5_operateStartTime').val(),
+     		       		endDate: $('#doc_table_5_operateEndTime').val(),
+     		       		qaUserName: $('#doc_table_5_qaUserName').val(),
      		       		patientName: $('#doc_table_5_patientName').val()
      		    	}
      	      		});

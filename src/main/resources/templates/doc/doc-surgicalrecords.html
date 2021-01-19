@@ -272,6 +272,7 @@
 	        				<label for="ywsjHxxt" class="layui-form-label zadmin-red">呼吸系统</label>
 			                <div class="layui-input-block">
 			            		<select name="ywsjHxxt" xm-select="ywsjHxxt-select"  xm-select-search=""  lay-search="">
+			            			<option value="-1"></option>
 			                        <option value="0">频繁舌后坠（≥3次）</option>
 									<option value="1">喉痉挛</option>
 									<option value="2">返流</option>
@@ -294,6 +295,7 @@
 	        				<label for="ywsjXhxt" class="layui-form-label zadmin-red">循环系统</label>
 			                <div class="layui-input-block">
 			             		 <select name="ywsjXhxt" xm-select="ywsjXhxt-select"  xm-select-search=""  lay-search="">
+			             		 	<option value="-1"></option>
 			                        <option value="0">需纠正的低血压</option>
 									<option value="1">需纠正的高血压</option>
 									<option value="2">肺动脉栓塞</option>
@@ -315,6 +317,7 @@
 	        				<label for="ywsjGm" class="layui-form-label zadmin-red">过敏源</label>
 			                <div class="layui-input-block">
 			             		 <select name="ywsjGm" xm-select-radio xm-select="ywsjGm-select"  xm-select-search=""  lay-search="">
+			                        <option value="-1"></option>
 			                        <option value="1">No</option>
 									<option value="2">Yes</option>
 			                    </select>
@@ -354,6 +357,7 @@
 	        				<label for="shttzl" class="layui-form-label zadmin-red">疼痛治疗</label>
 			                <div class="layui-input-block">
 			             		 <select name="shttzl" xm-select-radio xm-select="shttzl-select"  xm-select-search=""  lay-search="">
+									<option value="-1"></option>
 									<option value="1">口服药</option>
 									<option value="2">静脉推注</option>
 									<option value="3">静脉镇痛泵</option>
@@ -428,6 +432,7 @@
             	,type: 'datetime'
             	,min: 0
             	,calendar: true
+            	,trigger: 'click'
         	});
             
             laydate.render({
@@ -436,6 +441,7 @@
             	,min: 0
             	,value: doc.sskssj != null ? new Date(doc.sskssj):''
             	,calendar: true
+            	,trigger: 'click'
             	,done: function(value, date, endDate){
             		var doc_ssjssj_val = $("#doc_ssjssj").val();
             		if(doc_ssjssj_val != ''){
@@ -460,6 +466,7 @@
             	,min: 0
             	,value: doc.ssjssj != null ? new Date(doc.ssjssj):''
             	,calendar: true
+            	,trigger: 'click'
             	,done: function(value, date, endDate){
             		var doc_sskssj_val = $("#doc_sskssj").val();
             		if(doc_sskssj_val != ''){

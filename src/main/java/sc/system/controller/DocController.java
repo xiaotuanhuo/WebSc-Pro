@@ -90,18 +90,25 @@ public class DocController {
 		}else if(roleId.equals("2")){
 			//医疗机构人员，查询本机构发布订单
 			docQuery.setApplyUserId(String.valueOf(user.getUserId()));
+			
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+			docQuery.setArea(user.getArea());
 		}else if(roleId.equals("3")){
 			//卫监局人员，查询所有订单？？？？？？
-			
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+			docQuery.setArea(user.getArea());
 		}else if(roleId.equals("5")){
 			//医生，查询主治医生
 			docQuery.setQaUserId(String.valueOf(user.getUserId()));
+			
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
 		}
-				
-		//省，市，区   查询范围
-		docQuery.setProvince(user.getProvince());
-		docQuery.setCity(user.getCity());
-		docQuery.setArea(user.getArea());
 				
 		StateCount sc = docService.getStateCount(docQuery);
 		
@@ -212,6 +219,7 @@ public class DocController {
     											@RequestParam(value = "date", required=false) String date,
     											@RequestParam(value = "beginDate", required=false) String beginDate,
     											@RequestParam(value = "endDate", required=false) String endDate,
+    											@RequestParam(value = "qaUserName", required=false) String qaUserName,
     											@RequestParam(value = "patientName", required=false) String patientName,
     											@RequestParam(value = "patienttypeId", required=false) String patienttypeId,
     											@RequestParam(value = "asa", required=false) String asa,
@@ -230,18 +238,31 @@ public class DocController {
 		}else if(roleId.equals("2")){
 			//医疗机构人员，查询本机构发布订单
 			docQuery.setApplyUserId(String.valueOf(user.getUserId()));
+			
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+			docQuery.setArea(user.getArea());
 		}else if(roleId.equals("3")){
 			//卫监局人员，查询所有订单？？？？？？
 			
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+			docQuery.setArea(user.getArea());
 		}else if(roleId.equals("5")){
 			//医生，查询主治医生
 			docQuery.setQaUserId(String.valueOf(user.getUserId()));
+			
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
 		}
 		
-		//省，市，区   查询范围
-		docQuery.setProvince(user.getProvince());
-		docQuery.setCity(user.getCity());
-		docQuery.setArea(user.getArea());
+//		//省，市，区   查询范围
+//		docQuery.setProvince(user.getProvince());
+//		docQuery.setCity(user.getCity());
+//		docQuery.setArea(user.getArea());
 		
 		docQuery.setDocumentState(state);
 		
@@ -249,6 +270,15 @@ public class DocController {
 		if(date != null && !date.trim().equals("")){
 			docQuery.setOperateStartTime(date + " 00:00:00");
 			docQuery.setOperateEndTime(date + " 23:59:59");
+		}
+		if(beginDate != null && !beginDate.trim().equals("")){
+			docQuery.setOperateStartTime(beginDate + " 00:00:00");
+		}
+		if(endDate != null && !endDate.trim().equals("")){
+			docQuery.setOperateEndTime(endDate + " 23:59:59");
+		}
+		if(qaUserName != null && !qaUserName.trim().equals("")){
+			docQuery.setQaUserName(qaUserName);
 		}
 		if(patientName != null && !patientName.trim().equals("")){
 			docQuery.setPatientName(patientName);
@@ -490,7 +520,7 @@ public class DocController {
         	String filePath = "/" + documentId + "_"+originalFilename;
         	
         	File dir = new File(dirPath + filePath);
-        	System.out.println("路径:" + dirPath + filePath);
+        	//System.out.println("路径:" + dirPath + filePath);
         	if (dir.exists()) {
         		object.put("code", "fail");
     			object.put("message", "同名文件已存在！");
@@ -1035,8 +1065,28 @@ public class DocController {
         return ResultBean.success(qaTeamService.deleteQaUser(deleteMap));
     }
 	
-	@GetMapping("/evaluation")
-    public String evaluation(@RequestParam(value = "documentId") String documentId, 
+	@GetMapping("/drevaluation")
+    public String drevaluation(@RequestParam(value = "documentId") String documentId, 
+    						 @RequestParam(value = "type") String type, 
+    						 Model model) {
+		WebScDoc tmpdoc = new WebScDoc();
+		
+		WebScDoc doc = new WebScDoc();
+		doc.setDocumentId(documentId);
+    	List<WebScDoc> docs = docService.selectWebScDocList(1, 1, doc);
+		if(docs != null){
+			//查询订单当日医院情况
+			tmpdoc = docs.get(0);
+		}
+		
+		model.addAttribute("type", type);
+		model.addAttribute("doc", tmpdoc);
+		
+		return "doc/doc-evaluation";
+	}
+	
+	@GetMapping("/jgevaluation")
+    public String jgevaluation(@RequestParam(value = "documentId") String documentId, 
     						 @RequestParam(value = "type") String type, 
     						 Model model) {
 		WebScDoc tmpdoc = new WebScDoc();
@@ -1059,7 +1109,7 @@ public class DocController {
     @PostMapping("/save_evaluation")
     @ResponseBody
     public ResultBean save_evaluation(@RequestParam(value = "id") String documentId,
-    						  		  @RequestParam(value = "evaluate") Integer evaluate,
+    						  		  @RequestParam(value = "evaluate") Float evaluate,
     						  		  @RequestParam(value = "memo") String memo,
     						  		  @RequestParam(value = "type") String type) {
 		WebScDoc doc = new WebScDoc();

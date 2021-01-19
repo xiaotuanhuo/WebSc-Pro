@@ -32,9 +32,9 @@
     	<result column="operate_start_time" jdbcType="VARCHAR" property="operateStartTime"/>
     	<result column="operate_end_time" jdbcType="VARCHAR" property="operateEndTime"/>
     	<result column="create_date" jdbcType="VARCHAR" property="createDate"/>
-    	<result column="hospital_evaluate" jdbcType="INTEGER" property="hospitalEvaluate"/>
+    	<result column="hospital_evaluate" jdbcType="NUMERIC" property="hospitalEvaluate"/>
     	<result column="hospital_evaluate_memo" jdbcType="VARCHAR" property="hospitalEvaluateMemo"/>
-    	<result column="doctor_evaluate" jdbcType="INTEGER" property="doctorEvaluate"/>
+    	<result column="doctor_evaluate" jdbcType="NUMERIC" property="doctorEvaluate"/>
     	<result column="doctor_evaluate_memo" jdbcType="VARCHAR" property="doctorEvaluateMemo"/>
     	<result column="old_document_state" jdbcType="VARCHAR" property="oldDocumentState"/>
     	<result column="delete_reason" jdbcType="VARCHAR" property="deleteReason"/>
@@ -361,6 +361,7 @@
     </select>
     
     <select id="selectWebScDocList" parameterType="sc.system.model.WebScDoc" resultMap="BaseResultMap">
+    select * from (
     <![CDATA[
     	select 
     		doc.document_id,
@@ -533,7 +534,12 @@
       	<if test="patientName != null and patientName != ''">
       		and doc.patient_name like concat(#{patientName,jdbcType=VARCHAR}, '%')
       	</if>
-      	order by doc.operate_start_time desc
+      	) tmpTab 
+      	where 1=1 
+      	<if test="qaUserName != null and qaUserName != ''">
+      		and qa_user_name like concat(#{qaUserName,jdbcType=VARCHAR}, '%')
+      	</if>
+      	order by operate_start_time desc
     </select>
     
     <select id="findWebScDocOrg" parameterType="java.lang.String" resultType="sc.system.model.WebScOrganization">
