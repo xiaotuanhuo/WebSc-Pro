@@ -192,24 +192,20 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<div class="layui-input-block"
-						style="margin-left: 0; text-align: center;">
-						<input type="hidden" id="userId" name="userId"
-							th:value="${user.userId}"> <input type="hidden"
-							id="roleId" name="roleId" th:value="${user.roleId}"> <input
-							type="hidden" id="roleTypeId" name="roleTypeId"
-							th:value="${user.roleTypeId}"> <input type="hidden"
-							id="patients" name="patients" th:value="${user.patientType}">
-						<input type="hidden" id="operations" name="operations"
-							th:value="${user.operationType}"> <input type="hidden"
-							id="province" name="province" th:value="${user.province}">
+					<div class="layui-input-block" style="margin-left: 0; text-align: center;">
+						<input type="hidden" id="userId" name="userId" th:value="${user.userId}">
+						<input type="hidden" id="roleId" name="roleId" th:value="${user.roleId}">
+						<input type="hidden" id="roleTypeId" name="roleTypeId" th:value="${user.roleTypeId}">
+						<input type="hidden" id="patients" name="patients" th:value="${user.patientType}">
+						<input type="hidden" id="operations" name="operations" th:value="${user.operationType}">
+						<input type="hidden" id="province" name="province" th:value="${user.province}">
 						<input type="hidden" id="city" name="city" th:value="${user.city}">
 						<input type="hidden" id="area" name="area" th:value="${user.area}">
 						<input type="hidden" id="titlesLeave" name="titlesLeave" th:value="${user.titles}">
 						<!-- 表单提交按钮 -->
 						<button id="submitForm" th:text="修改"
-							class="layui-btn layui-btn-normal btn-w100" lay-submit=""
-							data-th-lay-filter="edit"></button>
+							class="layui-btn layui-btn-normal btn-w100" lay-submit="" data-th-lay-filter="edit">
+						</button>
 					</div>
 				</div>
 			</form>
@@ -334,7 +330,7 @@
 						hideNurse();
 					} else if (isAdd && arr.length != 0 && arr[0].roleId == 9) {
 						// 选择医疗机构订单录入员角色时加载当前用户区划及其下属医疗机构组织
-						loadTree('/organization/tree');
+						loadTree('/organization/tree/isLeaf');
 						hideDoctor();
 						hideNurse();
 					}
@@ -586,6 +582,8 @@
 				} else if (roleKit.getValue('valueStr') == '6') {
 					titleLeave = nurseTitlesKit.getValue('valueStr');
 				}
+				form.field.patientType = patientKit.getValue('valueStr');
+				form.field.operationType = operationKit.getValue('valueStr');
 				form.field.roleId = roleKit.getValue('valueStr');
 				form.field.photo = $('#credential_hide').val();
 				form.field.titles = titleLeave;
@@ -659,7 +657,7 @@
 			} else if (roleType == '8') {
 				loadTree('/dept/tree');
 			} else if (roleType == '9') {
-				loadTree('/organization/tree');
+				loadTree('/organization/tree/isLeaf');
 			}
 			
         });
