@@ -22,6 +22,7 @@ import sc.common.util.PageResultBean;
 import sc.common.util.ShiroUtil;
 import sc.common.util.StringUtil;
 import sc.common.util.UUID19;
+import sc.common.util.UnixtimeUtil;
 import sc.system.mapper.AnestheticMapper;
 import sc.system.mapper.DocMapper;
 import sc.system.mapper.OperativeMapper;
@@ -390,6 +391,14 @@ public class DocService {
     			if("1".equals(docMapper.isExists(
     					doc.getPatientName(), doc.getOperateStartTime(), doc.getOrgId(), doc.getOperativeId()))) {
     				throw new Exception("订单已经存在");
+    			}
+    			
+    			Date operativeDate = DateUtils.parseDate(doc.getOperateStartTime());
+    			if(UnixtimeUtil.getUnixHour(new Date().getTime())+24>=
+    			UnixtimeUtil.getUnixHour(operativeDate.getTime())) {
+    				doc.setDocumentType("1");
+    			}else {
+    				doc.setDocumentType("0");
     			}
     			
     			doc.setApplyUserId(ShiroUtil.getCurrentUser().getUserId()+"");
