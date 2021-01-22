@@ -48,6 +48,7 @@ import com.github.pagehelper.PageHelper;
 
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 
 @Service
 public class UserService {
@@ -112,7 +113,6 @@ public class UserService {
 		return UploadUtil.upload(file, uploadPath);
 	}
 	
-	@Transactional
 	public Integer add(WebScUser user) {
 		boolean index = false;	// 医生或者护士 更新索引文件
 		checkLoginNameExistOnCreate(user.getLoginName());
@@ -154,8 +154,13 @@ public class UserService {
 		}
 		int result = userMapper.insert(user);
 		if (index && result == 1) {
-			HttpRequest.post(indexUrl).header(Header.CONTENT_TYPE, "application/json")
+			HttpResponse response = HttpRequest.post(indexUrl).header(Header.CONTENT_TYPE, "application/json")
 					.header(Header.ACCEPT, "application/json").execute();
+			if (response.getStatus() == 200) {
+				log.info("更新索引文件请求成功");
+			} else {
+				log.info("更新索引文件请求失败:" + response.getStatus());
+			}
 		}
 		return user.getUserId();
 	}
@@ -223,7 +228,6 @@ public class UserService {
 		userMapper.activeUserByUserId(userId);
 	}
 	
-	@Transactional
 	public boolean update(WebScUser user) {
 		boolean index = false;
 		boolean result = false;
@@ -261,8 +265,13 @@ public class UserService {
 		}
 		result = userMapper.updateByUser(user) == 1;
 		if (index && result) {
-			HttpRequest.post(indexUrl).header(Header.CONTENT_TYPE, "application/json")
+			HttpResponse response = HttpRequest.post(indexUrl).header(Header.CONTENT_TYPE, "application/json")
 			.header(Header.ACCEPT, "application/json").execute();
+			if (response.getStatus() == 200) {
+				log.info("更新索引文件请求成功");
+			} else {
+				log.info("更新索引文件请求失败:" + response.getStatus());
+			}
 		}
 		return result;
 	}

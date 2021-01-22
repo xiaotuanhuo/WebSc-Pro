@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import com.github.pagehelper.PageHelper;
 
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import sc.common.exception.DuplicateNameException;
 import sc.common.util.UUID19;
 import sc.system.mapper.OperativeMapper;
@@ -19,6 +22,8 @@ import sc.system.model.WebScOperative;
 
 @Service
 public class OperativeService {
+	private static final Logger log = LoggerFactory.getLogger(OperativeService.class);
+	
 	@Resource
     private OperativeMapper operativeMapper;
 	
@@ -38,7 +43,6 @@ public class OperativeService {
 		return operativeMapper.selectOperativeById(operativeId);
 	}
 	
-	@Transactional
 	public void add(WebScOperative operative) {
 		String operativeName = operative.getOperativeName().trim();	// 消除前后空格
 		checkNameExistOnCreate(operativeName);
@@ -50,28 +54,32 @@ public class OperativeService {
 		if (result == 1) {
 			String reqData = "{" + 
 	        		"\"token\":\"" + "operativeluceneupdtoken1234" + "\"}";
-			String data = HttpRequest.post(indexUrl)
-					.header(Header.CONTENT_TYPE, "application/json")
-					.header(Header.ACCEPT, "application/json")
-					.body(reqData)
-					.execute().body();
+			HttpResponse response = HttpRequest.post(indexUrl).header(Header.CONTENT_TYPE, "application/json")
+					.header(Header.ACCEPT, "application/json").body(reqData).execute();
+			if (response.getStatus() == 200) {
+				log.info("更新索引文件请求成功");
+			} else {
+				log.info("更新索引文件请求失败:" + response.getStatus());
+			}
 		}
 	}
 	
-	@Transactional
 	public void update(WebScOperative operative) {
 		String operativeName = operative.getOperativeName().trim();	// 消除前后空格
 		operative.setOperativeName(operativeName);
+		operative.setUrgenttime(0);
 		checkNameExistOnUpdate(operative);
 		int result = operativeMapper.updateByPrimaryKey(operative);
 		if (result == 1) {
 			String reqData = "{" + 
 	        		"\"token\":\"" + "operativeluceneupdtoken1234" + "\"}";
-			String data = HttpRequest.post(indexUrl)
-					.header(Header.CONTENT_TYPE, "application/json")
-					.header(Header.ACCEPT, "application/json")
-					.body(reqData)
-					.execute().body();
+			HttpResponse response = HttpRequest.post(indexUrl).header(Header.CONTENT_TYPE, "application/json")
+					.header(Header.ACCEPT, "application/json").body(reqData).execute();
+			if (response.getStatus() == 200) {
+				log.info("更新索引文件请求成功");
+			} else {
+				log.info("更新索引文件请求失败:" + response.getStatus());
+			}
 		}
 	}
 	
