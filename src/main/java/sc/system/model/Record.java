@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Record {
     private Integer recordId;
 
-    private Integer userId;
+    private String userId;
 
     private String orgId;
 
@@ -39,15 +39,15 @@ public class Record {
         this.recordId = recordId;
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
+    public String getUserId() {
+		return userId;
+	}
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-    public String getOrgId() {
+	public String getOrgId() {
         return orgId;
     }
 

@@ -12,8 +12,8 @@ import sc.system.model.WebScCalendarAid;
 
 public interface WebScCalendarMapper {
 	
-	@Select("SELECT * FROM WSC_CALENDAR WHERE user_id = ${doctorId}")
-	List<WebScCalendar> selectCalendarsByDoctor(@Param("doctorId") int doctorId);
+	@Select("SELECT * FROM WSC_CALENDAR WHERE user_id = #{doctorId}")
+	List<WebScCalendar> selectCalendarsByDoctor(@Param("doctorId") String doctorId);
 	
 	/**
 	 * 根据可变条件查询医生备休情况

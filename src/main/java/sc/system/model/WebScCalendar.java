@@ -5,7 +5,7 @@ import java.util.Date;
 public class WebScCalendar {
     private String calendarId;
 
-    private Integer userId;
+    private String userId;
 
     private String title;
 
@@ -23,15 +23,15 @@ public class WebScCalendar {
         this.calendarId = calendarId;
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
+    public String getUserId() {
+		return userId;
+	}
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-    public String getTitle() {
+	public String getTitle() {
         return title;
     }
 
