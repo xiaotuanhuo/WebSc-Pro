@@ -41,14 +41,22 @@ public class DeptService {
 		return deptMapper.selectByPrimaryKey(deptId);
 	}
 	
+	/**
+	 * 医生集团总部
+	 * @return
+	 */
+	public WebScDept getSuperDept() {
+		return deptMapper.selectSuperDept();
+	}
+	
 	public String add(WebScDept dept) {
 		if (dept.getProvince() != null && dept.getProvince().equals("")) {
 			dept.setProvince(null);
 		}
-		if (dept.getCity() != null && dept.getCity().equals("")) {
-			dept.setCity(null);
-		}
-		checkDistExist(dept.getProvince(), dept.getCity());
+//		if (dept.getCity() != null && dept.getCity().equals("")) {
+//			dept.setCity(null);
+//		}
+		checkDistExist(dept.getProvince());
 		checkNameExist(null, dept.getDeptName());
 		dept.setDeptId(UUID19.uuid());
 		deptMapper.insert(dept);
@@ -56,12 +64,12 @@ public class DeptService {
 	}
 	
 	public boolean update(WebScDept dept) {
-		if (dept.getCity() != null && dept.getCity().equals("")) {
-			dept.setCity(null);
-		}
-		if (dept.getProvince() != null && dept.getProvince().equals("")) {
-			dept.setProvince(null);
-		}
+//		if (dept.getCity() != null && dept.getCity().equals("")) {
+//			dept.setCity(null);
+//		}
+//		if (dept.getProvince() != null && dept.getProvince().equals("")) {
+//			dept.setProvince(null);
+//		}
 		checkNameExist(dept.getDeptId(), dept.getDeptName());
 		return deptMapper.updateByPrimaryKey(dept) == 1;
 	}
@@ -214,17 +222,35 @@ public class DeptService {
 		Subject subject = SecurityUtils.getSubject();
 		WebScUser user = (WebScUser) subject.getPrincipal();
 		List<WebScDept> depts = deptMapper.selectTree(user.getRoleTypeId());
-		return getCityTree(depts);
+		return desabledUnleaf(depts);
 	}
 	
-	private List<WebScDept> getCityTree(List<WebScDept> depts) {
+//	private List<WebScDept> getCityTree(List<WebScDept> depts) {
+//		if (depts.size() > 0) {
+//			for (WebScDept dept : depts) {
+//				if (dept.getCity() == null || dept.getCity().equals("")) {
+//					dept.setDisabled(false);
+//				}
+//				if (dept.getChildren().size() > 0) {
+//					getCityTree(dept.getChildren());
+//				}
+//			}
+//		}
+//		return depts;
+//	}
+	/**
+	 * 禁用非叶子节点
+	 * @param depts
+	 * @return
+	 */
+	private List<WebScDept> desabledUnleaf(List<WebScDept> depts) {
 		if (depts.size() > 0) {
 			for (WebScDept dept : depts) {
-				if (dept.getCity() == null || dept.getCity().equals("")) {
+				if (dept.getProvince() == null || dept.getProvince().equals("")) {
 					dept.setDisabled(true);
 				}
 				if (dept.getChildren().size() > 0) {
-					getCityTree(dept.getChildren());
+					desabledUnleaf(dept.getChildren());
 				}
 			}
 		}
@@ -249,8 +275,14 @@ public class DeptService {
 		return deptMapper.selectUnleafTree(user.getRoleTypeId());
 	}
 	
-	private void checkDistExist(String province, String city) {
-		if (deptMapper.countByDist(province, city) > 0) {
+//	private void checkDistExist(String province, String city) {
+//		if (deptMapper.countByDist(province, city) > 0) {
+//			throw new DuplicateNameException("当前行政区划下已存在医疗集团");
+//		}
+//	}
+	
+	private void checkDistExist(String province) {
+		if (deptMapper.countByDist(province) > 0) {
 			throw new DuplicateNameException("当前行政区划下已存在医疗集团");
 		}
 	}
@@ -305,7 +337,7 @@ public class DeptService {
 		Subject subject = SecurityUtils.getSubject();
 		WebScUser user = (WebScUser) subject.getPrincipal();
 		List<DistTree> dists = new ArrayList<DistTree>();
-		WebScDept superDept = deptMapper.selectSuperDept();	// 医疗机构根节点
+		WebScDept superDept = deptMapper.selectSuperDept();	// 医生集团根节点
 		if (superDept == null) {
 			return dists;
 		}
@@ -314,7 +346,7 @@ public class DeptService {
 			DistTree superDist = new DistTree();
 			DistTree provinceDist = new DistTree();
 			switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
-				// 系统管理员 超级管理员添加医疗机构根节点
+				// 系统管理员 超级管理员添加医生集团根节点
 				case XTGLY:
 					superDist.setId(superDept.getDeptId());
 					superDist.setParentId(superDept.getParentId());
@@ -331,7 +363,7 @@ public class DeptService {
 					break;
 				case QYGLY:
 					// 区域管理员仅有省属和市属
-					// 市属区域管理员添加以医疗机构根节点为父节点的省级节点
+					// 市属区域管理员添加以医生集团根节点为父节点的省级节点
 					if (user.getCity() != null) {
 						provinceDist.setId(user.getProvince());
 						provinceDist.setParentId(superDept.getDeptId());
@@ -339,7 +371,7 @@ public class DeptService {
 						provinceDist.setInstitution(user.getRoleTypeId());
 						dists.add(provinceDist);
 					}
-					// 添加医疗机构根节点
+					// 添加医生集团根节点
 					superDist.setId(superDept.getDeptId());
 					superDist.setParentId(superDept.getParentId());
 					superDist.setName(superDept.getDeptName());

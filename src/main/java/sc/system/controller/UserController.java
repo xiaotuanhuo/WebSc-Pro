@@ -60,7 +60,7 @@ public class UserController {
 	}
     
     @GetMapping("/detail/{userId}")
-	public String detail(@PathVariable("userId") Integer userId, Model model) {
+	public String detail(@PathVariable("userId") String userId, Model model) {
     	WebScUser user = userService.selectOne(userId);
 		model.addAttribute("user", user);
 		model.addAttribute("roles", roleService.getRolesBytUserRole(Integer.parseInt(user.getRoleId())));
@@ -74,7 +74,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/credentials/{userId}")
-	public String credentials(@PathVariable("userId") Integer userId, Model model) {
+	public String credentials(@PathVariable("userId") String userId, Model model) {
     	WebScUser user = userService.selectOne(userId);
 		model.addAttribute("user", userService.selectOne(userId));
 		model.addAttribute("patients", userService.getPatients(user.getPatientType()));
@@ -92,7 +92,7 @@ public class UserController {
     }
     
 	@GetMapping("/{userId}")
-	public String update(@PathVariable("userId") Integer userId, Model model) {
+	public String update(@PathVariable("userId") String userId, Model model) {
 //		model.addAttribute("roleIds", userService.selectRoleIdsById(userId));
 		WebScUser user = userService.selectOne(userId);
 		model.addAttribute("user", user);
@@ -118,27 +118,27 @@ public class UserController {
 	@OperationLog("禁用账号")
 	@PostMapping("/{userId:\\d+}/disable")
 	@ResponseBody
-	public ResultBean disable(@PathVariable("userId") Integer userId) {
+	public ResultBean disable(@PathVariable("userId") String userId) {
 		return ResultBean.success(userService.disableUserByID(userId));
 	}
 	
 	@OperationLog("激活账号")
 	@PostMapping("/{userId}/enable")
 	@ResponseBody
-	public ResultBean enable(@PathVariable("userId") Integer userId) {
+	public ResultBean enable(@PathVariable("userId") String userId) {
 		return ResultBean.success(userService.enableUserByID(userId));
 	}
 	
 	@OperationLog("删除账号")
 	@DeleteMapping("/{userId}")
 	@ResponseBody
-	public ResultBean delete(@PathVariable("userId") Integer userId) {
+	public ResultBean delete(@PathVariable("userId") String userId) {
 		userService.delete(userId);
 		return ResultBean.success();
 	}
 	
 	@GetMapping("/reset/{userId}")
-	public String resetPassword(@PathVariable("userId") Integer userId, Model model) {
+	public String resetPassword(@PathVariable("userId") String userId, Model model) {
 		model.addAttribute("userId", userId);
 		return "user/user-reset-pwd";
 	}
@@ -146,7 +146,7 @@ public class UserController {
 	@OperationLog("重置密码")
 	@PostMapping("/reset/{userId}")
 	@ResponseBody
-	public ResultBean resetPassword(@PathVariable("userId") Integer userId, String password) {
+	public ResultBean resetPassword(@PathVariable("userId") String userId, String password) {
 		userService.updatePasswordByUserId(userId, password);
 		return ResultBean.success();
 	}
@@ -160,7 +160,7 @@ public class UserController {
 	@OperationLog("重置密码")
 	@PostMapping("/{userId}/updatepwd")
 	@ResponseBody
-	public ResultBean updatePassword(@PathVariable("userId") Integer userId, String password) {
+	public ResultBean updatePassword(@PathVariable("userId") String userId, String password) {
 		userService.updatePasswordByUserId(userId, password);
 		return ResultBean.success();
 	}
@@ -168,7 +168,7 @@ public class UserController {
 	@OperationLog("锁定用户")
 	@PutMapping("/lock/{userId}")
 	@ResponseBody
-	public ResultBean lock(@PathVariable("userId") int userId) {
+	public ResultBean lock(@PathVariable("userId") String userId) {
 		userService.lock(userId);
 		return ResultBean.success();
 	}
@@ -176,7 +176,7 @@ public class UserController {
 	@OperationLog("激活用户")
 	@PutMapping("/unlock/{userId}")
 	@ResponseBody
-	public ResultBean unlock(@PathVariable("userId") int userId) {
+	public ResultBean unlock(@PathVariable("userId") String userId) {
 		userService.unlock(userId);
 		return ResultBean.success();
 	}

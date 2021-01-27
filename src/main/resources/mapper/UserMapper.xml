@@ -62,7 +62,7 @@
         titles, titles_no, work, 
         role_id, role_type_id, province, 
         city, area, patient_type, 
-        operation_type, status, last_login_time, 
+        operation_type, last_login_time, 
         create_time, modify_time, photo)
       values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, 
         #{loginPwd,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
@@ -71,7 +71,7 @@
         #{titles,jdbcType=VARCHAR}, #{titlesNo,jdbcType=VARCHAR}, #{work,jdbcType=INTEGER}, 
         #{roleId,jdbcType=VARCHAR}, #{roleTypeId,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
         #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{patientType,jdbcType=VARCHAR}, 
-        #{operationType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{lastLoginTime,jdbcType=TIMESTAMP}, 
+        #{operationType,jdbcType=VARCHAR}, #{lastLoginTime,jdbcType=TIMESTAMP}, 
         #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{photo,jdbcType=VARCHAR})
     </insert>
     

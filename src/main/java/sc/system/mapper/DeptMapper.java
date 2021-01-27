@@ -55,7 +55,8 @@ public interface DeptMapper {
      * @param city
      * @return
      */
-    int countByDist(@Param("province_code") String province, @Param("city_code") String city);
+//    int countByDist(@Param("province_code") String province, @Param("city_code") String city);
+    int countByDist(@Param("province_code") String province);
     
     /**
      * 统计该医疗集团名称数量

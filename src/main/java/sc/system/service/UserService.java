@@ -30,6 +30,7 @@ import sc.common.shiro.ShiroActionProperties;
 import sc.common.util.ResultBean;
 import sc.common.util.ShiroUtil;
 import sc.common.util.TreeUtil;
+import sc.common.util.UUID19;
 import sc.common.util.UploadUtil;
 import sc.system.mapper.BureauMapper;
 import sc.system.mapper.DeptMapper;
@@ -105,7 +106,7 @@ public class UserService {
 		return userMapper.selectWithRoleAndDist(uvo);
 	}
 	
-	public Integer[] selectRoleIdsById(Integer userId) {
+	public Integer[] selectRoleIdsById(String userId) {
 		return userMapper.selectRoleIdsByUserId(userId);
 	}
 	
@@ -113,12 +114,13 @@ public class UserService {
 		return UploadUtil.upload(file, uploadPath);
 	}
 	
-	public Integer add(WebScUser user) {
+	public String add(WebScUser user) {
 		boolean index = false;	// 医生或者护士 更新索引文件
 		checkLoginNameExistOnCreate(user.getLoginName());
 		String salt = generateSalt();
 		String encryptPassword = new Md5Hash(user.getLoginPwd(), salt).toString();
 		
+		user.setUserId(UUID19.uuid());
 		user.setSalt(salt);
 		user.setLoginPwd(encryptPassword);
 		if (user.getArea().equals("")) {
@@ -135,14 +137,11 @@ public class UserService {
 			user.setTitles(null);
 		}
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
-			case YS:
-			case HS:
-				index = true;
-				if (user.getPhoto().equals("")) {
-					user.setPhoto(defaultImage);
-				}
-				break;
-			default:
+			case XTGLY:
+			case CJGLY:
+				user.setProvince(null);
+				user.setCity(null);
+				user.setArea(null);
 				// 非医生护士角色清空项
 				user.setIdCard(null);
 				user.setCertificateNo(null);
@@ -150,6 +149,60 @@ public class UserService {
 				user.setTitles(null);
 				user.setTitlesNo(null);
 				user.setPhoto(null);
+				break;
+			case QYGLY:
+			case QYDDLRY:
+				WebScDept dept = deptMapper.selectByPrimaryKey(user.getRoleTypeId());
+				user.setProvince(dept.getProvince());
+				user.setCity(null);
+				user.setArea(null);
+				// 非医生护士角色清空项
+				user.setIdCard(null);
+				user.setCertificateNo(null);
+				user.setOccupationalNo(null);
+				user.setTitles(null);
+				user.setTitlesNo(null);
+				user.setPhoto(null);
+				break;
+			case YS:
+			case HS:
+				WebScDept dept2 = deptMapper.selectByPrimaryKey(user.getRoleTypeId());
+				user.setProvince(dept2.getProvince());
+				user.setCity(null);
+				user.setArea(null);
+				index = true;
+				if (user.getPhoto().equals("")) {
+					user.setPhoto(defaultImage);
+				}
+				break;
+			case YLJGGLY:
+			case JGDDLRY:
+				WebScOrganization organization = organizationMapper.selectByPrimaryKey(user.getRoleTypeId());
+				user.setProvince(organization.getProvince());
+				user.setCity(organization.getCity());
+				user.setArea(organization.getArea());
+				// 非医生护士角色清空项
+				user.setIdCard(null);
+				user.setCertificateNo(null);
+				user.setOccupationalNo(null);
+				user.setTitles(null);
+				user.setTitlesNo(null);
+				user.setPhoto(null);
+				break;
+			case WJJGLY:
+				WebScBureau bureau = bureauMapper.selectByPrimaryKey(user.getRoleTypeId());
+				user.setProvince(bureau.getProvince());
+				user.setCity(bureau.getCity());
+				user.setArea(bureau.getArea());
+				// 非医生护士角色清空项
+				user.setIdCard(null);
+				user.setCertificateNo(null);
+				user.setOccupationalNo(null);
+				user.setTitles(null);
+				user.setTitlesNo(null);
+				user.setPhoto(null);
+				break;
+			default:
 				break;
 		}
 		int result = userMapper.insert(user);
@@ -165,13 +218,13 @@ public class UserService {
 		return user.getUserId();
 	}
 	
-	public void lock(int userId) {
+	public void lock(String userId) {
 		WebScUser user = userMapper.selectByPrimaryKey(userId);
 		user.setStatus(ShiroUtil.LOCK);
 		userMapper.updateByPrimaryKey(user);
 	}
 	
-	public void unlock(int userId) {
+	public void unlock(String userId) {
 		// 校验其所属机构是否处于锁定状态
 		WebScUser user = userMapper.selectByPrimaryKey(userId);
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
@@ -209,12 +262,12 @@ public class UserService {
 		userMapper.updateLastLoginTimeByLoginName(loginname);
 	}
 	
-	public boolean disableUserByID(Integer id) {
+	public boolean disableUserByID(String id) {
 		offlineByUserId(id); // 加上这段代码, 禁用用户后, 会将当前在线的用户立即踢出.
 		return userMapper.updateStatusByPrimaryKey(id, "0") == 1;
 	}
 	
-	public boolean enableUserByID(Integer id) {
+	public boolean enableUserByID(String id) {
 		return userMapper.updateStatusByPrimaryKey(id, "1") == 1;
 	}
 	
@@ -224,7 +277,7 @@ public class UserService {
 	 * @param userId
 	 *            用户 ID
 	 */
-	public void activeUserByUserId(Integer userId) {
+	public void activeUserByUserId(String userId) {
 		userMapper.activeUserByUserId(userId);
 	}
 	
@@ -246,14 +299,11 @@ public class UserService {
 			user.setTitles(null);
 		}
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
-			case YS:
-			case HS:
-				index = true;
-				if (user.getPhoto().equals("")) {
-					user.setPhoto(defaultImage);
-				}
-				break;
-			default:
+			case XTGLY:
+			case CJGLY:
+				user.setProvince(null);
+				user.setCity(null);
+				user.setArea(null);
 				// 非医生护士角色清空项
 				user.setIdCard(null);
 				user.setCertificateNo(null);
@@ -261,6 +311,60 @@ public class UserService {
 				user.setTitles(null);
 				user.setTitlesNo(null);
 				user.setPhoto(null);
+				break;
+			case QYGLY:
+			case QYDDLRY:
+				WebScDept dept = deptMapper.selectByPrimaryKey(user.getRoleTypeId());
+				user.setProvince(dept.getProvince());
+				user.setCity(null);
+				user.setArea(null);
+				// 非医生护士角色清空项
+				user.setIdCard(null);
+				user.setCertificateNo(null);
+				user.setOccupationalNo(null);
+				user.setTitles(null);
+				user.setTitlesNo(null);
+				user.setPhoto(null);
+				break;
+			case YS:
+			case HS:
+				WebScDept dept2 = deptMapper.selectByPrimaryKey(user.getRoleTypeId());
+				user.setProvince(dept2.getProvince());
+				user.setCity(null);
+				user.setArea(null);
+				index = true;
+				if (user.getPhoto().equals("")) {
+					user.setPhoto(defaultImage);
+				}
+				break;
+			case YLJGGLY:
+			case JGDDLRY:
+				WebScOrganization organization = organizationMapper.selectByPrimaryKey(user.getRoleTypeId());
+				user.setProvince(organization.getProvince());
+				user.setCity(organization.getCity());
+				user.setArea(organization.getArea());
+				// 非医生护士角色清空项
+				user.setIdCard(null);
+				user.setCertificateNo(null);
+				user.setOccupationalNo(null);
+				user.setTitles(null);
+				user.setTitlesNo(null);
+				user.setPhoto(null);
+				break;
+			case WJJGLY:
+				WebScBureau bureau = bureauMapper.selectByPrimaryKey(user.getRoleTypeId());
+				user.setProvince(bureau.getProvince());
+				user.setCity(bureau.getCity());
+				user.setArea(bureau.getArea());
+				// 非医生护士角色清空项
+				user.setIdCard(null);
+				user.setCertificateNo(null);
+				user.setOccupationalNo(null);
+				user.setTitles(null);
+				user.setTitlesNo(null);
+				user.setPhoto(null);
+				break;
+			default:
 				break;
 		}
 		result = userMapper.updateByUser(user) == 1;
@@ -276,7 +380,7 @@ public class UserService {
 		return result;
 	}
 	
-	public WebScUser selectOne(Integer id) {
+	public WebScUser selectOne(String id) {
 		return userMapper.selectByPrimaryKey(id);
 	}
 	
@@ -309,7 +413,7 @@ public class UserService {
 	/**
 	 * 删除所有此用户的在线用户
 	 */
-	public void offlineByUserId(Integer userId) {
+	public void offlineByUserId(String userId) {
 		Collection<Session> activeSessions = sessionDAO.getActiveSessions();
 		for (Session session : activeSessions) {
 			SimplePrincipalCollection simplePrincipalCollection = (SimplePrincipalCollection) session
@@ -324,7 +428,7 @@ public class UserService {
 	}
 	
 	@Transactional
-	public void grantRole(Integer userId, Integer[] roleIds) {
+	public void grantRole(String userId, Integer[] roleIds) {
 		if (roleIds == null || roleIds.length == 0) {
 			throw new IllegalArgumentException("赋予的角色数组不能为空.");
 		}
@@ -338,7 +442,7 @@ public class UserService {
 	}
 	
 	@Transactional
-	public void delete(Integer userId) {
+	public void delete(String userId) {
 		// 检查删除的是否是超级管理员, 如果是, 则不允许删除.
 		WebScUser user = userMapper.selectByPrimaryKey(userId);
 		if (shiroActionProperties.getSuperAdminUsername().equals(user.getLoginName())) {
@@ -376,7 +480,7 @@ public class UserService {
 		return userMapper.selectOneByLoginName(loginname);
 	}
 	
-	public void updatePasswordByUserId(Integer userId, String password) {
+	public void updatePasswordByUserId(String userId, String password) {
 		String salt = generateSalt();
 		String encryptPassword = new Md5Hash(password, salt).toString();
 		userMapper.updatePasswordByUserId(userId, encryptPassword, salt);

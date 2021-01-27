@@ -384,6 +384,7 @@
 			};
 			
 			dtree.on("node('orgTree')" ,function(obj) {
+				console.log(123);
 				if (obj.param.recordData.area != undefined && obj.param.recordData.area.length != undefined) {
 					$('#area').val(obj.param.recordData.area);
 				}

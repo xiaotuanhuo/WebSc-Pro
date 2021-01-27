@@ -8,7 +8,7 @@ public class UserOnline implements Serializable {
     private static final long serialVersionUID = 3828664348416633856L;
 
     private String id;
-    private Integer userId;
+    private String userId;
     private String username;
     private String ip;
     private String status;
@@ -24,11 +24,11 @@ public class UserOnline implements Serializable {
         this.id = id;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

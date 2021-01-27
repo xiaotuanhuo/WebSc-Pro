@@ -270,7 +270,7 @@
         order by dept_id
     </select>
     
-    <select id="countByDist" resultType="java.lang.Integer">
+    <!-- <select id="countByDist" resultType="java.lang.Integer">
         select count(*)
         from WSC_DEPT
         <where>
@@ -287,6 +287,20 @@
 							AND parent_id = '0'
 						</otherwise>
 					</choose>
+				</otherwise>
+			</choose>
+        </where>
+    </select> -->
+    <select id="countByDist" resultType="java.lang.Integer">
+        select count(*)
+        from WSC_DEPT
+        <where>
+        	<choose>
+				<when test="province_code != null and province_code != ''">
+					AND province = #{province_code} AND city is null
+				</when>
+				<otherwise>
+					AND parent_id = '0'
 				</otherwise>
 			</choose>
         </where>

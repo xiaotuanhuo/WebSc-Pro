@@ -9,7 +9,7 @@ import sc.common.constants.RoleEnum;
  */
 public class UserVO {
 
-	private int userId;				// 当前用户id
+	private String userId;				// 当前用户id
 	private String role;			// 当前用户角色
 	private String adminRoleId;		// 系统管理员角色id
 	private String superRoleId;		// 超级管理员角色id
@@ -33,11 +33,11 @@ public class UserVO {
 		this.orgDocRoleId = RoleEnum.JGDDLRY.getCode() + "";
 	}
 
-	public int getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
