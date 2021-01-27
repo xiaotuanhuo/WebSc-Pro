@@ -41,7 +41,7 @@
       modify_time, photo, wx_openid, wx_userid
     </sql>
 
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from WSC_USER
@@ -54,7 +54,7 @@
         where user_id = #{userId,jdbcType=VARCHAR}
     </delete>
 
-    <insert id="insert" keyColumn="user_id" keyProperty="userId" parameterType="sc.system.model.WebScUser" useGeneratedKeys="true">
+    <insert id="insert" parameterType="sc.system.model.WebScUser" >
       insert into WSC_USER (user_id, user_name, login_name, 
         login_pwd, salt, sex, 
         age, phone, email, 
@@ -63,8 +63,7 @@
         role_id, role_type_id, province, 
         city, area, patient_type, 
         operation_type, status, last_login_time, 
-        create_time, modify_time, photo, 
-        wx_openid, wx_userid)
+        create_time, modify_time, photo)
       values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, 
         #{loginPwd,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
         #{age,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
@@ -73,8 +72,7 @@
         #{roleId,jdbcType=VARCHAR}, #{roleTypeId,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
         #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{patientType,jdbcType=VARCHAR}, 
         #{operationType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{lastLoginTime,jdbcType=TIMESTAMP}, 
-        #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{photo,jdbcType=VARCHAR}, 
-        #{wxOpenid,jdbcType=VARCHAR}, #{wxUserid,jdbcType=VARCHAR})
+        #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{photo,jdbcType=VARCHAR})
     </insert>
     
     <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScUser">
@@ -249,12 +247,6 @@
         from WSC_USER
         where user_id = #{userId}
     </select>
-
-<!--     <select id="selectByActiveCode" resultMap="BaseResultMap"> -->
-<!--         select -->
-<!--         <include refid="Base_Column_List"/> -->
-<!--         from user where active_code = #{activeCode} -->
-<!--     </select> -->
 
     <select id="count" resultType="java.lang.Integer">
         select count(*)
