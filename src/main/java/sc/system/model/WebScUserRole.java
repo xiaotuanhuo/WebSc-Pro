@@ -1,15 +1,15 @@
 package sc.system.model;
 
 public class WebScUserRole {
-    private Integer userId;
+    private String userId;
 
     private Integer roleId;
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

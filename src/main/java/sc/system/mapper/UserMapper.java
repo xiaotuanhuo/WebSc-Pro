@@ -29,7 +29,7 @@ public interface UserMapper {
 	 * @return
 	 */
 	@Update("UPDATE WSC_USER SET wx_openid=#{openid} WHERE user_id=${userId}")
-	int updOpenid(@Param("openid") String openid, @Param("userId") int userId);
+	int updOpenid(@Param("openid") String openid, @Param("userId") String userId);
 	
 	/**
 	 * 判断指定姓名的医生是否存在
@@ -47,11 +47,11 @@ public interface UserMapper {
 	@Select("SELECT * FROM WSC_USER WHERE role_id='5' AND city LIKE CONCAT(#{cityPre},'%')")
 	List<WebScUser> selectDoctorsByQy(@Param("cityPre") String cityPre);
 	
-    int deleteByPrimaryKey(Integer userid);
+    int deleteByPrimaryKey(String userid);
 
     int insert(WebScUser user);
 
-    WebScUser selectByPrimaryKey(Integer userid);
+    WebScUser selectByPrimaryKey(String userid);
 
     int updateByPrimaryKey(WebScUser user);
 
@@ -94,7 +94,7 @@ public interface UserMapper {
     /**
      * 更改用户的状态为某项值
      */
-    int updateStatusByPrimaryKey(@Param("id") Integer id, @Param("status") String status);
+    int updateStatusByPrimaryKey(@Param("id") String id, @Param("status") String status);
 
     /**
      * 更新用户最后登录事件
@@ -109,7 +109,7 @@ public interface UserMapper {
     /**
      * 统计已经有几个此用户名, 用来检测用户名是否重复 (不包含某用户 ID).
      */
-    int countByLoginNameNotIncludeUserId(@Param("loginname") String loginname, @Param("userId") Integer userid);
+    int countByLoginNameNotIncludeUserId(@Param("loginname") String loginname, @Param("userId") String userid);
 
     /**
      * 查询此用户拥有的所有角色的 ID
@@ -117,7 +117,7 @@ public interface UserMapper {
      * @param userid 用户 ID
      * @return 拥有的角色 ID 数组
      */
-    Integer[] selectRoleIdsByUserId(@Param("userid") Integer userid);
+    Integer[] selectRoleIdsByUserId(@Param("userid") String userid);
 
 //    /**
 //     * 根据邮箱激活码, 查询要被激活的用户.
@@ -134,9 +134,9 @@ public interface UserMapper {
      */
     Set<String> selectOperatorPermsByLoginName(@Param("loginname") String loginname);
 
-    int updatePasswordByUserId(@Param("userId") Integer userId, @Param("password") String password, @Param("salt") String salt);
+    int updatePasswordByUserId(@Param("userId") String userId, @Param("password") String password, @Param("salt") String salt);
 
-    int activeUserByUserId(Integer userid);
+    int activeUserByUserId(String userid);
 
 //    selectAllByUsernameLikeAndStatus
 

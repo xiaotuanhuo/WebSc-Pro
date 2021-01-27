@@ -6,7 +6,7 @@ public class WebScUser implements Serializable {
 
     private static final long serialVersionUID = -3200103254689137288L;
     
-	private Integer userId;
+	private String userId;
 	private String userName;
 	private String loginName;
 	private String loginPwd;
@@ -38,11 +38,11 @@ public class WebScUser implements Serializable {
 	private String wxOpenid;
 	private String wxUserid;
 	
-	public Integer getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 

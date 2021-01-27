@@ -8,13 +8,13 @@
     </sql>
 
     <resultMap id="BaseResultMap" type="sc.system.model.WebScUserRole">
-        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
         <result column="role_id" jdbcType="INTEGER" property="roleId"/>
     </resultMap>
 
     <insert id="insert" parameterType="sc.system.model.WebScUserRole">
         insert into WSC_USER_ROLE (user_id, role_id)
-        values (#{userId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER})
+        values (#{userId,jdbcType=VARCHAR}, #{roleId,jdbcType=INTEGER})
     </insert>
 
     <insert id="insertList">

@@ -14,12 +14,12 @@ public interface UserRoleMapper {
     /**
      * 插入多条 用户色-角色 关联关系
      */
-    int insertList(@Param("userId") Integer userId, @Param("roleIds") Integer[] roleIds);
+    int insertList(@Param("userId") String userId, @Param("roleIds") Integer[] roleIds);
 
     /**
      * 清空用户所拥有的所有角色
      */
-    int deleteUserRoleByUserId(@Param("userId") Integer userId);
+    int deleteUserRoleByUserId(@Param("userId") String userId);
 
     /**
      * 清空此角色与所有角色的关联关系
