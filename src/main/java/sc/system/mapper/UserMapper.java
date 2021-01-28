@@ -139,5 +139,18 @@ public interface UserMapper {
     int activeUserByUserId(String userid);
 
 //    selectAllByUsernameLikeAndStatus
+    
+  //发送信息用
+  	/**
+  	 * 查询订单对应区域管理员
+  	 * @return
+  	 */
+  	List<WebScUser> getDocumentLocalAdminUser(String documentId);
+  	
+  	/**
+  	 * 查询订单对应医生
+  	 * @return
+  	 */
+  	List<WebScUser> getDocumentQaUser(String documentId);
 
 }
