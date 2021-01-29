@@ -71,7 +71,7 @@ public class MenuService {
     }
 
     /**
-     * 获取当前登陆用户拥有的树形菜单 (admin 账户拥有所有权限.)
+     * 获取当前登陆用户拥有的树形菜单 (root 账户拥有所有权限.)
      */
     public List<WebScMenu> selectCurrentUserMenuTree() {
     	WebScUser user = ShiroUtil.getCurrentUser();
@@ -79,7 +79,7 @@ public class MenuService {
     }
 
     /**
-     * 获取指定用户拥有的树形菜单 (admin 账户拥有所有权限.)
+     * 获取指定用户拥有的树形菜单 (root 账户拥有所有权限.)
      */
     public List<WebScMenu> selectMenuTreeVOByUsername(String loginname) {
         List<WebScMenu> menus;

@@ -562,12 +562,22 @@
 					form.field.patientType = patientKit.getValue('valueStr');
 					form.field.operationType = operationKit.getValue('valueStr');
 				} */
-				if (roleKit.getValue('valueStr') == '5' && $('#titlesNo').val() != '' && doctorTitlesKit.getValue('valueStr') == '') {
-					layer.alert('请选择职称', {icon: 5});
-					return false;
-				} else if (roleKit.getValue('valueStr') == '6' && $('#titlesNo').val() != '' && nurseTitlesKit.getValue('valueStr') == '') {
-					layer.alert('请选择职称', {icon: 5});
-					return false;
+				if (roleKit.getValue('valueStr') == '5') {
+					if ($('#titlesNo').val() != '' && doctorTitlesKit.getValue('valueStr') == '') {
+						layer.alert('请选择职称', {icon: 5});
+						return false;
+					} else if (doctorTitlesKit.getValue('valueStr') != '' && $('#titlesNo').val() == '') {
+						layer.alert('请补充职称证编号', {icon: 5});
+						return false;
+					}
+				} else if (roleKit.getValue('valueStr') == '6') {
+					if ($('#titlesNo').val() != '' && nurseTitlesKit.getValue('valueStr') == '') {
+						layer.alert('请选择职称', {icon: 5});
+						return false;
+					} else if (nurseTitlesKit.getValue('valueStr') != '' && $('#titlesNo').val() == '') {
+						layer.alert('请补充职称证编号', {icon: 5});
+						return false;
+					}
 				}
 				/* if ((roleKit.getValue('valueStr') == '5' || roleKit.getValue('valueStr') == '6') && $('#fileName').val() == '') {
 					layer.msg('请上传证件照', {icon: 5});
