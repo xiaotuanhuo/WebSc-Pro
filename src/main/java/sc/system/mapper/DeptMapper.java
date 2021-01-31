@@ -25,7 +25,7 @@ public interface DeptMapper {
      * 医疗集团根节点的父节点默认是0 且只有一个医疗集团根节点
      * @return
      */
-    WebScDept selectSuperDept();
+	WebScDept selectSuperDept();
 
     /**
      * 查询当前节点及其子孙节点（树形）
@@ -55,8 +55,8 @@ public interface DeptMapper {
      * @param city
      * @return
      */
-//    int countByDist(@Param("province_code") String province, @Param("city_code") String city);
-    int countByDist(@Param("province_code") String province);
+	int countByDist(@Param("province_code") String province, @Param("city_code") String city);
+//	int countByDist(@Param("province_code") String province);
     
     /**
      * 统计该医疗集团名称数量

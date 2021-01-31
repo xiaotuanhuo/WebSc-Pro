@@ -84,12 +84,12 @@
 					<form action="" method="post" class="layui-form layui-form-pane">
 						<div class="layui-form-item">
 							<label class="layui-form-label">所属集团</label>
-							<div class="layui-input-block">
+							<!-- <div class="layui-input-block">
 								<input type="hidden" id="parentId" name="parentId" th:value="${superDept?.deptId}">
 								<input type="text" class="layui-input" th:value="${superDept?.deptName}" readonly>
-							</div>
+							</div> -->
 							
-							<!-- <div class="layui-input-block">
+							<div class="layui-input-block">
 								<div class="layui-unselect layui-form-select" id="parentDeptKit">
 									<div class="layui-select-title">
 										<input type="text" id="parentDeptText" placeholder="请选择"
@@ -106,7 +106,7 @@
 										</div>
 									</div>
 								</div>
-							</div> -->
+							</div>
 						</div>
 						<div class="layui-form-item">
 							<label for="province" class="layui-form-label">区域</label>
@@ -115,13 +115,11 @@
 									<option value="">请选择省</option>
 								</select>
 							</div>
-							<!-- 
 							<div class="layui-inline city">
 								<select name="city" lay-filter="city" disabled>
 									<option value="">请选择市</option>
 								</select>
 							</div>
-							 -->
 						</div>
 						<div class="layui-form-item">
 							<label for="deptName" class="layui-form-label">集团名称</label>
@@ -188,17 +186,18 @@
 		var unCity = false;		// 市区划是否必填
 		layui.config({
 			base: '/lib/layui/extend/'
-		}).use(['form', 'layer', 'address'], function () {
+		}).use(['form', 'layer', 'dtree', 'address'], function () {
 			var $ = layui.jquery,
 				form = layui.form,
 				layer = layui.layer,
+				dtree = layui.dtree,
 				address = layui.address();
 			
 			form.verify({
 				telPhone: [/^0\d{2,3}[-]?\d{7,8}$|^0\d{2,3}\s?\d{7,8}$|^1[3-9][0-9]\d{8}$/, '请输入正确的固定电话或者手机号码']
 			});
 				
-			/* var deptDTree = dtree.render({
+			var deptDTree = dtree.render({
 				elem: "#deptTree",
 				url: "/dept/unleafTree",
 				dataStyle: "layuiStyle",
@@ -222,14 +221,14 @@
 						$("#parentId").val(parent.nodeId);
 					}
 				}
-			}); */
+			});
 			
             $("#parentDeptText").on("click",function() {
                 $(this).toggleClass("layui-form-selected");
                 $("#parentDeptTree").toggleClass("layui-show layui-anim layui-anim-upbit");
             });
 
-            /* dtree.on("node(deptTree)", function(obj) {
+            dtree.on("node(deptTree)", function(obj) {
             	if (currentNodeId != obj.param.nodeId) {
             		currentNodeId = obj.param.nodeId;
                 	// 当前所选集团的行政区划
@@ -252,7 +251,7 @@
 				$("#parentId").val(obj.param.nodeId);
 				$("#parentDeptKit").toggleClass("layui-form-selected");
 				$("#parentDeptTree").toggleClass("layui-show layui-anim layui-anim-upbit");
-			}); */
+			});
             
 			//监听提交
             form.on('submit(addHead)', function (form) {
@@ -278,10 +277,10 @@
             		alert("请选择省");
             		return false;
             	}
-            	/* if (unCity && $("select[name=city]").val() == '') {
+            	if (unCity && $("select[name=city]").val() == '') {
             		alert("请选择市");
             		return false;
-            	} */
+            	}
 				$.post('/dept', form.field, function (result) {
 					handlerResult(result, addDone);
 				});

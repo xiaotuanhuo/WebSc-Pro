@@ -30,7 +30,7 @@ public class DeptController {
 	
 	@GetMapping
 	public String add(Model model) {
-		model.addAttribute("superDept", deptService.getSuperDept());
+//		model.addAttribute("superDept", deptService.getSuperDept());
 		return "dept/dept-add";
 	}
 	

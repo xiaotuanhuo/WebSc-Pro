@@ -270,7 +270,7 @@
         order by dept_id
     </select>
     
-    <!-- <select id="countByDist" resultType="java.lang.Integer">
+    <select id="countByDist" resultType="java.lang.Integer">
         select count(*)
         from WSC_DEPT
         <where>
@@ -290,8 +290,8 @@
 				</otherwise>
 			</choose>
         </where>
-    </select> -->
-    <select id="countByDist" resultType="java.lang.Integer">
+    </select>
+    <!-- <select id="countByDist" resultType="java.lang.Integer">
         select count(*)
         from WSC_DEPT
         <where>
@@ -304,7 +304,7 @@
 				</otherwise>
 			</choose>
         </where>
-    </select>
+    </select> -->
     
     <select id="countByName" resultType="java.lang.Integer">
         select count(*)

@@ -45,18 +45,18 @@ public class DeptService {
 	 * 医生集团总部
 	 * @return
 	 */
-	public WebScDept getSuperDept() {
-		return deptMapper.selectSuperDept();
-	}
+//	public WebScDept getSuperDept() {
+//		return deptMapper.selectSuperDept();
+//	}
 	
 	public String add(WebScDept dept) {
 		if (dept.getProvince() != null && dept.getProvince().equals("")) {
 			dept.setProvince(null);
 		}
-//		if (dept.getCity() != null && dept.getCity().equals("")) {
-//			dept.setCity(null);
-//		}
-		checkDistExist(dept.getProvince());
+		if (dept.getCity() != null && dept.getCity().equals("")) {
+			dept.setCity(null);
+		}
+		checkDistExist(dept.getProvince(), dept.getCity());
 		checkNameExist(null, dept.getDeptName());
 		dept.setDeptId(UUID19.uuid());
 		deptMapper.insert(dept);
@@ -222,40 +222,41 @@ public class DeptService {
 		Subject subject = SecurityUtils.getSubject();
 		WebScUser user = (WebScUser) subject.getPrincipal();
 		List<WebScDept> depts = deptMapper.selectTree(user.getRoleTypeId());
-		return desabledUnleaf(depts);
+//		return desabledUnleaf(depts);
+		return getCityTree(depts);
 	}
 	
-//	private List<WebScDept> getCityTree(List<WebScDept> depts) {
-//		if (depts.size() > 0) {
-//			for (WebScDept dept : depts) {
-//				if (dept.getCity() == null || dept.getCity().equals("")) {
-//					dept.setDisabled(false);
-//				}
-//				if (dept.getChildren().size() > 0) {
-//					getCityTree(dept.getChildren());
-//				}
-//			}
-//		}
-//		return depts;
-//	}
-	/**
-	 * 禁用非叶子节点
-	 * @param depts
-	 * @return
-	 */
-	private List<WebScDept> desabledUnleaf(List<WebScDept> depts) {
+	private List<WebScDept> getCityTree(List<WebScDept> depts) {
 		if (depts.size() > 0) {
 			for (WebScDept dept : depts) {
-				if (dept.getProvince() == null || dept.getProvince().equals("")) {
+				if (dept.getCity() == null || dept.getCity().equals("")) {
 					dept.setDisabled(true);
 				}
 				if (dept.getChildren().size() > 0) {
-					desabledUnleaf(dept.getChildren());
+					getCityTree(dept.getChildren());
 				}
 			}
 		}
 		return depts;
 	}
+	/**
+	 * 禁用非叶子节点
+	 * @param depts
+	 * @return
+	 */
+//	private List<WebScDept> desabledUnleaf(List<WebScDept> depts) {
+//		if (depts.size() > 0) {
+//			for (WebScDept dept : depts) {
+//				if (dept.getProvince() == null || dept.getProvince().equals("")) {
+//					dept.setDisabled(true);
+//				}
+//				if (dept.getChildren().size() > 0) {
+//					desabledUnleaf(dept.getChildren());
+//				}
+//			}
+//		}
+//		return depts;
+//	}
 	
 	/**
 	 * 查询当前节点的子孙节点（树形）
@@ -275,17 +276,17 @@ public class DeptService {
 		return deptMapper.selectUnleafTree(user.getRoleTypeId());
 	}
 	
-//	private void checkDistExist(String province, String city) {
-//		if (deptMapper.countByDist(province, city) > 0) {
-//			throw new DuplicateNameException("当前行政区划下已存在医疗集团");
-//		}
-//	}
-	
-	private void checkDistExist(String province) {
-		if (deptMapper.countByDist(province) > 0) {
+	private void checkDistExist(String province, String city) {
+		if (deptMapper.countByDist(province, city) > 0) {
 			throw new DuplicateNameException("当前行政区划下已存在医疗集团");
 		}
 	}
+	
+//	private void checkDistExist(String province) {
+//		if (deptMapper.countByDist(province) > 0) {
+//			throw new DuplicateNameException("当前行政区划下已存在医疗集团");
+//		}
+//	}
 	
 	private void checkNameExist(String deptId, String deptName) {
 		if (deptMapper.countByName(deptId, deptName) > 0) {
