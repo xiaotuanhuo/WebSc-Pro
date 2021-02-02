@@ -156,7 +156,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/{userId}/updatepwd")
-	public String updatePassword(@PathVariable("userId") Integer userId, Model model) {
+	public String updatePassword(@PathVariable("userId") String userId, Model model) {
 		model.addAttribute("userId", userId);
 		return "user/user-update-pwd";
 	}
