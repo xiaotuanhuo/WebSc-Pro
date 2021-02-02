@@ -2,6 +2,7 @@ package sc.common.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Numbers {
 
@@ -136,6 +137,14 @@ public class Numbers {
 			throw forInputString(s);
 		}
 		return negative ? result : -result;
+	}
+	
+	/**
+	 * 生成4位随机数字字符串
+	 * @return
+	 */
+	public static String randomThousand() {
+		return (new Random().nextInt(9999)) + "";
 	}
 
 }

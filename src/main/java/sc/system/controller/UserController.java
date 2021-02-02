@@ -39,6 +39,9 @@ public class UserController {
 	@Value("${upload-path}")
 	private String uploadPath;
 	
+	@Value("${default-password}")
+	private String defaultPwd;
+	
 	@GetMapping("/index")
 	public String index() {
 		return "user/user-list";
@@ -56,6 +59,7 @@ public class UserController {
 	
     @GetMapping
 	public String add(Model model) {
+    	model.addAttribute("defaultPwd", defaultPwd);
 		return "user/user-add";
 	}
     

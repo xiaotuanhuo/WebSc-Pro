@@ -5,6 +5,7 @@
     <id column="operative_id" jdbcType="VARCHAR" property="operativeId" />
     <result column="operative_name" jdbcType="VARCHAR" property="operativeName" />
     <result column="urgenttime" jdbcType="INTEGER" property="urgenttime" />
+    <result column="pid" jdbcType="INTEGER" property="pid" />
   </resultMap>
   
   <select id="getWebScOperativeList" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -19,9 +20,10 @@
   </select>
   
   <select id="selectOnPage" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select operative_id,
-  		   operative_name
-    from WSC_OPERATIVE wo
+    select wo.operative_id,
+  		   wo.operative_name,
+  		   wt.type_name as typeName
+    from WSC_OPERATIVE wo, WSC_OPERATIVE_TYPE wt
     <where>
     	<choose>
     		<when test="operative.operativeName != null and operative.operativeName != ''">
@@ -31,19 +33,23 @@
     			1 = 1
     		</otherwise>
     	</choose>
+    	AND wo.pid = wt.id
     </where>
-    order by operative_id asc
+    order by wo.operative_id asc
   </select>
   
   <insert id="insert" parameterType="sc.system.model.WebScOperative" >
-    insert into WSC_OPERATIVE (operative_id, operative_name, urgenttime)
-    values (#{operativeId,jdbcType=VARCHAR}, #{operativeName,jdbcType=VARCHAR}, #{urgenttime,jdbcType=INTEGER})
+	insert into WSC_OPERATIVE (operative_id, operative_name, urgenttime, pid)
+	values (#{operativeId,jdbcType=VARCHAR},
+	#{operativeName,jdbcType=VARCHAR},
+	#{urgenttime,jdbcType=INTEGER},
+	#{pid,jdbcType=INTEGER})
   </insert>
   
   <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScOperative" >
     update WSC_OPERATIVE
     set operative_name = #{operativeName,jdbcType=VARCHAR},
-      urgenttime = #{urgenttime,jdbcType=INTEGER}
+      pid = #{pid,jdbcType=INTEGER}
     where operative_id = #{operativeId,jdbcType=VARCHAR}
   </update>
   

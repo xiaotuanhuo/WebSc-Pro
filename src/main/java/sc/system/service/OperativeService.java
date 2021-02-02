@@ -16,9 +16,12 @@ import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import sc.common.exception.DuplicateNameException;
+import sc.common.util.Numbers;
 import sc.common.util.UUID19;
 import sc.system.mapper.OperativeMapper;
+import sc.system.mapper.OperativeTypeMapper;
 import sc.system.model.WebScOperative;
+import sc.system.model.WscOperativeType;
 
 @Service
 public class OperativeService {
@@ -26,6 +29,9 @@ public class OperativeService {
 	
 	@Resource
     private OperativeMapper operativeMapper;
+	
+	@Resource
+	private OperativeTypeMapper typeMapper;
 	
 	@Value("${notify-path-operative}")
 	private String indexUrl;	// 更新索引通知地址
@@ -47,7 +53,7 @@ public class OperativeService {
 		String operativeName = operative.getOperativeName().trim();	// 消除前后空格
 		checkNameExistOnCreate(operativeName);
 		operative.setOperativeName(operativeName);
-		operative.setOperativeId(UUID19.uuid());
+		operative.setOperativeId(getRandomId());
 		operative.setUrgenttime(0);
 		
 		int result = operativeMapper.insert(operative);
@@ -67,7 +73,6 @@ public class OperativeService {
 	public void update(WebScOperative operative) {
 		String operativeName = operative.getOperativeName().trim();	// 消除前后空格
 		operative.setOperativeName(operativeName);
-		operative.setUrgenttime(0);
 		checkNameExistOnUpdate(operative);
 		int result = operativeMapper.updateByPrimaryKey(operative);
 		if (result == 1) {
@@ -85,7 +90,18 @@ public class OperativeService {
 	
 	@Transactional
     public void delete(String operativeId) {
-		operativeMapper.deleteByPrimaryKey(operativeId);
+		int result = operativeMapper.deleteByPrimaryKey(operativeId);
+		if (result == 1) {
+			String reqData = "{" + 
+	        		"\"token\":\"" + "operativeluceneupdtoken1234" + "\"}";
+			HttpResponse response = HttpRequest.post(indexUrl).header(Header.CONTENT_TYPE, "application/json")
+					.header(Header.ACCEPT, "application/json").body(reqData).execute();
+			if (response.getStatus() == 200) {
+				log.info("更新索引文件请求成功");
+			} else {
+				log.info("更新索引文件请求失败:" + response.getStatus());
+			}
+		}
 	}
 	
 	/**
@@ -102,5 +118,18 @@ public class OperativeService {
 		if (operativeMapper.countByNameNotIncludeId(operative.getOperativeName(), operative.getOperativeId()) > 0) {
 			throw new DuplicateNameException("手术名称已存在");
 		}
+	}
+	
+	public List<WscOperativeType> getAllType() {
+		return typeMapper.selectAll();
+	}
+	
+	private String getRandomId() {
+		String id = Numbers.randomThousand();
+		WebScOperative operative = operativeMapper.selectOperativeById(id);
+		if (operative != null) {
+			id = getRandomId();
+		}
+		return id;
 	}
 }

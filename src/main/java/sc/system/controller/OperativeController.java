@@ -48,7 +48,7 @@ public class OperativeController {
 	public String update(@PathVariable("operativeId") String operativeId, Model model) {
 		WebScOperative operative = operativeService.getOperativeById(operativeId);
 		model.addAttribute("operative", operative);
-		return "operative/operative-add";
+		return "operative/operative-edit";
 	}
 	
 	@OperationLog("获取手术列表")
@@ -61,7 +61,7 @@ public class OperativeController {
 		return new PageResultBean<>(operativeInfo.getTotal(), operativeInfo.getList());
 	}
 	
-	@OperationLog("新增手术名称")
+	@OperationLog("新增手术")
 	@PostMapping
 	@ResponseBody
 	public ResultBean add(WebScOperative operative) {
@@ -69,7 +69,7 @@ public class OperativeController {
 		return ResultBean.success();
 	}
 	
-	@OperationLog("修改手术名称")
+	@OperationLog("修改手术")
 	@PutMapping
 	@ResponseBody
 	public ResultBean update(WebScOperative operative) {
@@ -77,11 +77,17 @@ public class OperativeController {
 		return ResultBean.success();
 	}
 	
-	@OperationLog("删除手术名称")
+	@OperationLog("删除手术")
 	@DeleteMapping("/{operativeId}")
 	@ResponseBody
 	public ResultBean delete(@PathVariable("operativeId") String operativeId) {
 		operativeService.delete(operativeId);
 		return ResultBean.success();
+	}
+	
+	@GetMapping("/types")
+    @ResponseBody
+    public ResultBean getTypes() {
+		return ResultBean.success(operativeService.getAllType());
 	}
 }
