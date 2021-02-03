@@ -103,6 +103,15 @@ public class UserService {
 		uvo.setProvince(user.getProvince());
 		uvo.setCity(user.getCity());
 		uvo.setArea(user.getArea());
+		
+		// 医疗机构管理员仅可查看所属医疗机构内角色
+		if (RoleEnum.valueOf(Integer.parseInt(user.getRoleId())) == RoleEnum.YLJGGLY) {
+			WebScOrganization organization = organizationMapper.selectByPrimaryKey(user.getRoleTypeId());
+			uvo.setOrganizationId(user.getRoleTypeId());
+			uvo.setRootId(organization.getRootId());
+			uvo.setLeaf(organization.getLeaf());
+		}
+		
 		return userMapper.selectWithRoleAndDist(uvo);
 	}
 	

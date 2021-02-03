@@ -361,23 +361,31 @@
 	    										AND u.user_id = #{user.userId}
 	    										<choose>
 	    											<when test="user.area != null and user.area != ''">
-	    												OR (u.role_id = #{user.orgDocRoleId} AND u.area = #{user.area})
+	    												<choose>
+	    													<when test="user.leaf != null and user.leaf == 1">
+	    														OR (u.role_id = #{user.orgDocRoleId} AND u.role_type_id = #{user.organizationId})
+	    													</when>
+	    													<otherwise>
+	    														OR (u.role_id = #{user.orgDocRoleId} AND u.role_type_id in (select org_id from WSC_ORGANIZATION where root_id = #{user.rootId} and area = #{user.area}))
+	    														OR (u.role_id = #{user.organizationRoleId} AND u.role_type_id in (select org_id from WSC_ORGANIZATION where org_pid = #{user.organizationId}))
+	    													</otherwise>
+	    												</choose>
 	    											</when>
 	    											<otherwise>
 	    												<choose>
 	    													<when test="user.city != null and user.city != ''">
-	    														OR (u.role_id = #{user.orgDocRoleId} AND u.city = #{user.city})
-	    														OR (u.role_id = #{user.organizationRoleId} AND u.city = #{user.city} AND u.area is not null)
+	    														OR (u.role_id = #{user.orgDocRoleId} AND u.role_type_id in (select org_id from WSC_ORGANIZATION where root_id = #{user.rootId} and city = #{user.city}))
+	    														OR (u.role_id = #{user.organizationRoleId} AND u.role_type_id in (select org_id from WSC_ORGANIZATION where root_id = #{user.rootId} and city = #{user.city} and area is not null))
 	    													</when>
 	    													<otherwise>
 	    														<choose>
 	    															<when test="user.province != null and user.province != ''">
-	    																OR (u.role_id = #{user.orgDocRoleId} AND u.province = #{user.province})
-	    																OR (u.role_id = #{user.organizationRoleId} AND u.province = #{user.province} AND u.city is not null)
+	    																OR (u.role_id = #{user.orgDocRoleId} AND u.role_type_id in (select org_id from WSC_ORGANIZATION where root_id = #{user.rootId} and province = #{user.province}))
+	    																OR (u.role_id = #{user.organizationRoleId} AND u.role_type_id in (select org_id from WSC_ORGANIZATION where root_id = #{user.rootId} and province = #{user.province} and city is not null))
 	    															</when>
 	    															<otherwise>
-	    																OR (u.role_id = #{user.orgDocRoleId})
-	    																OR (u.role_id = #{user.organizationRoleId} AND u.province is not null)
+	    																OR (u.role_id = #{user.orgDocRoleId} AND u.role_type_id in (select org_id from WSC_ORGANIZATION where org_id = #{user.organizationId} or root_id = #{user.organizationId}))
+	    																OR (u.role_id = #{user.organizationRoleId} AND u.role_type_id in (select org_id from WSC_ORGANIZATION where root_id = #{user.organizationId}))
 	    															</otherwise>
 	    														</choose>
 	    													</otherwise>
