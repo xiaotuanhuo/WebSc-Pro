@@ -305,16 +305,8 @@ public class DocService {
     					doc.setPatientSex(SexEnum.txtOf(rows.get(i).get(j).toString()).getValue());
     				}else if (DocumentTitleEnum.patient_num.getTxt().equals(rows.get(0).get(j))) {
     					
-    					if(StringUtil.isEmpty(rows.get(i).get(j).toString())) {
-    			    		throw new Exception("住院号不能为空");
-    			    	}
-    					
     					doc.setPatientNum(rows.get(i).get(j).toString());
     				}else if (DocumentTitleEnum.patient_bednum.getTxt().equals(rows.get(0).get(j))) {
-    					
-    					if(StringUtil.isEmpty(rows.get(i).get(j).toString())) {
-    			    		throw new Exception("病床号不能为空");
-    			    	}
     					
     					doc.setPatientBednum(rows.get(i).get(j).toString());
     				}else if (DocumentTitleEnum.operative_name.getTxt().equals(rows.get(0).get(j))) {
