@@ -339,7 +339,7 @@ public class UserService {
 			case HS:
 				WebScDept dept2 = deptMapper.selectByPrimaryKey(user.getRoleTypeId());
 				user.setProvince(dept2.getProvince());
-				user.setCity(null);
+				user.setCity(dept2.getCity());
 				user.setArea(null);
 				index = true;
 				if (user.getPhoto().equals("")) {
