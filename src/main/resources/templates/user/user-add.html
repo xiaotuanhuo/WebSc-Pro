@@ -58,7 +58,7 @@
 					<label for="age" class="layui-form-label">年龄</label>
 					<div class="layui-input-block">
 						<input type="text" id="age" name="age"
-							lay-verify="required|number" lay-vertype="tips"
+							lay-verify="mandatoryfieldAge" lay-vertype="tips"
 							autocomplete="off" class="layui-input">
 					</div>
 				</div>
@@ -239,16 +239,21 @@
 					if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)){
 						return '用户名不能有特殊字符';
 					}
-				    if (value.length < 6) {
-				    	return '用户名长度不能少于6位';
+				    if (value.length < 4) {
+				    	return '用户名长度不能少于4位';
 				    }
 				},
 				//既支持上述函数式的方式，也支持下述数组的形式
 				//数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
 				pass: [/^[\S]{6,12}$/, '密码必须6到12位，且不能出现空格'],
-				mandatoryfieldEmail: function(value, item) { //邮箱的非必填校验
+				mandatoryfieldEmail: function(value, item) { // 邮箱的非必填校验
 					if (!new RegExp("(^$)|^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$").test(value)){
 						return '邮箱格式不正确';
+					}
+				},
+				mandatoryfieldAge: function(value, item) { // 年龄的非必填校验
+					if (!new RegExp("(^$)|^(\d)+$").test(value)){
+						return '请输入正确的年龄';
 					}
 				}
 			});
@@ -351,7 +356,10 @@
 						ficon: ['1', '-1'],
 						icon: ['-1', '2'],
 						accordion: true,
-						menubar: false,
+						menubar: true,
+						menubarTips: {
+							group: ["moveDown", "moveUp", "refresh", "searchNode"]
+						},
 						record: true,
 						response: {
 							statusCode: 0,
@@ -412,10 +420,10 @@
 					}
 				},
 				data: [
-					{name: '执业医师', value: 1},
-					{name: '主治医师', value: 2},
-					{name: '副主任医师', value: 3},
-					{name: '主任医师', value: 4}
+					{name: '执业医师', value: 11},
+					{name: '主治医师', value: 12},
+					{name: '副主任医师', value: 13},
+					{name: '主任医师', value: 14}
 				]
 			});
 			
@@ -437,11 +445,11 @@
 					}
 				},
 				data: [
-					{name: '护士', value: 1},
-					{name: '护师', value: 2},
-					{name: '主管护师', value: 3},
-					{name: '副主任护师', value: 4},
-					{name: '主任护师', value: 5}
+					{name: '护士', value: 21},
+					{name: '护师', value: 22},
+					{name: '主管护师', value: 23},
+					{name: '副主任护师', value: 24},
+					{name: '主任护师', value: 25}
 				]
 			});
 			

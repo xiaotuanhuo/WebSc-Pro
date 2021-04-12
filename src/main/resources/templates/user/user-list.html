@@ -25,13 +25,51 @@
 					<label for="userName" class="layui-form-label">姓名</label>
 					<div class="layui-input-inline">
 						<input type="text" name="userName" autocomplete="off"
-							id="userName" class="layui-input">
+							id="userName" placeholder="请输入姓名" class="layui-input">
 					</div>
-					<label for=phone class="layui-form-label">手机</label>
-					<div class="layui-input-inline">
-						<input type="text" name="phone" autocomplete="off" id="phone"
-							class="layui-input">
-					</div>
+					<shiro:lacksRole name="xtgly">
+						<label for="roleId" class="layui-form-label">角色</label>
+						<div class="layui-input-inline">
+							<shiro:hasRole name="cjgly">
+								<select name="roleId">
+									<option value="">请选择角色</option>
+									<option value="7">超级管理员</option>
+									<option value="4">区域管理员</option>
+									<option value="2">医疗机构管理员</option>
+									<option value="3">卫监局管理员</option>
+									<option value="5">麻醉医生</option>
+									<option value="6">护士</option>
+									<option value="8">区域订单录入员</option>
+									<option value="9">医疗机构订单录入员</option>
+								</select>
+							</shiro:hasRole>
+							<shiro:hasRole name="qygly">
+								<select name="roleId">
+									<option value="">请选择角色</option>
+									<option value="4">区域管理员</option>
+									<option value="2">医疗机构管理员</option>
+									<option value="3">卫监局管理员</option>
+									<option value="5">麻醉医生</option>
+									<option value="6">护士</option>
+									<option value="8">区域订单录入员</option>
+									<option value="9">医疗机构订单录入员</option>
+								</select>
+							</shiro:hasRole>
+							<shiro:hasRole name="yljggly">
+								<select name="roleId">
+									<option value="">请选择角色</option>
+									<option value="2">医疗机构管理员</option>
+									<option value="9">医疗机构订单录入员</option>
+								</select>
+							</shiro:hasRole>
+							<shiro:hasRole name="wjjgly">
+								<select name="roleId">
+									<option value="">请选择角色</option>
+									<option value="3">卫监局管理员</option>
+								</select>
+							</shiro:hasRole>
+						</div>
+					</shiro:lacksRole>
 					<button lay-submit="" lay-filter="search"
 						class="layui-btn layui-btn-sm layui-btn-primary table-action">
 						<i class="zadmin-icon zadmin-icon-search">&nbsp;&nbsp;查询</i>
@@ -52,6 +90,12 @@
 	</script>
 	
 	<script type="text/html" id="column-toolbar">
+		<shiro:hasAnyRoles name="cjgly,qygly">	
+			{{# if(d.roleId == '5') { }}
+				<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="stats">统计</a>
+			{{# } }}
+		</shiro:hasPermission>
+
 		<shiro:hasPermission name="user:update">
 			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
 		</shiro:hasPermission>
@@ -61,13 +105,11 @@
 		</shiro:hasPermission>
 
 		<shiro:hasPermission name="user:delete">
-			{{# if('<shiro:principal property="roleTypeId"/>' !== d.id) { }}
-				{{# if('<shiro:principal property="userName"/>' !== d.userName) { }}
-					{{# if(d.status == '1') { }}
-						<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="lock">锁定</a>
-					{{# } else { }}
-						<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="unlock">激活</a>
-					{{# } }}
+			{{# if('<shiro:principal property="userName"/>' != d.userName) { }}
+				{{# if(d.status == '1') { }}
+					<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="lock">锁定</a>
+				{{# } else { }}
+					<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="unlock">激活</a>
 				{{# } }}
 			{{# } }}
 		</shiro:hasPermission>
@@ -107,12 +149,12 @@
 					[
 						{type:'numbers', title:'序号', fixed:'left', width:'5%'},
 						{field:'userId', title:'id', hide:true},
-						{field:'loginName', title:'用户名'},
-						{field:'userName', title:'姓名', sort:true},
-						{field:'sex', title:'性别', templet:'#sexTpl', width:'8%'},
-						{field:'roleName', title:'角色'},
+						{field:'loginName', title:'用户名', width:'15%'},
+						{field:'userName', title:'姓名', sort:true, width:'25%'},
+						{field:'sex', title:'性别', templet:'#sexTpl', width:'7%'},
+						{field:'roleName', title:'角色', width:'15%'},
 						{field:'status', title:'状态', templet:'#statusTpl', width:'8%'},
-						{title:'操作', fixed:'right', align:'center', toolbar:'#column-toolbar', width:'20%'}
+						{title:'操作', fixed:'right', align:'center', toolbar:'#column-toolbar', width:'25%'}
 					]
 				]
 			});
@@ -133,7 +175,9 @@
 			table.on('tool', function (obj) {
 				var data = obj.data;
 				var event = obj.event;
-				if (event === 'edit') {
+				if (event === 'stats') {
+					stats(data.userId, data.userName);
+				} else if (event === 'edit') {
 					edit(data.userId);
 				} else if (event === 'reset') {
 					reset(data.userId);
@@ -160,7 +204,7 @@
 				layer.open({
 					content: '/user/credentials/' + id,
 					title: "详情",
-					area: ['50%', '85%'],
+					area: ['60%', '90%'],
 					type: 2,
 					shadeClose: true
 				});
@@ -172,6 +216,17 @@
 					maxmin: true,
 					shadeClose: true
 				}); */
+			}
+			
+			function stats(id, name) {
+				layer.open({
+					content: '/user/doctor/stats/' + id + "/" + name,
+					title: "统计信息",
+					area: ['60%', '70%'],
+					type: 2,
+					maxmin: true,
+					shadeClose: true
+				});
 			}
 			
 			function edit(id) {
