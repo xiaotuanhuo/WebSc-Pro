@@ -170,16 +170,26 @@ public class OrganizationService {
 		switch (RoleEnum.valueOf(Integer.parseInt(user.getRoleId()))) {
 			case CJGLY:
 			case QYGLY:
-				organizations = organizationMapper.selectAllTree(null, user.getProvince(), user.getCity(), user.getArea());
+//				organizations = organizationMapper.selectAllTree(null, user.getProvince(), user.getCity(), user.getArea());
+				organizations = organizationMapper.selectAllLeaf(null, user.getProvince(), user.getCity(), user.getArea());
 				break;
 			case YLJGGLY:
-				organizations = organizationMapper.selectAllTree(user.getRoleTypeId(), user.getProvince(), user.getCity(), user.getArea());
+				// 获取用户所在医疗机构的根节点
+				String rootId = organizationMapper.selectRootById(user.getRoleTypeId());
+				if (rootId == null) {
+					// 当前用户即为根节点医疗机构管理员
+					rootId = user.getRoleTypeId();
+				}
+//				organizations = organizationMapper.selectAllTree(user.getRoleTypeId(), user.getProvince(), user.getCity(), user.getArea());
+				organizations = organizationMapper.selectAllLeaf(rootId, user.getProvince(), user.getCity(), user.getArea());
 				break;
 			default:
 				break;
 		}
-		List<WebScOrganization> sos = noLeafDisabled(organizations);
-		return sos;
+//		List<WebScOrganization> sos = noLeafDisabled(organizations);
+//		return sos;
+		
+		return organizations;
 	}
 	
 	/**

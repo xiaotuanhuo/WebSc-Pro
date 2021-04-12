@@ -93,6 +93,12 @@
         order by org_id
     </select>
     
+    <select id="selectRootById" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        root_id
+        from WSC_ORGANIZATION where org_id = #{org_id,jdbcType=VARCHAR}
+    </select>
+    
     <!-- <select id="selectAll" parameterType="sc.system.model.WebScOrganization" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -330,6 +336,67 @@
 				                		</when>
 				                		<otherwise>
 				                			AND wo.province is null
+				                		</otherwise>
+		                			</choose>
+		                		</otherwise>
+		                	</choose>
+                		</otherwise>
+                	</choose>
+                </otherwise>
+            </choose>
+        </where>
+        order by org_id
+    </select>
+    
+    <!-- 根据用户权限获取医疗机构叶子节点 -->
+    <select id="selectAllLeaf" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from WSC_ORGANIZATION wo
+        <where>
+            <choose>
+                <when test="org_id != null and org_id != ''">
+                    AND wo.root_id = #{org_id}
+                    <choose>
+                    	<when test="area_code != null and area_code != ''">
+                    		AND wo.area = #{area_code} AND wo.leaf = 1
+                    	</when>
+                    	<otherwise>
+                			<choose>
+		                		<when test="city_code != null and city_code != ''">
+		                			AND wo.city = #{city_code} AND wo.leaf = 1
+		                		</when>
+		                		<otherwise>
+		                			<choose>
+		                				<when test="province_code != null and province_code != ''">
+				                			AND wo.province = #{province_code} AND wo.leaf = 1
+				                		</when>
+				                		<otherwise>
+				                			AND wo.leaf = 1
+				                		</otherwise>
+		                			</choose>
+		                		</otherwise>
+		                	</choose>
+                		</otherwise>
+                    </choose>
+                </when>
+                <otherwise>
+                	<choose>
+                		<when test="area_code != null and area_code != ''">
+                			AND wo.area = #{area_code} AND wo.leaf = 1
+                		</when>
+                		<otherwise>
+                			<choose>
+		                		<when test="city_code != null and city_code != ''">
+		                			AND wo.city = #{city_code} AND wo.leaf = 1
+		                		</when>
+		                		<otherwise>
+		                			<choose>
+		                				<when test="province_code != null and province_code != ''">
+				                			AND wo.province = #{province_code} AND wo.leaf = 1
+				                		</when>
+				                		<otherwise>
+				                			AND wo.leaf = 1
 				                		</otherwise>
 		                			</choose>
 		                		</otherwise>

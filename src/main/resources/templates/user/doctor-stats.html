@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>医疗集团详情</title>
+    <title>医生统计详情</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -19,36 +19,28 @@
 		<table class="layui-table" lay-skin="line">
 			<tbody>
 				<tr>
-					<th width='120px'>机构名称：</th>
-					<td th:text="${dept.deptName}"></td>
+					<th width='120px'>姓名：</th>
+					<td th:text="${name}"></td>
 				</tr>
 				<tr>
-					<th width='120px'>状态：</th>
-					<td th:text="${dept.status eq '1' ? '正常' : '锁定'}"></td>
+					<th width='120px'>日手术量：</th>
+					<td th:text="${day}"></td>
 				</tr>
 				<tr>
-					<th width='120px'>所属省份：</th>
-					<td th:text="${dept.provinceName}"></td>
+					<th width='120px'>月手术量：</th>
+					<td th:text="${month}"></td>
 				</tr>
 				<tr>
-					<th width='120px'>所属市：</th>
-					<td th:text="${dept.cityName}"></td>
+					<th width='120px'>年手术量：</th>
+					<td th:text="${year}"></td>
 				</tr>
 				<tr>
-					<th width='120px'>机构地址：</th>
-					<td th:text="${dept.deptAddress}"></td>
+					<th width='120px'>评分：</th>
+					<td th:text="90"></td>
 				</tr>
 				<tr>
-					<th width='120px'>机构电话：</th>
-					<td th:text="${dept.deptTel}"></td>
-				</tr>
-				<tr>
-					<th width='120px'>负责人：</th>
-					<td th:text="${dept.leaderName}"></td>
-				</tr>
-				<tr>
-					<th width='120px'>负责人电话：</th>
-					<td th:text="${dept.leaderTel}"></td>
+					<th width='120px'>评价：</th>
+					<td th:text="abc"></td>
 				</tr>
 			</tbody>
 		</table>

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -94,6 +95,18 @@ public class UserController {
     	File file = new File((uploadPath.endsWith("/") ? uploadPath : uploadPath + "/") + p);
     	FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
     }
+    
+    @GetMapping("/doctor/stats/{userId}/{userName}")
+	public String statsDoctor(@PathVariable("userId") String userId, @PathVariable("userName") String userName,
+			Model model) {
+		Map<String, Integer> statsMap = userService.statsForDoctor(userId);
+		
+		model.addAttribute("name", userName);
+		model.addAttribute("day", statsMap.get("dayCount"));
+		model.addAttribute("month", statsMap.get("monthCount"));
+		model.addAttribute("year", statsMap.get("yearCount"));
+		return "user/doctor-stats";
+	}
     
 	@GetMapping("/{userId}")
 	public String update(@PathVariable("userId") String userId, Model model) {

@@ -635,4 +635,28 @@
       		and user_name = #{userName,jdbcType=VARCHAR} 
       	</if>
     </select>
+    
+    <select id="statsTodayForDc" parameterType="java.lang.String" resultType="Integer">
+    	SELECT COUNT(1) FROM (
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND MID(operate_start_time,1,10) = DATE_FORMAT(CURDATE(),'%Y-%m-%d')
+			UNION
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND MID(wd.operate_start_time,1,10) = DATE_FORMAT(CURDATE(),'%Y-%m-%d')
+		) a
+    </select>
+    
+    <select id="statsMonthForDc" parameterType="java.lang.String" resultType="Integer">
+    	SELECT COUNT(1) FROM (
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND MID(operate_start_time,1,7) = DATE_FORMAT(CURDATE(),'%Y-%m')
+			UNION
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND MID(wd.operate_start_time,1,7) = DATE_FORMAT(CURDATE(),'%Y-%m')
+		) a
+    </select>
+    
+    <select id="statsYearForDc" parameterType="java.lang.String" resultType="Integer">
+    	SELECT COUNT(1) FROM (
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND MID(operate_start_time,1,4) = DATE_FORMAT(CURDATE(),'%Y')
+			UNION
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND MID(wd.operate_start_time,1,4) = DATE_FORMAT(CURDATE(),'%Y')
+		) a
+    </select>
 </mapper>

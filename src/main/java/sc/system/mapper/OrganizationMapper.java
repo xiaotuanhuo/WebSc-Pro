@@ -41,6 +41,13 @@ public interface OrganizationMapper {
 	List<WebScOrganization> selectRoot();
 	
 	/**
+	 * 获取医疗结构根节点id
+	 * @param orgId
+	 * @return
+	 */
+	String selectRootById(@Param("org_id") String orgId);
+	
+	/**
 	  * 获取所有医疗机构节点
 	  * @return
 	  */
@@ -75,9 +82,21 @@ public interface OrganizationMapper {
 	 * @param orgId
 	 * @param privince
 	 * @param city
+	 * @param area
 	 * @return
 	 */
 	List<WebScOrganization> selectAllTree(@Param("org_id") String orgId, @Param("province_code") String privince,
+			@Param("city_code") String city, @Param("area_code") String area);
+	
+	/**
+	 * 查询当前用户下的所有医疗结构叶子节点
+	 * @param orgId
+	 * @param privince
+	 * @param city
+	 * @param area
+	 * @return
+	 */
+	List<WebScOrganization> selectAllLeaf(@Param("org_id") String orgId, @Param("province_code") String privince,
 			@Param("city_code") String city, @Param("area_code") String area);
 	
 	/**

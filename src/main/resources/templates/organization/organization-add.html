@@ -173,6 +173,7 @@
 				radio: true,
 				clickClose: true,
 				repeat: true,
+				filterable: true,
 				model: {
 					label: {
 						type: 'block',
@@ -199,6 +200,7 @@
 					var data = response.data;
 					rootKit.update({
 						data: data,
+						filterable: true,
 						autoRow: true
 					})
 				}

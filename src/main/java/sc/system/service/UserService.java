@@ -2,8 +2,10 @@ package sc.system.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import sc.common.constants.PatientEnum;
 import sc.common.constants.RoleEnum;
+import sc.common.constants.TitleEnum;
 import sc.common.exception.DuplicateNameException;
 import sc.common.shiro.ShiroActionProperties;
 import sc.common.util.ResultBean;
@@ -34,6 +37,7 @@ import sc.common.util.UUID19;
 import sc.common.util.UploadUtil;
 import sc.system.mapper.BureauMapper;
 import sc.system.mapper.DeptMapper;
+import sc.system.mapper.DocMapper;
 import sc.system.mapper.OperationMapper;
 import sc.system.mapper.OrganizationMapper;
 import sc.system.mapper.UserMapper;
@@ -71,10 +75,13 @@ public class UserService {
 	private OperationMapper operationMapper;
 	
 	@Resource
-	private MenuService menuService;
+	private UserRoleMapper userRoleMapper;
 	
 	@Resource
-	private UserRoleMapper userRoleMapper;
+	private DocMapper docMapper;
+	
+	@Resource
+	private MenuService menuService;
 	
 	@Resource
 	private UserAuthsService userAuthsService;
@@ -98,7 +105,7 @@ public class UserService {
 		UserVO uvo = new UserVO();
 		uvo.setUserId(user.getUserId());
 		uvo.setName(userQuery.getUserName());
-		uvo.setPhone(userQuery.getPhone());
+		uvo.setSearchRole(userQuery.getRoleId());
 		uvo.setRole(RoleEnum.valueOf(Integer.parseInt(user.getRoleId())).getType());
 		uvo.setProvince(user.getProvince());
 		uvo.setCity(user.getCity());
@@ -390,7 +397,13 @@ public class UserService {
 	}
 	
 	public WebScUser selectOne(String id) {
-		return userMapper.selectByPrimaryKey(id);
+		WebScUser user = userMapper.selectByPrimaryKey(id);
+		if (user.getTitles() != null) {
+			// 职称代号替换为职称描述 前端展示
+			TitleEnum te = TitleEnum.getValueOf(user.getTitles());
+			user.setTitles(te.getDesc());
+		}
+		return user;
 	}
 	
 	/**
@@ -523,5 +536,21 @@ public class UserService {
 			operations = operationMapper.selectByIds(codes);
 		}
 		return operations;
+	}
+	
+	/**
+	 * 医生手术量统计
+	 * @param userId
+	 * @return
+	 */
+	public Map<String, Integer> statsForDoctor(String userId) {
+		Map<String, Integer> statsMap = new HashMap<String, Integer>();
+		int todayCount = docMapper.statsTodayForDc(userId);
+		int monthCount = docMapper.statsMonthForDc(userId);
+		int yearCount = docMapper.statsYearForDc(userId);
+		statsMap.put("dayCount", todayCount);
+		statsMap.put("monthCount", monthCount);
+		statsMap.put("yearCount", yearCount);
+		return statsMap;
 	}
 }

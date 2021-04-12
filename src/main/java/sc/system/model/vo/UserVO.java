@@ -26,7 +26,7 @@ public class UserVO {
 	private int leaf;				// 上述医疗机构是否是叶子节点 1是 0否
 	
 	private String name;			// 用户姓名（前台查询条件）
-	private String phone;			// 手机号（前台查询条件）
+	private String searchRole;		// 角色（前台查询条件）
 	
 	public UserVO() {
 		this.adminRoleId = RoleEnum.XTGLY.getCode() + "";
@@ -157,12 +157,12 @@ public class UserVO {
 		this.name = name;
 	}
 	
-	public String getPhone() {
-		return phone;
+	public String getSearchRole() {
+		return searchRole;
 	}
 	
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setSearchRole(String searchRole) {
+		this.searchRole = searchRole;
 	}
 	
 }

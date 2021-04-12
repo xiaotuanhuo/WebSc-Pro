@@ -309,9 +309,9 @@
 				da.login_name,
 				da.sex,
 				da.age,
-				da.phone,
 				da.email,
 				da.status,
+				da.role_id,
                	da.role_name
     	from 
 	    	(select u.user_id,
@@ -319,7 +319,7 @@
 					u.login_name,
 					u.sex,
 					u.age,
-					u.phone,
+					u.role_id,
 					u.email,
 					u.status,
 	               	r.role_name
@@ -440,8 +440,8 @@
     		<if test="user.name != null and user.name != ''">
 				AND da.user_name like CONCAT('%', #{user.name, jdbcType=VARCHAR}, '%')
 			</if>
-			<if test="user.phone != null and user.phone != ''">
-				AND da.phone like CONCAT('%', #{user.phone, jdbcType=VARCHAR}, '%')
+			<if test="user.searchRole != null and user.searchRole != ''">
+				AND da.role_id = #{user.searchRole, jdbcType=VARCHAR}
 			</if>
     	</where>
     </select>
