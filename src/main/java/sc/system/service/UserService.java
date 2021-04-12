@@ -397,6 +397,15 @@ public class UserService {
 	}
 	
 	public WebScUser selectOne(String id) {
+		return userMapper.selectByPrimaryKey(id);
+	}
+	
+	/**
+	 * 医生或者护士资质详情
+	 * @param id
+	 * @return
+	 */
+	public WebScUser selectCredentials(String id) {
 		WebScUser user = userMapper.selectByPrimaryKey(id);
 		if (user.getTitles() != null) {
 			// 职称代号替换为职称描述 前端展示

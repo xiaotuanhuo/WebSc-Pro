@@ -80,8 +80,8 @@ public class UserController {
      */
     @GetMapping("/credentials/{userId}")
 	public String credentials(@PathVariable("userId") String userId, Model model) {
-    	WebScUser user = userService.selectOne(userId);
-		model.addAttribute("user", userService.selectOne(userId));
+    	WebScUser user = userService.selectCredentials(userId);
+		model.addAttribute("user", user);
 		model.addAttribute("patients", userService.getPatients(user.getPatientType()));
 		model.addAttribute("operations", userService.getOperations(user.getOperationType()));
 		return "user/credentials-info";
@@ -92,8 +92,10 @@ public class UserController {
      */
     @GetMapping("/picture")
     public void picture(String p, HttpServletResponse response) throws IOException {
-    	File file = new File((uploadPath.endsWith("/") ? uploadPath : uploadPath + "/") + p);
-    	FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
+    	if (p != null && !p.equals("null")) {
+    		File file = new File((uploadPath.endsWith("/") ? uploadPath : uploadPath + "/") + p);
+        	FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
+		}
     }
     
     @GetMapping("/doctor/stats/{userId}/{userName}")
