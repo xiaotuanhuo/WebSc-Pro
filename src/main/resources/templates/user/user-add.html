@@ -252,8 +252,11 @@
 					}
 				},
 				mandatoryfieldAge: function(value, item) { // 年龄的非必填校验
-					if (!new RegExp("(^$)|^(\d)+$").test(value)){
-						return '请输入正确的年龄';
+					if (value != "") {
+						var regex = /^\+?[1-9][0-9]*$/;
+						if (!regex.test(value)) {
+							return '年龄必须为数字';
+						}
 					}
 				}
 			});
@@ -538,6 +541,9 @@
 			//监听提交
 			form.on('submit(add)', function (form) {
 				var titleLeave = '';
+				if ($("#age").val() == "") {
+					form.field.age = 0;
+				}
 				if (roleKit.getValue('valueStr') == '') {
 					layer.alert('请选择角色', {icon: 5});
 					return false;

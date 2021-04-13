@@ -3,7 +3,6 @@ package sc.system.model;
 import java.io.Serializable;
 
 public class WebScUser implements Serializable {
-
     private static final long serialVersionUID = -3200103254689137288L;
     
 	private String userId;
