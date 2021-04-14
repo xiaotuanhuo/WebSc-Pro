@@ -90,12 +90,6 @@
 	</script>
 	
 	<script type="text/html" id="column-toolbar">
-		<shiro:hasAnyRoles name="cjgly,qygly">	
-			{{# if(d.roleId == '5') { }}
-				<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="stats">统计</a>
-			{{# } }}
-		</shiro:hasPermission>
-
 		<shiro:hasPermission name="user:update">
 			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">修改</a>
 		</shiro:hasPermission>
@@ -175,9 +169,7 @@
 			table.on('tool', function (obj) {
 				var data = obj.data;
 				var event = obj.event;
-				if (event === 'stats') {
-					stats(data.userId, data.userName);
-				} else if (event === 'edit') {
+				if (event === 'edit') {
 					edit(data.userId);
 				} else if (event === 'reset') {
 					reset(data.userId);
@@ -216,17 +208,6 @@
 					maxmin: true,
 					shadeClose: true
 				}); */
-			}
-			
-			function stats(id, name) {
-				layer.open({
-					content: '/user/doctor/stats/' + id + "/" + name,
-					title: "统计信息",
-					area: ['60%', '70%'],
-					type: 2,
-					maxmin: true,
-					shadeClose: true
-				});
 			}
 			
 			function edit(id) {

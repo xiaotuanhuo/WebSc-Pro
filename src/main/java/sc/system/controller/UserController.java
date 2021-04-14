@@ -98,18 +98,6 @@ public class UserController {
 		}
     }
     
-    @GetMapping("/doctor/stats/{userId}/{userName}")
-	public String statsDoctor(@PathVariable("userId") String userId, @PathVariable("userName") String userName,
-			Model model) {
-		Map<String, Integer> statsMap = userService.statsForDoctor(userId);
-		
-		model.addAttribute("name", userName);
-		model.addAttribute("day", statsMap.get("dayCount"));
-		model.addAttribute("month", statsMap.get("monthCount"));
-		model.addAttribute("year", statsMap.get("yearCount"));
-		return "user/doctor-stats";
-	}
-    
 	@GetMapping("/{userId}")
 	public String update(@PathVariable("userId") String userId, Model model) {
 //		model.addAttribute("roleIds", userService.selectRoleIdsById(userId));

@@ -62,22 +62,4 @@ public interface DocMapper {
 	List<WebScUser> getTransferUser(Map<String, String> searchMap);
 	
 	List<WebScUser> getQaUserInfo(Map<String, String> searchMap);
-	
-	/**
-	 * 医生当日手术量统计
-	 * @return
-	 */
-	int statsTodayForDc(@Param("userId") String userId);
-	
-	/**
-	 * 医生当月手术量统计
-	 * @return
-	 */
-	int statsMonthForDc(@Param("userId") String userId);
-	
-	/**
-	 * 医生当年手术量统计
-	 * @return
-	 */
-	int statsYearForDc(@Param("userId") String userId);
 }

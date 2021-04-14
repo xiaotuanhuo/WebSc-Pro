@@ -546,20 +546,4 @@ public class UserService {
 		}
 		return operations;
 	}
-	
-	/**
-	 * 医生手术量统计
-	 * @param userId
-	 * @return
-	 */
-	public Map<String, Integer> statsForDoctor(String userId) {
-		Map<String, Integer> statsMap = new HashMap<String, Integer>();
-		int todayCount = docMapper.statsTodayForDc(userId);
-		int monthCount = docMapper.statsMonthForDc(userId);
-		int yearCount = docMapper.statsYearForDc(userId);
-		statsMap.put("dayCount", todayCount);
-		statsMap.put("monthCount", monthCount);
-		statsMap.put("yearCount", yearCount);
-		return statsMap;
-	}
 }
