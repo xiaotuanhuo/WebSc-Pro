@@ -310,6 +310,7 @@
 				da.sex,
 				da.age,
 				da.email,
+				DATE_FORMAT(da.create_time, "%Y-%m-%d") as create_time,
 				da.status,
 				da.role_id,
                	da.role_name
@@ -321,6 +322,7 @@
 					u.age,
 					u.role_id,
 					u.email,
+					u.create_time,
 					u.status,
 	               	r.role_name
 	        from WSC_USER u
