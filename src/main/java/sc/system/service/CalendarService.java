@@ -24,7 +24,7 @@ import sc.system.model.vo.CalendarEventVO;
 @Service
 public class CalendarService {
 	
-	private final static String allDayPeriod = "00:00:00 - 23:59:59";
+	private final static String allDayPeriod = "00:00 - 23:59";
 	
 	@Resource
     private WebScCalendarMapper webScCalendarMapper;
@@ -74,15 +74,15 @@ public class CalendarService {
 			CalendarEventVO calendarEventVO = new CalendarEventVO();
 			calendarEventVO.setId(webScCalendar.getCalendarId()+"");
 			calendarEventVO.setTitle(webScCalendar.getTitle());
-			calendarEventVO.setStart(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", 
+			calendarEventVO.setStart(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm", 
 					webScCalendar.getStartTime()));
-			calendarEventVO.setEnd(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", 
+			calendarEventVO.setEnd(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm", 
 					webScCalendar.getEndTime()));
 			
 			String timePeriod = 
-			DateUtils.getTime(webScCalendar.getStartTime())
+			DateUtils.getTime(webScCalendar.getStartTime()).substring(0, 5)
 			+" - "+
-			DateUtils.getTime(webScCalendar.getEndTime());
+			DateUtils.getTime(webScCalendar.getEndTime()).substring(0, 5);
 			
 			calendarEventVO.setAllDay(
 					timePeriod.equals(allDayPeriod) ? true : false);

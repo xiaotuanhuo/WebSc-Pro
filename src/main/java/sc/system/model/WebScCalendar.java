@@ -2,6 +2,10 @@ package sc.system.model;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class WebScCalendar {
     private String calendarId;
 
@@ -9,8 +13,12 @@ public class WebScCalendar {
 
     private String title;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date startTime;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date endTime;
 
     private String memo;

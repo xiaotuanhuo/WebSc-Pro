@@ -7,7 +7,7 @@ package sc.common.constants;
  */
 public enum RecordTitleEnum {
 	DOCTOR_NAME("0", "医生姓名"),
-	DOCTOR_PHONE("1", "医生手机号"),
+//	DOCTOR_PHONE("1", "医生手机号"),
 	ORG_NAME("2", "医疗机构名称"),
 	RECORD_DATE("3", "备案日期"),
 	END_DATE("4", "截止日期");

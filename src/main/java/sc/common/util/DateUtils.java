@@ -179,7 +179,28 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		return parseDateToStr("HH:mm:ss", date);
 	}
 	
+	/**
+	 * 判断字符串日期是否满足指定格式
+	 * @param dateStr 字符串日期
+	 * @param pattern 指定格式
+	 * @return
+	 */
+	public static boolean isValidDate(String dateStr, String pattern) {
+		boolean convertSuccess=true;
+		// 指定日期格式为四位年/两位月份/两位日期，注意yyyy/MM/dd区分大小写；
+		SimpleDateFormat format = new SimpleDateFormat(pattern);
+		try {
+			// 设置lenient为false. 否则SimpleDateFormat会比较宽松地验证日期，比如2007/02/29会被接受，并转换成2007/03/01
+			format.setLenient(false);
+			format.parse(dateStr);
+		} catch (ParseException e) {
+			// 如果throw java.text.ParseException或者NullPointerException，就说明格式不对
+			convertSuccess=false;
+		} 
+		return convertSuccess;
+	}
+	
 	public static void main(String[] args) {
-		System.out.println(getTime(new Date()));
+		System.out.println(getHour(new Date(121, 4, 13, 8, 8)));
 	}
 }

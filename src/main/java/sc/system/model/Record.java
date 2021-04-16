@@ -30,6 +30,8 @@ public class Record {
     private Date endDate;
 
     private Date createDate;
+    
+    private int expireDays;
 
     public Integer getRecordId() {
         return recordId;
@@ -110,4 +112,20 @@ public class Record {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
+
+	public int getExpireDays() {
+		return expireDays;
+	}
+
+	public void setExpireDays(int expireDays) {
+		this.expireDays = expireDays;
+	}
+
+	@Override
+	public String toString() {
+		return "Record [recordId=" + recordId + ", userId=" + userId + ", orgId=" + orgId + ", doctorName=" + doctorName
+				+ ", doctorPhone=" + doctorPhone + ", doctorCity=" + doctorCity + ", orgName=" + orgName
+				+ ", recordDate=" + recordDate + ", endDate=" + endDate + ", createDate=" + createDate + ", expireDays="
+				+ expireDays + "]";
+	}
 }

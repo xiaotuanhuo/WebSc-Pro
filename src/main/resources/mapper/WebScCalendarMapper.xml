@@ -36,21 +36,21 @@
     user.role_id='5'
     and user.city like concat(#{cityPre,jdbcType=VARCHAR},'%')
     and cal.end_time > now()
-    <if test="doctorName != null and doctorName != ''" >
-    	and user.user_name = #{doctorName,jdbcType=VARCHAR}
-    </if>
-    <if test="orgName != null and orgName != ''" >
-    	and rd.org_name = #{orgName,jdbcType=VARCHAR}
-    </if>
     <if test="startDate != null and startDate != ''" >
     	<![CDATA[
-    		and end_time >= str_to_date( #{startDate},'%Y-%m-%d %H:%i:%s')
+    		and end_time >= str_to_date( #{startDate},'%Y-%m-%d')
     	]]>
     </if>
     <if test="endDate != null and endDate != ''" >
     	<![CDATA[
-    		and cal.start_time <= str_to_date( #{endDate},'%Y-%m-%d %H:%i:%s')
+    		and cal.start_time <= str_to_date( #{endDate},'%Y-%m-%d')
     	]]>
+    </if>
+    <if test="doctorName != null and doctorName != ''" >
+    	and user.user_name like concat(#{doctorName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="orgName != null and orgName != ''" >
+    	and rd.org_name like concat(#{orgName,jdbcType=VARCHAR},'%')
     </if>
     order by cal.start_time desc
   </select>

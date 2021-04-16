@@ -12,11 +12,13 @@
     <result column="record_date" property="recordDate" jdbcType="DATE" />
     <result column="end_date" property="endDate" jdbcType="DATE" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    
+    <result column="expire_days" property="expireDays" jdbcType="INTEGER" />
   </resultMap>
   
   <sql id="Base_Column_List" >
     record_id, user_id, org_id, doctor_name, doctor_phone, doctor_city, org_name, 
-    record_date, end_date, create_date
+    record_date, end_date, create_date, datediff(end_date,NOW()) AS expire_days
   </sql>
   
   <select id="selectRecordByConditions" resultMap="BaseResultMap" parameterType="hashmap">
@@ -28,6 +30,11 @@
     1 = 1
     <if test="doctorName != null and doctorName != ''" >
     	and doctor_name = #{doctorName,jdbcType=VARCHAR}
+    </if>
+    <if test="endDate != null and endDate != ''" >
+    	<![CDATA[
+    		and end_date <= str_to_date(#{endDate},'%Y-%m-%d')
+    	]]>
     </if>
     <if test="orgName != null and orgName != ''" >
     	and org_name like concat(#{orgName,jdbcType=VARCHAR},'%')

@@ -119,8 +119,6 @@ public class RecordService {
 				for (int j = 0; j < rows.get(i).size(); j++) {
 					if (RecordTitleEnum.DOCTOR_NAME.getTxt().equals(rows.get(0).get(j))) {
 						record.setDoctorName(rows.get(i).get(j).toString());
-					}else if (RecordTitleEnum.DOCTOR_PHONE.getTxt().equals(rows.get(0).get(j))) {
-						record.setDoctorPhone(rows.get(i).get(j).toString());
 					}else if (RecordTitleEnum.ORG_NAME.getTxt().equals(rows.get(0).get(j))) {
 						record.setOrgName(rows.get(i).get(j).toString());
 					}else if (RecordTitleEnum.RECORD_DATE.getTxt().equals(rows.get(0).get(j))) {
@@ -154,22 +152,10 @@ public class RecordService {
 	 */
 	private Record checkRecord(Record record) throws Exception {
 		
-//		if(!MailTelValidateUtil.isMobileNO(record.getDoctorPhone())) {
-//			throw new Exception("手机号格式有误");
-//		}
-		
-		WebScUser user = userMapper.selectOneByLoginName(record.getDoctorPhone());
+		WebScUser user = userMapper.selectByDoctorName(record.getDoctorName());
 		//校验医生是否注册
 		if(StringUtil.isNull(user)) {
-			throw new Exception("手机号“"+record.getDoctorPhone()+"”未注册");
-		}else {
-			if(!user.getUserName().equals(record.getDoctorName())) {
-				throw new Exception("医生名字和注册时的名字不相同，（注册姓名：“"+user.getUserName()+"”）");
-			}
-			//判断是否为医生账号
-			if(!"5".equals(user.getRoleId())) {
-				throw new Exception("此账号非医生账号，（姓名：“"+user.getUserName()+"”）");
-			}
+			throw new Exception("医生姓名“"+record.getDoctorPhone()+"”未注册");
 		}
 		
 		//校验医疗机构是否存在
@@ -185,7 +171,7 @@ public class RecordService {
 		
 		//判重
 		if("1".equals(recordMapper.isExists(
-				record.getDoctorPhone(), record.getOrgName(), 
+				record.getDoctorName(), record.getOrgName(), 
 				DateUtils.parseDateToStr("yyyy-MM-dd", record.getEndDate())))) {
 			
 			throw new Exception("这条备案信息已存在，不可重复添加");
@@ -193,6 +179,7 @@ public class RecordService {
 		
 		//只能增加自己辖区的医生备案信息？？
 		
+		record.setDoctorPhone(user.getPhone());
 		record.setUserId(user.getUserId());
 		record.setDoctorCity(user.getCity());
 		record.setOrgId(organization.getOrgId());

@@ -29,7 +29,7 @@
     	var laydate;
     	var layerIndex;
     	var layer;
-    	const allDayPeriod = '00:00:00 - 23:59:59';
+    	const allDayPeriod = '00:00 - 23:59';
 		layui.use(['layer','laydate','form'], function(){
 			laydate = layui.laydate;
 			form = layui.form;
@@ -234,6 +234,7 @@
 						elem: '#calendarType'
 						,position: 'fixed'
 						,type: 'time'
+						,format: 'HH:mm'
 						,range: true
 						,trigger: 'click'
 						,done: function(value, date, endDate){
@@ -310,6 +311,7 @@
 						elem: '#calendarType'
 						,position: 'fixed'
 						,type: 'time'
+						,format: 'HH:mm'
 						,range: true
 						,trigger: 'click'
 						,done: function(value, date, endDate){
@@ -333,9 +335,9 @@
 	    	if(allDay){
 	    		return allDayPeriod;
 	    	}else{
-	    		return startDate.getHours()+":"+startDate.getMinutes()+":"+startDate.getSeconds()
+	    		return startDate.getHours()+":"+startDate.getMinutes()
 	    		+" - "+
-	    		endDate.getHours()+":"+endDate.getMinutes()+":"+endDate.getSeconds();
+	    		endDate.getHours()+":"+endDate.getMinutes();
 	    	}
 	    }
 	    

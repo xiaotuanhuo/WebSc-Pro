@@ -281,6 +281,8 @@ public class DocService {
     	for (int i = 1; i < rows.size(); i++) {
     		try {
     			WebScDoc doc = new WebScDoc();
+    			String operateDate = "";
+				String operateTime = "";
     			for (int j = 0; j < rows.get(i).size(); j++) {
     				if (DocumentTitleEnum.patient_name.getTxt().equals(rows.get(0).get(j))) {
     					
@@ -327,13 +329,22 @@ public class DocService {
 						}
     					
 						doc.setOperativeId(operativeIds.substring(1));
-					}else if (DocumentTitleEnum.operate_start_time.getTxt().equals(rows.get(0).get(j))) {
+					}else if (DocumentTitleEnum.operate_date.getTxt().equals(rows.get(0).get(j))) {
+						
+						if(StringUtil.isEmpty(rows.get(i).get(j).toString())) {
+							throw new Exception("手术日期不能为空");
+						}
+						System.out.println("手术日期："+rows.get(i).get(j));
+						operateDate = rows.get(i).get(j).toString();
+//						doc.setOperateStartTime(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", (Date)rows.get(i).get(j)));
+					}else if (DocumentTitleEnum.operate_time.getTxt().equals(rows.get(0).get(j))) {
 						
 						if(StringUtil.isEmpty(rows.get(i).get(j).toString())) {
 							throw new Exception("手术时间不能为空");
 						}
-						
-						doc.setOperateStartTime(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", (Date)rows.get(i).get(j)));
+						System.out.println("手术时间："+rows.get(i).get(j));
+//						
+						operateTime = rows.get(i).get(j).toString();
 					}else if (DocumentTitleEnum.operate_user.getTxt().equals(rows.get(0).get(j))) {
 						
 						if(StringUtil.isEmpty(rows.get(i).get(j).toString())) {
@@ -378,6 +389,12 @@ public class DocService {
 						doc.setMemo(rows.get(i).get(j).toString());
 					}
     			}
+    			
+    			if(DateUtils.isValidDate(operateDate +" "+ operateTime,"yyyy-MM-dd HH:mm")) {
+					doc.setOperateStartTime(operateDate +" "+ operateTime);
+				}else {
+					throw new Exception("手术日期或时间格式有误“"+operateDate +" "+ operateTime+"”，请调整为正确的格式（yyyy-MM-dd HH:mm）");
+				}
     			
     			//根据“患者姓名+手术日期+机构”判断是否为重复订单
     			if("1".equals(docMapper.isExists(

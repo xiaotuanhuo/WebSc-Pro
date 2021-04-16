@@ -15,6 +15,12 @@ import java.util.Set;
 public interface UserMapper {
 	
 	/**
+     * 根据用户名获取用户
+     */
+	@Select("SELECT * FROM WSC_USER WHERE user_name=#{username} AND role_id='5' limit 1")
+    WebScUser selectByDoctorName(@Param("username") String username);
+	
+	/**
 	 * 根据微信openid获取用户信息
 	 * @param openid
 	 * @return
@@ -68,7 +74,7 @@ public interface UserMapper {
     Set<String> selectRoleNameByLoginName(@Param("loginname") String loginname);
 
     /**
-     * 根据用户名获取用户
+     * 根据登录名获取用户
      */
     WebScUser selectOneByLoginName(@Param("loginname") String loginname);
 

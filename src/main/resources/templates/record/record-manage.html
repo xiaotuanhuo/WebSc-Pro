@@ -13,7 +13,7 @@
 <body class="z-body">
 	<div class="searchDiv" style="margin-bottom:20px;">
 		<div class="layui-row">
-			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md3">
 				医生姓名：
 				<div class="layui-inline">
 					<input class="layui-input" name="doctorNameInput" id="doctorNameInput" autocomplete="off">
@@ -25,7 +25,13 @@
 					<input class="layui-input" name="orgNameInput" id="orgNameInput" autocomplete="off">
 				</div>
 			</div>
-			<div class="layui-col-xs12 layui-col-sm6 layui-col-md4">
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md3">
+				截止时间：
+				<div class="layui-inline">
+					<input class="layui-input" name="endDate" id="endDate" autocomplete="off">
+				</div>
+			</div>
+			<div class="layui-col-xs12 layui-col-sm6 layui-col-md2">
 				<button class="layui-btn" data-type="reload">
 					<i class="layui-icon layui-icon-search"></i>搜索
 				</button>
@@ -66,6 +72,12 @@
 	  	  var form = layui.form;
 	  	  var upload = layui.upload;
 	  	  
+		  laydate.render({
+			elem: '#endDate'
+			,type: 'date'
+			,trigger: 'click'
+		  });
+	  	  
 	  	  table.render({
 	  	    elem: '#doctorRecordTable'
 	  	    ,toolbar: '#recordHeaderToolbar' //开启头部工具栏，并为其绑定左侧模板
@@ -74,7 +86,8 @@
 	  	    ,method : 'post' //默认：get请求
 	  	    ,where : {
 	  			doctorName: $('#doctorNameInput').val(),
-			    orgName: $('#orgNameInput').val()
+			    orgName: $('#orgNameInput').val(),
+			    endDate: $('#endDate').val()
 			}
 			,contentType : 'application/json'
 	  	    ,cols: [
@@ -83,11 +96,12 @@
 	  	    		,{field:'userId', title: '用户Id', hide: true}
 		    	    ,{field:'orgId', title: '医疗机构Id', hide: true}
 		    	    ,{type: 'numbers', title: '序号', align: 'center', width:'5%'}
-		    	    ,{field:'doctorName', width:'15%', align: 'center', title: '医生姓名'}
+		    	    ,{field:'doctorName', width:'10%', align: 'center', title: '医生姓名'}
 		    	    ,{field:'doctorPhone', width:'10%', align: 'center', title: '医生手机号'}
 		    	    ,{field:'orgName', width:'15%', align: 'center', title: '医疗机构'}
-		    	    ,{field:'recordDate', width:'15%', align: 'center', title: '备案日期'}
-		    	    ,{field:'endDate', width:'15%', align: 'center', title: '截止日期'}
+		    	    ,{field:'recordDate', width:'12%', align: 'center', title: '备案日期'}
+		    	    ,{field:'endDate', width:'12%', align: 'center', title: '截止日期'}
+		    	    ,{field:'expireDays', width:'11%', align: 'center', title: '到期天数'}
 		    	    ,{field:'createDate', width:'15%', align: 'center', title: '创建日期'}
 		    	    ,{fixed: 'right', width:'10%', align:'center', toolbar: '#recordBar'}
 	  	    	]
@@ -106,7 +120,8 @@
 	  			    }
 		    		,where: {
 		    			doctorName: $('#doctorNameInput').val().trim(),
-		    			orgName: $('#orgNameInput').val().trim()
+		    			orgName: $('#orgNameInput').val().trim(),
+		    			endDate: $('#endDate').val().trim()
 		    		}
 	  			});
 	  		}
@@ -134,7 +149,7 @@
 	                    						'<label class="layui-form-label" style="width:100px;">医生姓名</label>'+
 	                    						'<div class="layui-input-inline">'+
 	                        						'<select id="doctorName" name="doctorName" lay-verify="required" lay-search lay-filter="doctorFilter">'+
-	                        							'<option value="'+data.doctorName+'_'+data.doctorPhone+'">'+data.doctorName+'</option>'+
+	                        							'<option value="'+data.doctorName+'">'+data.doctorName+'</option>'+
 	                        						'</select>'+
 	                    						'</div>'+
 	                						'</div>'+
@@ -151,6 +166,14 @@
 	            						'</div>'+
 	        						'</div>'+
 	        						'<div class="layui-form-item">'+
+		        						'<div class="layui-col-md6 layui-col-xs6 layui-col-sm6 layui-col-lg6">'+
+		            						'<div class="layui-inline">'+
+		                						'<label class="layui-form-label" style="width:100px;">备案日期</label>'+
+							                    '<div class="layui-input-inline">'+
+							                        '<input id="recordDate" name="recordDate" value="'+data.recordDate+'" lay-verify="required" class="layui-input" type="text" placeholder="备案日期" autocomplete="off"/>'+
+							                    '</div>'+
+		            						'</div>'+
+		        						'</div>'+
 	            						'<div class="layui-col-md6 layui-col-xs6 layui-col-sm6 layui-col-lg6">'+
 	                						'<div class="layui-inline">'+
 	                    						'<label class="layui-form-label" style="width:100px;">截止日期</label>'+
@@ -159,24 +182,6 @@
 	                    						'</div>'+
 	                						'</div>'+
 	            						'</div>'+
-	            						'<div class="layui-col-md6 layui-col-xs6 layui-col-sm6 layui-col-lg6">'+
-	                						'<div class="layui-inline">'+
-	                    						'<label class="layui-form-label" style="width:100px;">备案日期</label>'+
-							                    '<div class="layui-input-inline">'+
-							                        '<input id="recordDate" name="recordDate" value="'+data.recordDate+'" lay-verify="required" class="layui-input" type="text" placeholder="备案日期" autocomplete="off"/>'+
-							                    '</div>'+
-	                						'</div>'+
-	            						'</div>'+
-	        						'</div>'+
-	        						'<div class="layui-form-item">'+
-		        						'<div class="layui-col-md6 layui-col-xs6 layui-col-sm6 layui-col-lg6">'+
-		            						'<div class="layui-inline">'+
-		                						/* '<label class="layui-form-label" style="width:110px;">医生手机号</label>'+ */
-							                    '<div class="layui-input-inline">'+
-							                        '<input id="doctorPhone" name="doctorPhone" value="'+data.doctorPhone+'" class="layui-input" type="hidden" placeholder="医生手机号"/>'+
-							                    '</div>'+
-		            						'</div>'+
-		        						'</div>'+
 	        						'</div>'+
 	        						'<div class="layui-form-item">'+
 		        						'<div class="layui-col-md12 layui-col-xs12 layui-col-sm12 layui-col-lg12">'+
@@ -199,18 +204,22 @@
 	      		laydate.render({
 	      	  		elem: '#recordDate'
 	      	  		,type: 'date'
+	      	  		,trigger: 'click'
+	      	  		,position: 'fixed'
 	      	  	});
 				//截止时间
 				laydate.render({
 					elem: '#endDate'
 					,type: 'date'
+					,trigger: 'click'
+					,position: 'fixed'
 				});
 				//获取该区域医生列表
 				$.get("/record/getDoctors",function(resData,status){
 				    if(resData.code == 0){
 				    	$.each(resData.data, function(index,value){
 				    		if(data.doctorPhone != value.loginName){
-				    			$("#doctorName").append("<option value='"+value.userName+"_"+value.loginName+"'>"+value.userName+"</option>");
+				    			$("#doctorName").append("<option value='"+value.userName+"'>"+value.userName+"</option>");
 				    		}
 				    	});
 				    }else{
@@ -323,28 +332,18 @@
 					'<div class="layui-form-item">'+
 						'<div class="layui-col-md6 layui-col-xs6 layui-col-sm6 layui-col-lg6">'+
 							'<div class="layui-inline">'+
-	    						'<label class="layui-form-label" style="width:100px;">截止日期</label>'+
-	    						'<div class="layui-input-inline">'+
-	        						'<input id="endDate" name="endDate" lay-verify="required" class="layui-input" type="text" placeholder="截止日期" autocomplete="off"/>'+
-	    						'</div>'+
-							'</div>'+
-						'</div>'+
-						'<div class="layui-col-md6 layui-col-xs6 layui-col-sm6 layui-col-lg6">'+
-							'<div class="layui-inline">'+
-	    						'<label class="layui-form-label" style="width:100px;">备案日期</label>'+
+								'<label class="layui-form-label" style="width:100px;">备案日期</label>'+
 			                    '<div class="layui-input-inline">'+
 			                        '<input id="recordDate" name="recordDate" lay-verify="required" class="layui-input" type="text" placeholder="备案日期" autocomplete="off"/>'+
 			                    '</div>'+
 							'</div>'+
 						'</div>'+
-					'</div>'+
-					'<div class="layui-form-item">'+
 						'<div class="layui-col-md6 layui-col-xs6 layui-col-sm6 layui-col-lg6">'+
 							'<div class="layui-inline">'+
-	    						/* '<label class="layui-form-label" style="width:110px;">医生手机号</label>'+ */
-			                    '<div class="layui-input-inline">'+
-			                        '<input id="doctorPhone" name="doctorPhone" class="layui-input" type="hidden" placeholder="医生手机号"/>'+
-			                    '</div>'+
+	    						'<label class="layui-form-label" style="width:100px;">截止日期</label>'+
+	    						'<div class="layui-input-inline">'+
+	        						'<input id="endDate" name="endDate" lay-verify="required" class="layui-input" type="text" placeholder="截止日期" autocomplete="off"/>'+
+	    						'</div>'+
 							'</div>'+
 						'</div>'+
 					'</div>'+
@@ -369,18 +368,22 @@
 				laydate.render({
 					elem: '#recordDate'
 					,type: 'date'
+					,trigger: 'click'
+					,position: 'fixed'
 				});
 				//截止时间
 				laydate.render({
 					elem: '#endDate'
 					,type: 'date'
+					,trigger: 'click'
+					,position: 'fixed'
 				});
 				
 				//获取该区域医生列表
 				$.get("/record/getDoctors",function(resData,status){
 				    if(resData.code == 0){
 				    	$.each(resData.data, function(index,value){
-				    		$("#doctorName").append("<option value='"+value.userName+"_"+value.loginName+"'>"+value.userName+"</option>");
+				    		$("#doctorName").append("<option value='"+value.userName+"'>"+value.userName+"</option>");
 				    	});
 				    }else{
 				    	layer.alert(resData.msg);

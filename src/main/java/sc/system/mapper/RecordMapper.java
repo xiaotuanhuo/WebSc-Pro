@@ -13,10 +13,10 @@ import sc.system.model.Record;
 @Mapper
 public interface RecordMapper {
 	
-	@Select("SELECT '1' FROM WSC_RECORD WHERE doctor_phone=#{doctorPhone} "
+	@Select("SELECT '1' FROM WSC_RECORD WHERE doctor_name=#{doctorName} "
 			+ "AND org_name=#{orgName} AND end_date=str_to_date(#{endDate},'%Y-%m-%d')")
 	String isExists(
-			@Param("doctorPhone") String doctorPhone, 
+			@Param("doctorName") String doctorName, 
 			@Param("orgName") String orgName, 
 			@Param("endDate") String endDate);
 	

@@ -34,8 +34,6 @@ public class ExcelUtil {
 				for (int j = 0; j < rows.get(i).size(); j++) {
 					if (RecordTitleEnum.DOCTOR_NAME.getTxt().equals(rows.get(0).get(j))) {
 						record.setDoctorName(rows.get(i).get(j).toString());
-					}else if (RecordTitleEnum.DOCTOR_PHONE.getTxt().equals(rows.get(0).get(j))) {
-						record.setDoctorPhone(rows.get(i).get(j).toString());
 					}else if (RecordTitleEnum.ORG_NAME.getTxt().equals(rows.get(0).get(j))) {
 						record.setOrgName(rows.get(i).get(j).toString());
 					}else if (RecordTitleEnum.RECORD_DATE.getTxt().equals(rows.get(0).get(j))) {
