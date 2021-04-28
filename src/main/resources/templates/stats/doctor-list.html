@@ -14,6 +14,16 @@
     <link rel="stylesheet" th:href="@{/iconfont/iconfont.css}">
     <link rel="stylesheet" th:href="@{/lib/layui/extend/dtree.css}" />
     <link rel="stylesheet" th:href="@{/lib/layui/extend/font/dtreefont.css}">
+    
+    <style>
+    	::-webkit-scrollbar{
+    		display:none;
+    	}
+    	html,body{
+    		height: 50%;
+    		margin: 10;
+    	}
+    </style>
 </head>
 
 <body>
@@ -25,8 +35,8 @@
 			<div class="layui-form-item">
 				<label for="roleName" class="layui-form-label">姓名</label>
 				<div class="layui-input-inline">
-					<input type="text" name="roleName" autocomplete="off"
-						id="roleName" placeholder="请输入医生姓名" class="layui-input">
+					<input type="text" name="name" autocomplete="off"
+						id="name" placeholder="请输入医生姓名" class="layui-input">
 				</div>
 				<button lay-submit="" lay-filter="search"
 					class="layui-btn layui-btn-sm layui-btn-primary table-action">
@@ -34,13 +44,29 @@
 				</button>
 			</div>
 		</form>
-		<table class="layui-hide" id="role-table"></table>
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md7">
+				<table id="doctor-table" class="layui-hide" lay-filter="scoreEvent"></table>
+			</div>
+			<div class="layui-col-md5">
+				<div id="mountNode"></div>
+			</div>
+		</div>
 	</div>
 	
 	<script th:src="@{/lib/jquery/jquery.min.js}"></script>
 	<script th:src="@{/lib/layui/layui.js}"></script>
 	<script th:src="@{/js/common.js}"></script>
+	<script src="https://gw.alipayobjects.com/os/lib/antv/g2/3.4.10/dist/g2.min.js"></script>
+	<script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.data-set-0.10.1/dist/data-set.min.js"></script>
 	<script>
+		var firstRender = true;
+		var chart = new G2.Chart({
+			container : 'mountNode',
+			forceFit : true,
+			height : window.innerHeight,
+			padding : [50, 20, 100, 80]
+		});
         layui.config({
 			base: '/lib/layui/extend/'
 		}).use(['table', 'element', 'form', 'tablePlug'], function () {
@@ -58,29 +84,195 @@
 				smartReloadModel: true,
 				cols: [
 					[
-						{type:'numbers', title:'序号', fixed:'left', width:'5%'},
+						{type:'numbers', title:'', fixed:'left', width:'10%'},
 						{field:'userId', title:'id', hide:true},
-						{field:'loginName', title:'用户名', width:'15%'},
-						{field:'userName', title:'姓名', sort:true, width:'25%'},
-						{field:'sex', title:'性别', templet:'#sexTpl', width:'7%'},
-						{field:'roleName', title:'角色', width:'15%'},
-						{field:'status', title:'状态', templet:'#statusTpl', width:'8%'}
+						{field:'userName', title:'姓名', sort:true, width:'15%'},
+						{field:'d_dr_qty', title:'日手术量', width:'15%'},
+						{field:'m_dr_qty', title:'月手术量', width:'15%'},
+						{field:'y_dr_qty', title:'年手术量', width:'15%'},
+						{field:'s_dr_qty', title:'总手术量', width:'15%'},
+						{field:'score', title:'评分', event: 'bar', style:'cursor: pointer;', width:'15%'}
 					]
-				]
+				],
+				done: function (res, curr, count) {
+					//表格加载完成后，默认选中第一行
+					$('.layui-table-view[lay-id="doctor-table"]').children('.layui-table-box').children('.layui-table-body').find('table tbody tr[data-index="0"]').click();
+                }
 			});
 			
-			// 工具条点击事件
-			table.on('toolbar', function (obj) {
-				var event = obj.event;
-				switch (event) {
-					case 'add':
-						add();
-						break;
-					default:
-						break;
-				}
-            });
+			//监听行单击事件（双击事件为：rowDouble）
+			table.on('row(scoreEvent)', function(obj) {
+				obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+				var data = obj.data;
+				vote(data.userId);
+				/* layer.alert(JSON.stringify(data), {
+					title: '当前行数据：'
+				});
+				//标注选中样式
+				obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click'); */
+			});
+			
+			form.on('submit(search)', function(form) {
+				table.reload('doctor-table', {
+					where : form.field
+				});
+				return false;
+			});
 		});
+        
+        function vote(id) {
+        	$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "/stats/vote/" + id,
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			if (firstRender) {
+        				firstRender = false;
+        				if (result.code == 0) {
+            				sumRadio = true;
+            				var data = result.data;
+            				chart.source(data, {
+            					ratio : {
+            						max : 1.0,
+            						min : 0.0,
+            						nice : false,
+            						alias : ' ',
+            						formatter: val => {
+            							if (val != 0.00) {
+            								return accMul(val, 100) + '%';
+            							}
+            							return val;
+            						}
+            					},
+            					type: {
+            						formatter: val => {
+            							switch (val) {
+    	        							case '1':
+    	        								return '服务态度';
+    	        							case '2':
+    	        								return '配合度';
+    	        							case '3':
+    	        								return '术前评估';
+    	        							case '4':
+    	        								return '术中管理';
+    	        							case '5':
+    	        								return '术中并发症';
+    	        							case '6':
+    	        								return '术后疼痛';
+            								default:
+            									return val;
+            							}
+            						}
+            					},
+            					level: {
+            						formatter: val => {
+            							switch (val) {
+    	        							case '1':
+    	        								return '良好';
+    	        							case '2':
+    	        								return '一般';
+    	        							case '3':
+    	        								return '较差';
+    	    								default:
+    	    									return val;
+    	    							}
+            						}
+            					}
+            				});
+            				chart.axis('type', {
+            					label : {
+            						textStyle : {
+            							fill : '#595959',
+            							fontSize : 12
+            						}
+            					},
+            					tickLine : {
+            						alignWithLabel : false,
+            						length : 0
+            					},
+            					line : {
+            						lineWidth : 0
+            					}
+            				});
+            				chart.axis('ratio', {
+            					label : null,
+            					title : {
+            						offset : 30,
+            						textStyle : {
+            							fontSize : 14,
+            							fontWeight : 300
+            						}
+            					},
+            					grid : {
+            						lineStyle : {
+            							lineWidth : 0
+            						}
+            					}
+            				});
+            				chart.legend({
+            					position : 'top-center'
+            				});
+            				chart.coord().transpose();
+            				chart.intervalStack().position('type*ratio').color('level*type',
+            						function(level, type) {
+            							var color = void 0;
+            							if (level === '1')
+            								color = '#1890ff';
+            							if (level === '2')
+            								color = '#ced4d9';
+            							if (level === '3')
+            								color = '#f0f2f3';
+            							return color;
+            						}).size(26).opacity(1).label('value*ratio*level',
+            						function(val, v, t) {
+            							if (v < 0.05) {
+            								return false;
+            							}
+            							var color = '#47494b';
+            							return {
+            								position : 'middle',
+            								offset : 0,
+            								textStyle : {
+            									fontSize : 12,
+            									fill : color,
+            									shadowBlur : 2,
+            									shadowColor : 'rgba(0, 0, 0, .45)'
+            								}
+            							};
+            						});
+            				chart.render();
+            			} else {
+            				
+            			}
+        			} else {
+        				chart.changeData(result.data);
+        			}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+        }
+        
+		/**
+         * 小数相乘，解决丢失精度问题
+         * @param {Number} value1
+         * @param {Number} value2
+         */
+		function accMul(value1, value2) {
+			if (value1 == 0 || value2 == 0) {
+				return 0;
+			}
+			var m = 0;
+			var v1 = value1.toString();
+			var v2 = value2.toString();
+			m += v1.split(".")[1] ? v1.split(".")[1].length : 0;
+			m += v2.split(".")[1] ? v2.split(".")[1].length : 0;
+			var _v1 = Number(v1.replace(".", ""));
+			var _v2 = Number(v2.replace(".", ""));
+			return (_v1 * _v2) / Math.pow(10, m);
+        }
 	</script>
 </body>
 

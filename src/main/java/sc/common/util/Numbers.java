@@ -1,5 +1,6 @@
 package sc.common.util;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -146,5 +147,22 @@ public class Numbers {
 	public static String randomThousand() {
 		return (new Random().nextInt(9999)) + "";
 	}
-
+	
+	
+	/**
+	 * 除法运算，精度由参数指定，四舍五入
+	 * @param v1
+	 * @param v2
+	 * @param scale
+	 * @return
+	 */
+	public static double div(int v1, int v2, int scale) {
+		if (scale < 0)
+			throw new IllegalArgumentException("小数精确位必须大于零");
+		if (v2 == 0)
+			throw new IllegalArgumentException("被除数不能为零");
+		BigDecimal dec1 = new BigDecimal(Double.toString(v1));
+		BigDecimal dec2 = new BigDecimal(Double.toString(v2));
+		return dec1.divide(dec2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+	}
 }

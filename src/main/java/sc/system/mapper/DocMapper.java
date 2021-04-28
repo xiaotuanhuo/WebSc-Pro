@@ -62,4 +62,12 @@ public interface DocMapper {
 	List<WebScUser> getTransferUser(Map<String, String> searchMap);
 	
 	List<WebScUser> getQaUserInfo(Map<String, String> searchMap);
+	
+	
+	
+	
+	int statsToday(@Param("userId") String userId);
+	int statsMonth(@Param("userId") String userId);
+	int statsYear(@Param("userId") String userId);
+	int statsSum(@Param("userId") String userId);
 }

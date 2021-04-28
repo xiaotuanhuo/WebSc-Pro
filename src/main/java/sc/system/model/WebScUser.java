@@ -37,6 +37,12 @@ public class WebScUser implements Serializable {
 	private String wxOpenid;
 	private String wxUserid;
 	
+	private int score;		// 评分
+	private int d_dr_qty;	// 医生日手术量
+	private int m_dr_qty;	// 医生月手术量
+	private int y_dr_qty;	// 医生年手术量
+	private int s_dr_qty;	// 医生总手术量
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -284,5 +290,44 @@ public class WebScUser implements Serializable {
 	public void setRoleTypeName(String roleTypeName) {
 		this.roleTypeName = roleTypeName;
 	}
-
+	
+	public int getScore() {
+		return score;
+	}
+	
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
+	public int getD_dr_qty() {
+		return d_dr_qty;
+	}
+	
+	public void setD_dr_qty(int d_dr_qty) {
+		this.d_dr_qty = d_dr_qty;
+	}
+	
+	public int getM_dr_qty() {
+		return m_dr_qty;
+	}
+	
+	public void setM_dr_qty(int m_dr_qty) {
+		this.m_dr_qty = m_dr_qty;
+	}
+	
+	public int getY_dr_qty() {
+		return y_dr_qty;
+	}
+	
+	public void setY_dr_qty(int y_dr_qty) {
+		this.y_dr_qty = y_dr_qty;
+	}
+	
+	public int getS_dr_qty() {
+		return s_dr_qty;
+	}
+	
+	public void setS_dr_qty(int s_dr_qty) {
+		this.s_dr_qty = s_dr_qty;
+	}
 }

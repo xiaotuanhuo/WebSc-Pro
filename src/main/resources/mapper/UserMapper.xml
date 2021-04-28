@@ -478,5 +478,36 @@
 		where wd.document_id = #{documentId, jdbcType=VARCHAR}
 	)
   	</select>
-
+  	
+  	
+  	
+  	
+  	
+  	<select id="selectDoctors" resultMap="BaseResultMap">
+        select
+        user_id,
+        user_name
+        from WSC_USER
+        <where>
+        	<choose>
+	        	<when test="user.city != null and user.city != ''">
+	        		AND city = #{user.city,jdbcType=VARCHAR}
+	        	</when>
+	        	<otherwise>
+	        		<choose>
+	        			<when test="user.province != null and user.province != ''">
+	        				AND province = #{user.province,jdbcType=VARCHAR}
+	        			</when>
+	        			<otherwise>
+	        				1 = 1
+	        			</otherwise>
+	        		</choose>
+	        	</otherwise>
+	        </choose>
+	        AND role_id = '5'
+	        <if test="name != null and name != ''">
+	        	AND user_name like CONCAT('%', #{name, jdbcType=VARCHAR}, '%')
+	        </if>
+        </where>
+    </select>
 </mapper>

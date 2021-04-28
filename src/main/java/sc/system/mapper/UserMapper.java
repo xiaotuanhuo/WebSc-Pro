@@ -158,5 +158,10 @@ public interface UserMapper {
   	 * @return
   	 */
   	List<WebScUser> getDocumentQaUser(String documentId);
-
+  	
+  	
+  	
+  	
+  	
+  	List<WebScUser> selectDoctors(@Param("user") WebScUser user, @Param("name") String name);
 }

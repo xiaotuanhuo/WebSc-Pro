@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sc.system.mapper.WebScEvaluateMapper" >
+  <resultMap id="BaseResultMap" type="sc.system.model.WebScEvaluate" >
+    <id column="document_id" property="documentId" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="kind" property="kind" jdbcType="CHAR" />
+    <result column="score" property="score" jdbcType="REAL" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="label_id" property="labelId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    document_id, org_id, user_id, kind, score, remark, label_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSC_EVALUATE
+    where document_id = #{documentId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from WSC_EVALUATE
+    where document_id = #{documentId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="sc.system.model.WebScEvaluate" >
+    insert into WSC_EVALUATE (document_id, org_id, user_id, 
+      kind, score, remark, label_id
+      )
+    values (#{documentId,jdbcType=VARCHAR}, #{orgId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{kind,jdbcType=CHAR}, #{score,jdbcType=REAL}, #{remark,jdbcType=VARCHAR}, #{labelId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="sc.system.model.WebScEvaluate" >
+    insert into WSC_EVALUATE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="documentId != null" >
+        document_id,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="kind != null" >
+        kind,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="labelId != null" >
+        label_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="documentId != null" >
+        #{documentId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="kind != null" >
+        #{kind,jdbcType=CHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=REAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="labelId != null" >
+        #{labelId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="sc.system.model.WebScEvaluate" >
+    update WSC_EVALUATE
+    <set >
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="kind != null" >
+        kind = #{kind,jdbcType=CHAR},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=REAL},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="labelId != null" >
+        label_id = #{labelId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where document_id = #{documentId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScEvaluate" >
+    update WSC_EVALUATE
+    set org_id = #{orgId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      kind = #{kind,jdbcType=CHAR},
+      score = #{score,jdbcType=REAL},
+      remark = #{remark,jdbcType=VARCHAR},
+      label_id = #{labelId,jdbcType=VARCHAR}
+    where document_id = #{documentId,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <!-- 机构对医生的评价 -->
+  <select id="selectLabels" resultType="java.lang.String" parameterType="java.lang.String" >
+    select 
+    GROUP_CONCAT(label_id) labels
+    from WSC_EVALUATE
+    where user_id = #{userId,jdbcType=VARCHAR} and kind = '0' group by user_id, kind
+  </select>
+</mapper>
