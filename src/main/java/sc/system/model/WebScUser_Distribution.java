@@ -14,8 +14,11 @@ public class WebScUser_Distribution {
 	private String patient_type;
 	private String isOperation;	
 	private String operation_type;
+	private float fAvgEvaluate;
 	
 	private int distributionScore;
+	
+	private double avgNumber;
 	
 	public String getUserId() {
 		return userId;
@@ -100,5 +103,17 @@ public class WebScUser_Distribution {
 	}
 	public void setDistributionScore(int distributionScore) {
 		this.distributionScore = distributionScore;
+	}
+	public double getAvgNumber() {
+		return avgNumber;
+	}
+	public void setAvgNumber(double avgNumber) {
+		this.avgNumber = avgNumber;
+	}
+	public float getfAvgEvaluate() {
+		return fAvgEvaluate;
+	}
+	public void setfAvgEvaluate(float fAvgEvaluate) {
+		this.fAvgEvaluate = fAvgEvaluate;
 	}
 }

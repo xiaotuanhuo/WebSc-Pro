@@ -12,6 +12,7 @@
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/animate.min.css}">
     <link rel="stylesheet" th:href="@{/iconfont/iconfont.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/extend/formSelects-v4.css}" />
     <style type="text/css">
     	.layui-table-tool{
     		min-height: 60px;
@@ -74,7 +75,56 @@
 						<table class="layui-hide" id="doc-table-9" lay-filter="doc-table-9"></table>
 					</div>
 					<div class="layui-tab-item">
-						<table class="layui-hide" id="doc-table-5" lay-filter="doc-table-5"></table>
+						<table class="layui-hide" id="doc-table-5" lay-filter="doc-table-5">
+							<div class="layui-row">
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+							     	<label for="operateStartTime" class="layui-form-label">手术日期</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_operateStartTime" autocomplete="off" class="layui-input" >
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+							     	<label for="operateEndTime" class="layui-form-label">至</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_operateEndTime" autocomplete="off" class="layui-input" >
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm3 layui-col-md3" style="margin-top: 8px;">
+									<label for="patientName" class="layui-form-label">患者姓名</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_patientName" lay-vertype="tips" autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm1 layui-col-md1" style="text-align: left;padding-left: 10px;margin-top: 11px;">
+									<button class="layui-btn layui-btn-sm" onclick="doc_table_5_export()">
+										<i class="layui-icon layui-icon-download-circle" style="font-size: 15px;"></i>  
+									</button>
+								</div>
+							</div>
+							<div class="layui-row">
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+							 		<label for="qaUserName" class="layui-form-label">医生姓名</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_qaUserName" lay-vertype="tips" autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm7 layui-col-md7" style="margin-top: 8px;">
+							 		<label for="orgId" class="layui-form-label">医疗机构</label>
+									<div class="layui-input-block">
+										<select id="doc_table_5_orgId" name="orgId" xm-select="org-select" xm-select-show-count="10" xm-select-max="10" xm-select-search="" xm-select-skin="normal" lay-search="">
+									  		<option value="">请选择机构</option>
+											<option th:each="org:${orgls}" th:value="${org.orgId}" th:text="${org.orgName}"
+									       		th:selected="${#arrays.contains((orgls == null ? #arrays.toIntegerArray(new String[]{}) : orgls), org.orgId)}"></option>
+									   	</select>
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm1 layui-col-md1" style="text-align: left;padding-left: 10px;margin-top: 11px;">
+									<button class="layui-btn layui-btn-sm" onclick="doc_table_5_search()">
+										<i class="layui-icon layui-icon-search" style="font-size: 15px;"></i>  
+									</button>
+								</div>
+							</div>
+						</table>
 					</div>
 					<div class="layui-tab-item">
 						<table class="layui-hide" id="doc-table-6" lay-filter="doc-table-6"></table>
@@ -88,7 +138,49 @@
 						<table class="layui-hide" id="doc-table-3" lay-filter="doc-table-3"></table>
 					</div>
 					<div class="layui-tab-item">
-						<table class="layui-hide" id="doc-table-5" lay-filter="doc-table-5"></table>
+						<table class="layui-hide" id="doc-table-5" lay-filter="doc-table-5">
+							<div class="layui-row">
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+									<label for="patientName" class="layui-form-label">患者姓名</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_patientName" lay-vertype="tips" autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm7 layui-col-md7" style="margin-top: 8px;">
+							 		<label for="orgId" class="layui-form-label">医疗机构</label>
+									<div class="layui-input-block">
+										<select id="doc_table_5_orgId" name="orgId" xm-select="org-select" xm-select-show-count="10" xm-select-max="10" xm-select-search="" xm-select-skin="normal" lay-search="">
+									  		<option value="">请选择机构</option>
+											<option th:each="org:${orgls}" th:value="${org.orgId}" th:text="${org.orgName}"
+									       		th:selected="${#arrays.contains((orgls == null ? #arrays.toIntegerArray(new String[]{}) : orgls), org.orgId)}"></option>
+									   	</select>
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm1 layui-col-md1" style="text-align: left;padding-left: 10px;margin-top: 11px;">
+								</div>
+							</div>
+							<div class="layui-row">
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+							     	<label for="operateStartTime" class="layui-form-label">手术日期</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_operateStartTime" autocomplete="off" class="layui-input" >
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+							     	<label for="operateEndTime" class="layui-form-label">至</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_operateEndTime" autocomplete="off" class="layui-input" >
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm3 layui-col-md3" style="margin-top: 8px;">
+								</div>
+								<div class="layui-col-xs12 layui-col-sm1 layui-col-md1" style="text-align: left;padding-left: 10px;margin-top: 11px;">
+									<button class="layui-btn layui-btn-sm" onclick="doc_table_5_search()">
+										<i class="layui-icon layui-icon-search" style="font-size: 15px;"></i>  
+									</button>
+								</div>
+							</div>
+						</table>
 					</div>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="doc:hospital">
@@ -99,7 +191,43 @@
 						<table class="layui-hide" id="doc-table-123" lay-filter="doc-table-123"></table>
 					</div>
 					<div class="layui-tab-item">
-						<table class="layui-hide" id="doc-table-5" lay-filter="doc-table-5"></table>
+						<table class="layui-hide" id="doc-table-5" lay-filter="doc-table-5">
+							<div class="layui-row">
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+							     	<label for="operateStartTime" class="layui-form-label">手术日期</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_operateStartTime" autocomplete="off" class="layui-input" >
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+							     	<label for="operateEndTime" class="layui-form-label">至</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_operateEndTime" autocomplete="off" class="layui-input" >
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm3 layui-col-md3" style="margin-top: 8px;">
+								</div>
+							</div>
+							<div class="layui-row">
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+							 		<label for="patientName" class="layui-form-label">患者姓名</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_patientName" lay-vertype="tips" autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
+							 		<label for="qaUserName" class="layui-form-label">医生姓名</label>
+									<div class="layui-input-block">
+										<input type="text" id="doc_table_5_qaUserName" lay-vertype="tips" autocomplete="off" class="layui-input">
+									</div>
+								</div>
+								<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="text-align: left;padding-left: 10px;margin-top: 11px;">
+									<button class="layui-btn layui-btn-sm" onclick="doc_table_5_search()">
+										<i class="layui-icon layui-icon-search" style="font-size: 15px;"></i>  
+									</button>
+								</div>
+							</div>
+						</table>
 					</div>
 					<div class="layui-tab-item">
 						<table class="layui-hide" id="doc-table-6" lay-filter="doc-table-6"></table>
@@ -233,26 +361,42 @@
 				<input type="text" id="doc_table_5_operateEndTime" autocomplete="off" class="layui-input" >
 			</div>
 		</div>
-		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-		</div>
-		</div>
-		<div class="layui-row">
-		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
-	 		<label for="patientName" class="layui-form-label">患者姓名</label>
+		<div class="layui-col-xs12 layui-col-sm3 layui-col-md3" style="margin-top: 8px;">
+			<label for="patientName" class="layui-form-label">患者姓名</label>
 			<div class="layui-input-block">
 				<input type="text" id="doc_table_5_patientName" lay-vertype="tips" autocomplete="off" class="layui-input">
 			</div>
 		</div>
+		</div>
+		<div class="layui-row">
 		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="margin-top: 8px;">
 	 		<label for="qaUserName" class="layui-form-label">医生姓名</label>
 			<div class="layui-input-block">
 				<input type="text" id="doc_table_5_qaUserName" lay-vertype="tips" autocomplete="off" class="layui-input">
 			</div>
 		</div>
-		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="text-align: left;padding-left: 10px;margin-top: 11px;">
+		<div class="layui-col-xs12 layui-col-sm7 layui-col-md7" style="margin-top: 8px;">
+	 		<label for="orgId" class="layui-form-label">医疗机构</label>
+			<div class="layui-input-block">
+				<select id="search_orgId" name="orgId" xm-select="org-select" xm-select-show-count="3" xm-select-max="10" xm-select-search="" xm-select-skin="normal" lay-search="">
+			  		<option value="">请选择机构</option>
+					<option th:each="org:${orgls}" th:value="${org.orgId}" th:text="${org.orgName}"
+			       		th:selected="${#arrays.contains((orgls == null ? #arrays.toIntegerArray(new String[]{}) : orgls), org.orgId)}"></option>
+			   	</select>
+			</div>
+		</div>
+		<div class="layui-col-xs12 layui-col-sm1 layui-col-md1" style="text-align: left;padding-left: 10px;margin-top: 11px;">
 			<button class="layui-btn layui-btn-sm" lay-event="doc_table_5_search">
 				<i class="layui-icon layui-icon-search" style="font-size: 15px;"></i>  
 			</button>
+		</div>
+		</div>
+		<div class="layui-row">
+		<div class="layui-col-xs12 layui-col-sm8 layui-col-md8" style="margin-top: 8px;">
+			
+		</div>
+		<div class="layui-col-xs12 layui-col-sm4 layui-col-md4" style="text-align: left;padding-left: 10px;margin-top: 11px;">
+			
 		</div>
 		</div>
 	</script>
@@ -450,7 +594,7 @@
     
     <script type="text/html" id="evaluation-column-toolbar">
 		<shiro:hasPermission name="doc:JgEvaluation">
-			{{#if(d.hospitalEvaluate != null &&  d.hospitalEvaluate != '') { }}
+			{{#if(d.hospitalEvaluate != null && d.hospitalEvaluate != '' && d.hospitalEvaluate != '-1') { }}
 				<span>{{d.hospitalEvaluate}}星</span>
 			{{# }else{ }}
             	<a lay-event="JgEvaluation">
@@ -459,7 +603,7 @@
 			{{# } }}
 		</shiro:hasPermission>
 		<shiro:hasPermission name="doc:DrEvaluation">
-			{{#if(d.doctorEvaluate != null &&  d.doctorEvaluate != '') { }}
+			{{#if(d.doctorEvaluate != null &&  d.doctorEvaluate != '' && d.doctorEvaluate != '-1') { }}
 				<span>{{d.doctorEvaluate}}星</span>
 			{{# }else{ }}
             	<a lay-event="DrEvaluation">
@@ -543,14 +687,22 @@
     /*<![CDATA[*/
         layui.config({
             base: '/lib/layui/extend/'
-        }).use(['table', 'element', 'form', 'tablePlug','laydate'], function () {
+        }).extend({
+            formSelects: 'formSelects-v4'
+        }).use(['table', 'element', 'form', 'formSelects', 'tablePlug','laydate'], function () {
             var table = layui.table;
             var $ = layui.$;
             var form = layui.form;
             var tablePlug = layui.tablePlug,
+            formSelects = layui.formSelects,
             laydate = layui.laydate;
             
             tablePlug.smartReload.enable(true);
+            
+            formSelects.config('org-select', {
+            	clearInput: true,
+            	searchType: "title"
+		 	}, true);
             
             //时间控件
             laydate.render({
@@ -762,7 +914,6 @@
                 , where: {state: '5'}
                 , page: true
                 , smartReloadModel: true
-                , toolbar: '#doc-table-5-toolbar'
                 , defaultToolbar:[]
                 , cols: [
                     [
@@ -984,11 +1135,11 @@
                 	layer.open({
                 		content: '/doc/drevaluation?documentId=' + data.documentId + "&type=1",
                      	title: "医生评价",
-                     	area: ['100%', '100%'],
+                     	area: ['300px', '500px'],
                      	type: 2,
-                     	maxmin: true,
+                     	maxmin: false,
                      	shadeClose: true,
-                        move: false,
+                        move: true,
                      	end: function () {
                      		table.reload('doc-table-5');
                      	}
@@ -1168,28 +1319,6 @@
            		}
           	};
             
-            table.on('toolbar(doc-table-5)', function (obj) {
-            	var data = obj.data;
-            	if(obj.event === 'doc_table_5_search'){
-            		active_5["reload"] ? active_5["reload"].call(this) : '';
-                }
-            });
-            
-            var active_5 = {
-           		reload: function(){
-     	      		table.reload('doc-table-5', {
-     	      		url: '/doc/list',
-     		       	where: {
-     		       		state: '5', 
-     		       		beginDate: $('#doc_table_5_operateStartTime').val(),
-     		       		endDate: $('#doc_table_5_operateEndTime').val(),
-     		       		qaUserName: $('#doc_table_5_qaUserName').val(),
-     		       		patientName: $('#doc_table_5_patientName').val()
-     		    	}
-     	      		});
-           		}
-          	};
-            
             table.on('toolbar(doc-table-6)', function (obj) {
             	var data = obj.data;
             	if(obj.event === 'doc_table_6_search'){
@@ -1229,8 +1358,74 @@
      	      		});
            		}
           	};
-
         });
+    
+        function doc_table_5_search(){
+        	layui.config({
+                base: '/lib/layui/extend/'
+            }).extend({
+                formSelects: 'formSelects-v4'
+            }).use(['table', 'formSelects'], function () {
+                var table = layui.table;
+                var $ = layui.$;
+                var formSelects = layui.formSelects;
+            	
+            	var orgValue = formSelects.value('org-select', 'valStr');
+            	
+	 	  		table.reload('doc-table-5', {
+	 	      		url: '/doc/list',
+	 		       	where: {
+	 		       		state: '5', 
+	 		       		beginDate: $('#doc_table_5_operateStartTime').val(),
+	 		       		endDate: $('#doc_table_5_operateEndTime').val(),
+	 		       		qaUserName: $('#doc_table_5_qaUserName').val(),
+	 		       		patientName: $('#doc_table_5_patientName').val(),
+	 		       		orgId:orgValue
+	 		    	}
+	 	    	});
+            });
+        }
+        
+        function doc_table_5_export(){
+        	layui.config({
+		   		base: '/lib/layui/extend/'
+			}).extend({
+		    	formSelects: 'formSelects-v4'
+			}).use(['table', 'formSelects'], function () {
+		  		var table = layui.table;
+		   		var $ = layui.$;
+	    		var formSelects = layui.formSelects;
+		     	
+		     	var orgValue = formSelects.value('org-select', 'valStr');
+        	
+	        	var parms = "state=5&beginDate=" + $('#doc_table_5_operateStartTime').val() + "&endDate=" + $('#doc_table_5_operateEndTime').val() + "&qaUserName=" + $('#doc_table_5_qaUserName').val() + "&patientName=" + $('#doc_table_5_patientName').val() + "&orgId=" + orgValue;
+	        	var elemIF = document.createElement("iframe");
+	    		elemIF.src = "/doc/exportHistoryDocList?" + parms;
+	    		elemIF.style.display = "none";
+	    		document.body.appendChild(elemIF);
+    		
+    		
+
+            	
+//             	$.ajax({
+//                     url: "/doc/list",
+//                     data: {
+//                     	state: '5', 
+// 	 		       		beginDate: $('#doc_table_5_operateStartTime').val(),
+// 	 		       		endDate: $('#doc_table_5_operateEndTime').val(),
+// 	 		       		qaUserName: $('#doc_table_5_qaUserName').val(),
+// 	 		       		patientName: $('#doc_table_5_patientName').val(),
+// 	 		       		orgId:orgValue
+//                     },
+//                     async: false,
+//                     dataType: 'json',
+//                     success: function (res) {
+//                         table.exportFile('doc-table-5', res.data, 'xls');
+//                     }
+//                 });
+            });
+        }
+        
 	/*]]>*/
     </script>
 </body>

@@ -31,6 +31,7 @@ import sc.system.model.StateCount;
 import sc.system.mapper.UserMapper;
 import sc.system.model.WebScAnesthetic;
 import sc.system.model.WebScDoc;
+import sc.system.model.WebScEvaluate;
 import sc.system.model.WebScOperative;
 import sc.system.model.WebScOrganization;
 import sc.system.model.WebScUser;
@@ -67,6 +68,10 @@ public class DocService {
     public int updateByPrimaryKey(WebScDoc doc) {
     	return docMapper.updateByPrimaryKey(doc);
     }
+    
+    public int insertWscEvaluate(WebScEvaluate wse) {
+    	return docMapper.insertWscEvaluate(wse);
+    }
 
     public WebScDoc selectByPrimaryKey(String documentId) {
         return docMapper.selectByPrimaryKey(documentId);
@@ -77,19 +82,19 @@ public class DocService {
     	List<WebScDoc> ls = docMapper.selectWebScDocList(doc);
     	for(WebScDoc d : ls){
     		if(d.getStatus() != null && !d.getStatus().equals("")){
-    			if(d.getTmpPatientName() != null)
+    			if(d.getTmpPatientName() != null && !d.getTmpPatientName().trim().equals(""))
     				d.setPatientName(d.getTmpPatientName());
-    			if(d.getTmpPatientAge() != null)
+    			if(d.getTmpPatientAge() != null && !d.getTmpPatientAge().equals(""))
     				d.setPatientAge(d.getTmpPatientAge());
-    			if(d.getTmpPatientSex() != null)
+    			if(d.getTmpPatientSex() != null && !d.getTmpPatientSex().trim().equals(""))
     				d.setPatientSex(d.getTmpPatientSex());
-    			if(d.getTmpOperativeId() != null)
+    			if(d.getTmpOperativeId() != null && !d.getTmpOperativeId().trim().equals(""))
     				d.setOperativeId(d.getTmpOperativeId());
-    			if(d.getTmpOperativeName() != null)
+    			if(d.getTmpOperativeName() != null && !d.getTmpOperativeName().trim().equals(""))
     				d.setOperativeName(d.getTmpOperativeName());
-    			if(d.getTmpAnestheticId() != null)
+    			if(d.getTmpAnestheticId() != null && !d.getTmpAnestheticId().trim().equals(""))
     				d.setAnestheticId(d.getTmpAnestheticId());
-    			if(d.getTmpAnestheticName() != null)
+    			if(d.getTmpAnestheticName() != null && !d.getTmpAnestheticName().trim().equals(""))
     				d.setAnestheticName(d.getTmpAnestheticName());
 
     			String photo = "";
@@ -151,12 +156,15 @@ public class DocService {
 	    	
 	    	//获取当天医院匹配的医生
 	    	
-	    	List<String> uls = docMapper.getWorkDr(doc.getOperateStartTime());
+	    	List<String> uls = docMapper.getWorkDr(doc.getOperateStartTime(), org.getOrgId());
 	    	
 	    	//创建查询条件
 	    	Map<String, String> searchMap = new HashMap<String, String>();
 	    	searchMap.put("qaName", qaName);
 	    	searchMap.put("province", user.getProvince());
+	    	if(user.getCity() != null && !user.getCity().equals("")){
+	    		searchMap.put("city", user.getCity());
+	    	}
 	    	searchMap.put("org_id",org.getOrgId());
 	    	searchMap.put("operate_start_time", doc.getOperateStartTime());
 	    	//获取医生信息
@@ -171,21 +179,21 @@ public class DocService {
 	    			for(String userid : uls){
 	    				if(duser.getUserId().equals(userid)){
 	    					duser.setIswork("1");
-	    					iDistributionScore += 3;
+	    					iDistributionScore += 1000;
 	    					break;
 	    				}
 	    			}
 	    		}
 	    		//当日有空
 	    		if(duser.getIscalendar() != null && !duser.getIscalendar().equals("")){
-	    			iDistributionScore += 2;
+	    			iDistributionScore += 100;
 	    			duser.setIscalendar("1");
 	    		}else{
 	    			duser.setIscalendar("0");
 	    		}
 	    		//备案
 	    		if(duser.getIsrecord() != null && !duser.getIsrecord().equals("")){
-	    			iDistributionScore += 2;
+	    			iDistributionScore += 50;
 	    			duser.setIscalendar("1");
 	    		}else{
 	    			duser.setIsrecord("0");
@@ -193,13 +201,13 @@ public class DocService {
 	    		
 	    		//所在区域范围
 	    		if(org.getProvince().equals(duser.getProvince())){
-	    			iDistributionScore += 1;
+	    			iDistributionScore += 10;
 	    			iScope += 1;
 	    		}
 	    		
 	    		if(org.getCity() != null && duser.getCity() != null){
 	    			if(org.getCity().equals(duser.getCity())){
-	    				iDistributionScore += 1;
+	    				iDistributionScore += 5;
 		    			iScope += 1;
 	    			}
 	    		}

@@ -101,6 +101,7 @@
     	<result column="area" jdbcType="VARCHAR" property="area"/>
     	<result column="patient_type" jdbcType="VARCHAR" property="patient_type"/>
     	<result column="operation_type" jdbcType="VARCHAR" property="operation_type"/>
+    	<result column="avg_evaluate" jdbcType="NUMERIC" property="fAvgEvaluate"/>
     </resultMap>
     
     <resultMap id="BaseResultMap_Org" type="sc.system.model.WebScOrganization">
@@ -361,21 +362,117 @@
     </select>
     
     <select id="selectWebScDocList" parameterType="sc.system.model.WebScDoc" resultMap="BaseResultMap">
-    select * from (
-    <![CDATA[
-    	select 
-    		doc.document_id,
-    		doc.operative_id,
+     <![CDATA[
+    select  document_id,
+    		operative_id,
 			(select GROUP_CONCAT(operative_name) 
 			from WSC_OPERATIVE 
 			where operative_id in (
 				(
 					select 
-					substring_index(substring_index(doc.operative_id, ',' , help_topic_id + 1), ',' , -1) 
+					substring_index(substring_index(tmpTab.operative_id, ',' , help_topic_id + 1), ',' , -1) 
 					from mysql.help_topic 
-					where help_topic_id < (length(doc.operative_id) - length(REPLACE(doc.operative_id, ',', '')) + 1 )
+					where help_topic_id < (length(tmpTab.operative_id) - length(REPLACE(tmpTab.operative_id, ',', '')) + 1 )
 				)
 			)) as operative_name,
+			anesthetic_id,
+			anesthetic_name,
+			patient_name,
+			patient_age,
+			patient_sex,
+    		
+            tmp_operative_id,
+			(select GROUP_CONCAT(operative_name) 
+			from WSC_OPERATIVE 
+			where operative_id in (
+				(
+					select 
+					substring_index(substring_index(tmpTab.tmp_operative_id, ',' , help_topic_id + 1), ',' , -1) 
+					from mysql.help_topic 
+					where help_topic_id < (length(tmpTab.tmp_operative_id) - length(REPLACE(tmpTab.tmp_operative_id, ',', '')) + 1 )
+				)
+			)) as tmp_operative_name,
+			tmp_anesthetic_id,
+			tmp_anesthetic_name,
+			tmp_patient_name,
+			tmp_patient_age,
+			tmp_patient_sex,
+			
+			patient_num,
+			patient_bednum,
+			patienttype_id,
+			operationtype_id,
+			document_title,
+			document_type,
+			operate_user,
+			operate_aide,
+			apply_user_id,
+			apply_user_name,
+			admin_user_id,
+			admin_user_name,
+			qa_user_id,
+			qa_user_name,
+			qa_team_id,
+			hospital_memo,
+			qa_memo,
+			admin_memo,
+			memo,
+			document_state,
+			operate_start_time,
+			operate_end_time,
+			create_date,
+			hospital_evaluate,
+			hospital_evaluate_memo,
+			doctor_evaluate,
+			doctor_evaluate_memo,
+			old_document_state,
+			delete_reason,
+			transfer_user_id,
+			
+			org_id,
+			org_name,
+			org_address,
+			org_tel,
+			leader_name,
+			leader_tel,
+			org_province,
+			org_city,
+			org_area,
+			
+			height,
+			weight,
+			asa,
+			xtbs,
+			shs,
+			shcs,
+			sskssj,
+			ssjssj,
+			sssc,
+			jmjs,
+			ywsj_hxxt,
+			ywsj_hxxt_qt,
+			ywsj_xhxt,
+			ywsj_xhxt_qt,
+			ywsj_gm,
+			ywsj_gm_socre,
+			ywsj_qt,
+			shbl_zw,
+			shbl_hbtt,
+			shbl_ex,
+			shbl_xy,
+			shbl_ot,
+			shbl_ot_score,
+			shttzl,
+			photo_1,
+			photo_2,
+			photo_3,
+			photo_4,
+			photo_5,
+			status 
+	 from (
+    	select 
+    		doc.document_id,
+    		doc.operative_id,
 			doc.anesthetic_id,
 			(select anesthetic_name from WSC_ANESTHETIC where anesthetic_id = doc.anesthetic_id) as anesthetic_name,
 			doc.patient_name,
@@ -383,16 +480,6 @@
 			doc.patient_sex,
     		
             doctmp.operative_id as tmp_operative_id,
-			(select GROUP_CONCAT(operative_name) 
-			from WSC_OPERATIVE 
-			where operative_id in (
-				(
-					select 
-					substring_index(substring_index(doctmp.operative_id, ',' , help_topic_id + 1), ',' , -1) 
-					from mysql.help_topic 
-					where help_topic_id < (length(doctmp.operative_id) - length(REPLACE(doctmp.operative_id, ',', '')) + 1 )
-				)
-			)) as tmp_operative_name,
 			doctmp.anesthetic_id as tmp_anesthetic_id,
 			(select anesthetic_name from WSC_ANESTHETIC where anesthetic_id = doctmp.anesthetic_id) as tmp_anesthetic_name,
 			doctmp.patient_name as tmp_patient_name,
@@ -408,7 +495,9 @@
 			doc.operate_user,
 			doc.operate_aide,
 			doc.apply_user_id,
+			(select user_name from WSC_USER where user_id = doc.apply_user_id) as apply_user_name,
 			doc.admin_user_id,
+			(select user_name from WSC_USER where user_id = doc.apply_user_id) as admin_user_name,
 			doc.qa_user_id,
 			(select user_name from WSC_USER where user_id = doc.qa_user_id) as qa_user_name,
 			doc.qa_team_id,
@@ -473,21 +562,19 @@
     	left join WSC_ORGANIZATION org on doc.org_id = org.org_id 
     	where 1=1 
     	]]>	
-      	<if test="roleId != null and roleId == '2' and applyUserId != null">
+      	<if test="roleId != null and (roleId == '2'.toString() or roleId == '9'.toString()) and applyUserId != null">
     		<![CDATA[
       			and (	
       					org.org_id in (
-	      					select org_id 
-	      					from WSC_USER t_u 
-	      					left join WSC_ORGANIZATION t_o on t_u.role_type_id = t_o.org_pid 
-	      					where t_u.user_id = #{applyUserId,jdbcType=VARCHAR} 
-	      				) or org.org_id in (
 	      					select role_type_id from WSC_USER where user_id = #{applyUserId,jdbcType=VARCHAR} 
 	      				)
       				)
       		]]>		
     	</if>
-    	<if test="roleId != null and roleId == '4' and qaUserId != null">
+    	<if test="roleId != null and roleId == '8'.toString() and applyUserId != null">
+      		and doc.apply_user_id = #{applyUserId,jdbcType=VARCHAR} 
+    	</if>
+    	<if test="roleId != null and roleId == '4'.toString() and qaUserId != null">
     		<![CDATA[
       			and (
       					doc.qa_user_id = #{qaUserId,jdbcType=VARCHAR} 
@@ -534,12 +621,19 @@
       	<if test="patientName != null and patientName != ''">
       		and doc.patient_name like concat(#{patientName,jdbcType=VARCHAR}, '%')
       	</if>
+      	<if test="isHistroy == null">
+			and doc.operate_start_time > DATE_FORMAT(DATE_SUB(NOW(),interval 2 month), '%Y-%m-%d %H:%k:%s') 
+      	</if>
+      	
+      	<if test="orgId != null and orgId != ''">
+      		and doc.org_id in (${orgId}) 
+      	</if>
       	) tmpTab 
       	where 1=1 
       	<if test="qaUserName != null and qaUserName != ''">
       		and qa_user_name like concat(#{qaUserName,jdbcType=VARCHAR}, '%')
       	</if>
-      	order by operate_start_time desc
+      	order by operate_start_time asc
     </select>
     
     <select id="findWebScDocOrg" parameterType="java.lang.String" resultType="sc.system.model.WebScOrganization">
@@ -563,8 +657,9 @@
     	select qa_user_id 
     	from WSC_DOCUMENT 
     	where qa_user_id is not null
-    	and operate_start_time between str_to_date(#{operate_start_time,jdbcType=VARCHAR}, '%Y-%m-%d') 
-		and date_add(str_to_date(#{operate_start_time,jdbcType=VARCHAR}, '%Y-%m-%d'), interval 1 day) 
+    	and org_id = #{param2,jdbcType=VARCHAR} 
+    	and operate_start_time between str_to_date(#{param1,jdbcType=VARCHAR}, '%Y-%m-%d') 
+		and date_add(str_to_date(#{param1,jdbcType=VARCHAR}, '%Y-%m-%d'), interval 1 day) 
     </select>
     
     <select id="getDistributionDrGridList" parameterType="java.util.Map" resultMap="BaseResultMap_Fp">
@@ -589,11 +684,15 @@
     		   wu.city,
     		   wu.area,
     		   wu.patient_type,
-    		   wu.operation_type
+    		   wu.operation_type,
+    		   wu.avg_evaluate
     	from WSC_USER wu
     	where role_id = '5'
     	and province = #{province,jdbcType=VARCHAR} 
     ]]>	
+    	<if test="city != null">
+    		and city = #{city,jdbcType=VARCHAR} 
+  		</if>
     	<if test="qaName != null">
     		<![CDATA[
     		and wu.user_name like concat(#{qaName,jdbcType=VARCHAR}, '%')

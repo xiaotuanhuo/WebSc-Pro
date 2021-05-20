@@ -27,7 +27,28 @@
 					<div id="jg_star"></div>
 					<input type="hidden" id="jg_store">
 				</div>
-			</div>	
+			</div>
+			<div class="layui-row" style="text-align: left;margin-top: 5px;font: caption;">请选择标签</div>
+			<div class="layui-row" id="dr_main_lab_1" style="text-align: left;margin-top: 10px;">
+				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary">服务态度好</button>
+				</div>
+				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary">配合度高</button>
+				</div>
+				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术前评估及时</button>
+				</div>
+				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术中管理平稳</button>
+				</div>
+				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术后无并发症</button>
+				</div>
+				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术后无疼痛</button>
+				</div>
+			</div>
 			<div class="layui-row" style="margin-top: 8px;">
 	     		<label for="operativeId" class="layui-form-label">备注</label>
 	     		<div class="layui-input-block">
@@ -40,26 +61,24 @@
 		</div>
 	</div>
 	
-	<div id="dr_main" >
-		<fieldset class="layui-elem-field layui-field-title" style="margin: 20px;">
-			<legend>医生打分</legend>
+	<div id="dr_main" style="text-align: center;">
+		<fieldset class="layui-elem-field layui-field-title" style="margin: 30px 30px 0 30px;">
+			<legend style="font-size: 14px;margin-left: 65px;">匿名评价机构</legend>
 		</fieldset>
 		<div class="layui-row" style="margin: 0 20px 0 20px;">
 			<div class="layui-row" style="margin-top: 8px;">
-				<label for="hospitalEvaluate" class="layui-form-label">评分</label>
-				<div class="layui-input-block">
+				<div class="layui-input-block" style="margin-left: 0px;">
 					<div id="dr_star"></div>
 					<input type="hidden" id="dr_store">
 				</div>
-			</div>	
-			<div class="layui-row" style="margin-top: 8px;">
-	     		<label for="doctorEvaluate" class="layui-form-label">备注</label>
-	     		<div class="layui-input-block">
-	          		<textarea placeholder="请输入内容" class="layui-textarea" id="doc_doctorEvaluateMemo" th:value="${doc?.doctorEvaluateMemo}"></textarea>
+			</div>
+			<div class="layui-row" style="margin-top: 10px;">
+	     		<div class="layui-input-block" style="margin-left: 0px;">
+	          		<textarea placeholder="如果有其他意见和建议，请放心填写" class="layui-textarea" id="doc_doctorEvaluateMemo" th:value="${doc?.doctorEvaluateMemo}"></textarea>
 	       		</div>
 	     	</div>
-	     	<div class="layui-row" style="margin-top: 8px;text-align: center;">
-	     		<button id="btnSaveDr" class="layui-btn layui-btn-normal" onclick="saveDr()">保存</button>
+	     	<div class="layui-row" style="margin-top: 15px;">
+	     		<button id="btnSaveDr" class="layui-btn layui-btn-fluid" onclick="saveDr()">保存</button>
 	     	</div>				
 		</div>
 	</div>
@@ -101,7 +120,7 @@
 		      			 var arrs = {
 		      			        '1': '极差'
 		      			        ,'2': '差'
-		      			        ,'3': '中等'
+		      			        ,'3': '一般'
 		      			        ,'4': '好'
 		      			        ,'5': '极好'
 		      			};
@@ -121,7 +140,7 @@
 		      			 var arrs = {
 		      			        '1': '极差'
 		      			        ,'2': '差'
-		      			        ,'3': '中等'
+		      			        ,'3': '一般'
 		      			        ,'4': '好'
 		      			        ,'5': '极好'
 		      			};
@@ -132,7 +151,7 @@
 		      	})
 	      	}
 	      	
-	      	if(doc.doctorEvaluate != null && doc.doctorEvaluate != ''){
+	      	if(doc.doctorEvaluate != null && doc.doctorEvaluate != '' && doc.doctorEvaluate != '-1'){
 	      		rate.render({
 		      		elem: '#dr_star'
 		      		, text: true
@@ -142,10 +161,19 @@
 		      			 var arrs = {
 		      			        '1': '极差'
 		      			        ,'2': '差'
-		      			        ,'3': '中等'
+		      			        ,'3': '一般'
 		      			        ,'4': '好'
 		      			        ,'5': '极好'
 		      			};
+			      		if(value <= 0){
+			      			this.span.text("无评价");
+			      		}else if(value == 1){
+			      			this.span.text("差");
+			      		}else if(value == 2 || value == 3){
+			      			this.span.text("一般");
+			      		}else if(value == 4 || value == 5){
+			      			this.span.text("满意");
+			      		}
 		      		}
 			      	, choose: function (value) {
 		            	$("#dr_store").val(value);
@@ -155,17 +183,26 @@
 	      		$("#doc_doctorEvaluateMemo").attr("disabled","disabled");
 	      		$("#btnSaveDr").css("display", "none");
 	      	}else{
-	      		rate.render({
+		      	rate.render({
 		      		elem: '#dr_star'
 		      		, text: true
 		      		, setText: function(value){ //自定义文本的回调
 		      			 var arrs = {
 		      			        '1': '极差'
 		      			        ,'2': '差'
-		      			        ,'3': '中等'
+		      			        ,'3': '一般'
 		      			        ,'4': '好'
 		      			        ,'5': '极好'
 		      			};
+			      		if(value <= 0){
+			      			this.span.text("无评价");
+			      		}else if(value == 1){
+			      			this.span.text("差");
+			      		}else if(value == 2 || value == 3){
+			      			this.span.text("一般");
+			      		}else if(value == 4 || value == 5){
+			      			this.span.text("满意");
+			      		}
 		      		}
 			      	, choose: function (value) {
 		            	$("#dr_store").val(value);

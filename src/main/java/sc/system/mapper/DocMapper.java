@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import sc.system.model.WebScDoc;
+import sc.system.model.WebScEvaluate;
 import sc.system.model.WebScOrganization;
 import sc.system.model.WebScUser;
 import sc.system.model.WebScUser_Distribution;
@@ -51,11 +52,13 @@ public interface DocMapper {
 
 	int updateByPrimaryKey(WebScDoc doc);
 	
+	int insertWscEvaluate(WebScEvaluate wse);
+	
 	List<WebScDoc> selectWebScDocList(WebScDoc doc);
 	
 	WebScOrganization findWebScDocOrg(String documentId);
 	
-	List<String> getWorkDr(String time);
+	List<String> getWorkDr(String time, String orgId);
 	
 	List<WebScUser_Distribution> getDistributionDrGridList(Map<String, String> searchMap);
 	

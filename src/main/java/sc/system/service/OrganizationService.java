@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -12,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.github.pagehelper.PageHelper;
 
 import sc.common.constants.DistType;
 import sc.common.constants.RoleEnum;
@@ -27,6 +26,8 @@ import sc.system.model.WebScUser;
 import sc.system.model.vo.DistTree;
 import sc.system.model.vo.District;
 
+import com.github.pagehelper.PageHelper;
+
 @Service
 public class OrganizationService {
 	private static final Logger log = LoggerFactory.getLogger(OrganizationService.class);
@@ -39,6 +40,13 @@ public class OrganizationService {
 	
 	@Autowired
 	private District district;
+	
+	public List<WebScOrganization> selectAll(int page, int rows, @Param("bureau") boolean isBureau, @Param("orgRole") boolean isOrgRole, @Param("root_id") String rootId, @Param("wso") WebScOrganization wso) {
+		PageHelper.startPage(page, rows);
+		Subject subject = SecurityUtils.getSubject();
+		WebScUser user = (WebScUser) subject.getPrincipal();
+		return organizationMapper.selectAll(isBureau, isOrgRole, rootId, user, wso);
+	}
 	
 	public List<WebScOrganization> getList(int page, int rows, WebScOrganization wso) {
 		PageHelper.startPage(page, rows);

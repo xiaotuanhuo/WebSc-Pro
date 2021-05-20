@@ -58,7 +58,7 @@
 				        				<label for="patientNum" class="layui-form-label">住院号</label>
 						                <div class="layui-input-block">
 						             		 <input type="text" id="doc_patientNum"
-						                           lay-verify="required" lay-vertype="tips"
+						                           lay-vertype="tips"
 						                           autocomplete="off" class="layui-input" th:value="${doc?.patientNum}" Readonly="true">
 						                </div>
 					                </div>
@@ -67,7 +67,7 @@
 				        				<label for="patientBednum" class="layui-form-label">病床号</label>
 						                <div class="layui-input-block">
 						             		 <input type="text" id="doc_patientBednum"
-						                           lay-verify="required" lay-vertype="tips"
+						                           lay-vertype="tips"
 						                           autocomplete="off" class="layui-input" th:value="${doc?.patientBednum}" Readonly="true">
 						                </div>
 					                </div>
@@ -219,11 +219,11 @@
     </script>
     
     <script type="text/html" id="scopeTpl">
-		{{# if(d.isScope == '1'){ }}
-			<span style="color:blue;">{{d.province}}</span><span> - {{d.city}} - {{d.area}}</span>
-		{{# } else if(d.isScope == '2'){ }}
-			<span style="color:blue;">{{d.province}}</span> - <span style="color:blue;">{{d.city}}</span><span> - {{d.area}}</span>
-		{{# } else if(d.isScope == '3'){ }}
+		{{# if(d.isScope == 1){ }}
+			<span style="color:blue;">{{d.province}}</span>
+		{{# } else if(d.isScope == 2){ }}
+			<span style="color:blue;">{{d.province}}</span> - <span style="color:blue;">{{d.city}}</span>
+		{{# } else if(d.isScope == 3){ }}
 			<span style="color:blue;">{{d.province}}</span> - <span style="color:blue;">{{d.city}}</span> - <span style="color:blue;">{{d.area}}</span>
 		{{# } else { }}
 			<span>{{d.province}} - {{d.city}} - {{d.area}}</span>
@@ -244,7 +244,13 @@
 			<span style="color:blue;">强烈推荐</span>
 		{{# } }}
     </script>
-    
+    <script type="text/html" id="avgEvaluateTypeTpl">
+		{{# if(d.fAvgEvaluate > 0){ }}
+			<span>{{d.fAvgEvaluate}}</span>
+		{{# } else{ }}
+			<span>-</span>
+		{{# } }}
+    </script>
     
     <script th:src="@{/lib/jquery/jquery.min.js}"></script>
     <script th:src="@{/lib/layui/layui.js}"></script>
@@ -308,14 +314,15 @@
                 , cols: [
                     [
                         {field: 'userId', title: 'ID', align: 'center',sort: true, hide: true}
-                        , {field: 'distributionScore', title: '推荐', templet: '#distributionTpl', unresize: true, align: 'center',sort: true, width:'12%'}
-                        , {field: 'userName', title: '姓名', align: 'center',sort: true, width:'13%'}
+//                         , {field: 'distributionScore', title: '推荐', templet: '#distributionTpl', unresize: true, align: 'center',sort: true, width:'12%'}
+                        , {field: 'userName', title: '姓名', align: 'center',sort: true, width:'12%'}
                         , {field: 'iswork', title: '当日已派单', templet: '#workTpl', unresize: true, align: 'center',sort: true, width:'10%'}
                         , {field: 'isrecord', title: '机构备案', templet: '#recordTpl', unresize: true, align: 'center',sort: true, width:'10%'}
                         , {field: 'iscalendar', title: '空闲日', templet: '#calendarTpl', unresize: true, align: 'center',sort: true, width:'10%'}
                         , {field: 'scope', title: '所在区域', templet: '#scopeTpl', unresize: true, align: 'center',sort: true, width:'23%'}
                         , {field: 'patient_type', title: '病人类型', templet: "#patientTypeTpl", align: 'center',sort: true, width:'10%'}
-                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#fp-column-toolbar', width:'10%'}
+                        , {field: 'fAvgEvaluate', title: '评价分值', templet: "#avgEvaluateTypeTpl", align: 'center',sort: true, width:'10%'}
+                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#fp-column-toolbar', width:'15%'}
                     ]
                 ]
             });

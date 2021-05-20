@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import sc.common.util.RedisUtil;
 import sc.system.model.WebScAnesthetic;
 import sc.system.model.WebScOperative;
+import sc.system.model.WebScOrganization;
 import sc.system.service.AnestheticService;
 import sc.system.service.OperativeService;
+import sc.system.service.OrganizationService;
 
 @Controller
 @RequestMapping("/data")
@@ -25,6 +27,9 @@ public class DataController {
 	
 	@Resource
 	private AnestheticService anestheticService;
+	
+	@Resource
+	private OrganizationService organizationService;
 	
 	@Resource
 	private RedisUtil rs;
@@ -61,5 +66,23 @@ public class DataController {
 			rs.set("WSC_ANESTHETIC", anestheticls, 86400);
 		}
 		return anestheticls;
+	}
+	
+	/**
+	 * 获取麻醉方法清单
+	 */
+	public List<WebScOrganization> getWebScOrganizationList(){
+		//从redis里获取
+//		log.info("Redis:获取麻醉方法列表");
+//		@SuppressWarnings("unchecked")
+//		List<WebScOrganization> anestheticls = (List<WebScOrganization>) rs.get("WSC_Organization");
+//		
+//		if(anestheticls == null){
+//			log.info("Redis获取失败:从数据读取麻醉方法列表");
+		List<WebScOrganization> orgls = organizationService.selectAll(1, 10000, false, false, null, new WebScOrganization());
+		//getList(1, 10000, new WebScOrganization());
+//			rs.set("WSC_ANESTHETIC", anestheticls, 86400);
+//		}
+		return orgls;
 	}
 }

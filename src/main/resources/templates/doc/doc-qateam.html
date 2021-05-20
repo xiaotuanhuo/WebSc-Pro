@@ -131,6 +131,10 @@
     	</a>
     </script>
     
+    <script type="text/html" id="sexTpl">
+		{{ d.sex == '0' ? '女' : '男' }}
+    </script>
+    
     <script th:src="@{/lib/jquery/jquery.min.js}"></script>
     <script th:src="@{/lib/layui/layui.js}"></script>
     <script th:src="@{/js/common.js}"></script>
@@ -298,7 +302,7 @@
 					   "		<div class='layui-form-item'>" +
 					   "			<label for='loginname' class='layui-form-label'>性别:</label>" +
 					   "			<div class='layui-input-block'>" +
-					   "				<input type='text'  value='" + (sex == 0 ? '男':'女') + "' class='layui-input' disabled='disabled' style='border-width: 0px;'>" +
+					   "				<input type='text'  value='" + (sex == 0 ? '女':'男') + "' class='layui-input' disabled='disabled' style='border-width: 0px;'>" +
 					   "			</div>" +
 					   "		</div>" +
 					   "		<div class='layui-form-item'>" +
@@ -310,7 +314,7 @@
 					   "	</div>" +
 					   "</div>" +
 					   "<div class='layui-col-xs1 layui-col-sm2 layui-col-md2' style='margin-top: 8px;text-align: center !important;'>" +
-					   "		<button class='layui-btn layui-btn-normal addBox' style='width:30%;height:180px;' onclick='btnUserDel(" + id + "," + type + ")'>" +
+					   "		<button class='layui-btn layui-btn-normal addBox' style='width:30%;height:180px;' onclick='btnUserDel(\"" + id + "\"," + type + ")'>" +
 					   "		<i class='layui-icon layui-icon-subtraction' style='font-size: 20px;color: #aaa;'></i>" +
 					   "	</button>" +
 					   "</div>";
