@@ -29,9 +29,11 @@ import sc.system.mapper.OperativeMapper;
 import sc.system.mapper.OrganizationMapper;
 import sc.system.model.StateCount;
 import sc.system.mapper.UserMapper;
+import sc.system.mapper.WebScDocOperativeMapper;
 import sc.system.model.WebScAnesthetic;
 import sc.system.model.WebScDoc;
 import sc.system.model.WebScEvaluate;
+import sc.system.model.WebScDocOperative;
 import sc.system.model.WebScOperative;
 import sc.system.model.WebScOrganization;
 import sc.system.model.WebScUser;
@@ -53,6 +55,8 @@ public class DocService {
 	private OrganizationMapper organizationMapper;
 	@Resource
 	private UserMapper userMapper;
+	@Autowired
+	WebScDocOperativeMapper webScDocOperativeMapper;
 	
 	@Autowired
 	private District district;
@@ -441,6 +445,11 @@ public class DocService {
     	//4、数据持久化
     	for (WebScDoc webScDoc : docs) {
 			docMapper.insert(webScDoc);
+			String operatives[] = webScDoc.getOperativeId().split(",");
+			for (int i = 0; i < operatives.length; i++) {
+				WebScDocOperative webScDocOperative = new WebScDocOperative(webScDoc, operatives[i]);
+				webScDocOperativeMapper.insert(webScDocOperative);
+			}
 		}
     	
     	return "成功导入"+docs.size()+"条，失败"+(rows.size()-docs.size()-1)+"条："+msg;
