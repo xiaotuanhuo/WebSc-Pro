@@ -58,7 +58,11 @@ public class StatsService {
 			doctor.setM_dr_qty(monthCount);
 			doctor.setY_dr_qty(yearCount);
 			doctor.setS_dr_qty(sumCount);
-			doctor.setScore(90);
+			if (doctor.getAvgEvaluate() == 0) {
+				doctor.setScore("-");
+			} else {
+				doctor.setScore(doctor.getAvgEvaluate() + "");
+			}
 		}
 		return doctors;
 	}

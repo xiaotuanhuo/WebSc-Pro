@@ -36,8 +36,9 @@ public class WebScUser implements Serializable {
 	private String photo;
 	private String wxOpenid;
 	private String wxUserid;
+	private float avgEvaluate;
 	
-	private int score;		// 评分
+	private String score;		// 评分
 	private int d_dr_qty;	// 医生日手术量
 	private int m_dr_qty;	// 医生月手术量
 	private int y_dr_qty;	// 医生年手术量
@@ -291,11 +292,19 @@ public class WebScUser implements Serializable {
 		this.roleTypeName = roleTypeName;
 	}
 	
-	public int getScore() {
+	public float getAvgEvaluate() {
+		return avgEvaluate;
+	}
+	
+	public void setAvgEvaluate(float avgEvaluate) {
+		this.avgEvaluate = avgEvaluate;
+	}
+	
+	public String getScore() {
 		return score;
 	}
 	
-	public void setScore(int score) {
+	public void setScore(String score) {
 		this.score = score;
 	}
 	

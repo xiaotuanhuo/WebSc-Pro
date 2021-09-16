@@ -32,13 +32,14 @@
         <result column="photo" jdbcType="VARCHAR" property="photo" />
         <result column="wxopenid" jdbcType="VARCHAR" property="wxOpenid"/>
         <result column="wxuserId" jdbcType="VARCHAR" property="wxUserid"/>
+        <result column="avg_evaluate" jdbcType="FLOAT" property="avgEvaluate"/>
     </resultMap>
 
     <sql id="Base_Column_List">
       user_id, user_name, login_name, login_pwd, salt, sex, age, phone, email, id_card, 
       certificate_no, occupational_no, titles, titles_no, work, role_id, role_type_id, 
       province, city, area, patient_type, operation_type, status, last_login_time, create_time, 
-      modify_time, photo, wx_openid, wx_userid
+      modify_time, photo, wx_openid, wx_userid, avg_evaluate
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -479,14 +480,11 @@
 	)
   	</select>
   	
-  	
-  	
-  	
-  	
   	<select id="selectDoctors" resultMap="BaseResultMap">
         select
         user_id,
-        user_name
+        user_name,
+        avg_evaluate
         from WSC_USER
         <where>
         	<choose>
