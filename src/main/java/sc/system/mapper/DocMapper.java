@@ -16,6 +16,21 @@ import sc.system.model.WebScUser_Distribution;
 
 @Mapper
 public interface DocMapper {
+	
+	/**
+	 * 获取机构的平均评分
+	 * @return
+	 */
+	@Select("SELECT AVG(doctor_evaluate) AS orgEvaluate,org_id AS orgId FROM WSC_DOCUMENT WHERE doctor_evaluate <> -1 GROUP BY org_id")
+	List<Map<String, Object>> selectOrgAvgEvaluate();
+	
+	/**
+	 * 获取医生的平均评分
+	 * @return
+	 */
+	@Select("SELECT AVG(hospital_evaluate) AS doctorEvaluate,qa_user_id AS doctorId FROM WSC_DOCUMENT WHERE hospital_evaluate <> -1 GROUP BY qa_user_id")
+	List<Map<String, Object>> selectDoctorAvgEvaluate();
+	
 	@Select("SELECT * FROM WSC_DOCUMENT WHERE org_id=#{orgId} AND document_state=#{state} ORDER BY operate_start_time DESC LIMIT ${limit}")
 	List<WebScDoc> selectWebScDocs(
 			@Param("orgId") String orgId, 

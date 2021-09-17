@@ -37,6 +37,7 @@ public class WebScOrganization {
 	private String area;
 	private String areaName;
 	private String status;
+	private float avgEvaluate;
 //	private String porgName;
 //	private String orgParentId;
 	private boolean disabled = false;	// 用于前端当前节点是否不可选中，默认fasle：可选中
@@ -226,11 +227,22 @@ public class WebScOrganization {
 		this.children = children;
 	}
 	
+	public float getAvgEvaluate() {
+		return avgEvaluate;
+	}
+
+	public void setAvgEvaluate(float avgEvaluate) {
+		this.avgEvaluate = avgEvaluate;
+	}
+
 	@Override
 	public String toString() {
-		return "WebScOrganization [orgId=" + orgId + ", orgPid=" + orgPid + ", orgName=" + orgName + ", orgAddress="
-				+ orgAddress + ", orgTel=" + orgTel + ", leaderName=" + leaderName + ", leaderTel=" + leaderTel
-				+ ", province=" + province + ", city=" + city + ", area=" + area + ", orgParentId=" + "" + "]";
+		return "WebScOrganization [orgId=" + orgId + ", orgName=" + orgName + ", orgPid=" + orgPid + ", rootId="
+				+ rootId + ", rootName=" + rootName + ", credentials=" + credentials + ", narcoticCard=" + narcoticCard
+				+ ", leaf=" + leaf + ", orgAddress=" + orgAddress + ", orgTel=" + orgTel + ", leaderName=" + leaderName
+				+ ", leaderTel=" + leaderTel + ", province=" + province + ", provinceName=" + provinceName + ", city="
+				+ city + ", cityName=" + cityName + ", area=" + area + ", areaName=" + areaName + ", status=" + status
+				+ ", avgEvaluate=" + avgEvaluate + ", disabled=" + disabled + ", children=" + children + "]";
 	}
-	
+
 }

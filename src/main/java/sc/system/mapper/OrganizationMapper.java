@@ -5,12 +5,22 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import sc.system.model.WebScOrganization;
 import sc.system.model.WebScUser;
 
 @Mapper
 public interface OrganizationMapper {
+	
+	/**
+	 * 修改机构的平均评分
+	 * @param orgId
+	 * @param orgEvaluate
+	 * @return
+	 */
+	@Update("UPDATE WSC_ORGANIZATION SET avg_evaluate=${orgEvaluate} WHERE org_id=#{orgId}")
+	int updOrgAvgEvaluate(@Param("orgId") String orgId, @Param("orgEvaluate") double orgEvaluate);
 	
 	@Select("SELECT org_name FROM WSC_ORGANIZATION WHERE leaf = 1 AND area LIKE CONCAT(#{cityPre},'%')")
 	List<String> selectOrgsByQy(@Param("cityPre") String cityPre);

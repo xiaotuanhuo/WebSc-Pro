@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import sc.system.mapper.DocMapper;
 import sc.system.mapper.OrganizationMapper;
 import sc.system.mapper.RecordMapper;
 import sc.system.mapper.WebScCalendarMapper;
@@ -29,22 +30,28 @@ public class ShiroActionApplicationTest{
 	OrganizationMapper organizationMapper;
 	@Autowired
 	WebScCalendarMapper webScCalendarMapper;
+	@Autowired
+	DocMapper docMapper;
 	
 	@Test
 	public void test() {
-		try {
-			Map<String, Object> paraMap = new HashMap<String, Object>();
-//			paraMap.put("doctorName", "一一");
-//			paraMap.put("orgName", "医疗机构0");
-			paraMap.put("startDate", "2020-06-21 09:23:33");
-			paraMap.put("endDate", "2020-06-22 09:23:33");
-			List<WebScCalendarAid> webScCalendarAids = 
-					webScCalendarMapper.selectWebScCalendarAidsByConditions(paraMap);
-			
-			System.out.println("webScCalendarAids : "+webScCalendarAids);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		List<Map<String, Object>> ssList = docMapper.selectOrgAvgEvaluate();
+		System.out.println(ssList);
+		
+//		try {
+//			Map<String, Object> paraMap = new HashMap<String, Object>();
+////			paraMap.put("doctorName", "一一");
+////			paraMap.put("orgName", "医疗机构0");
+//			paraMap.put("startDate", "2020-06-21 09:23:33");
+//			paraMap.put("endDate", "2020-06-22 09:23:33");
+//			List<WebScCalendarAid> webScCalendarAids = 
+//					webScCalendarMapper.selectWebScCalendarAidsByConditions(paraMap);
+//			
+//			System.out.println("webScCalendarAids : "+webScCalendarAids);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		
 		
 //		WebScOrganization organization = organizationMapper.selectWebScOrganization("医疗机构0");

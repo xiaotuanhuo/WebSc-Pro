@@ -15,6 +15,15 @@ import java.util.Set;
 public interface UserMapper {
 	
 	/**
+	 * 修改医生平均评分
+	 * @param userId
+	 * @param doctorEvaluate
+	 * @return
+	 */
+	@Update("UPDATE WSC_USER SET avg_evaluate=${doctorEvaluate} WHERE user_id=#{userId}")
+	int updDoctorAvgEvaluate(@Param("userId") String userId, @Param("doctorEvaluate") double doctorEvaluate);
+	
+	/**
      * 根据用户名获取用户
      */
 	@Select("SELECT * FROM WSC_USER WHERE user_name=#{username} AND role_id='5' limit 1")
