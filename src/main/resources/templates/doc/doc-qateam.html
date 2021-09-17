@@ -207,13 +207,15 @@
             
             form.on('submit(btnUserAdd)', function (form) {
             	$("#gridType").val("5");
-            	fptab.slide("add"); 
+            	$("#searchName").val("");
+            	fptab.slide("add");
             	fm_active["reload"] ? fm_active["reload"].call(this) : '';
                 return false;
             });
             
             form.on('submit(btnHsUserAdd)', function (form) {
             	$("#gridType").val("6");
+            	$("#searchName").val("");
             	fptab.slide("add"); 
             	hs_active["reload"] ? hs_active["reload"].call(this) : '';
                 return false;

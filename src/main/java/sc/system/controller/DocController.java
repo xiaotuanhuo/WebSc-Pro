@@ -43,6 +43,7 @@ import sc.common.validate.groups.Create;
 import sc.system.model.StateCount;
 import sc.system.model.WebScAnesthetic;
 import sc.system.model.WebScDoc;
+import sc.system.model.WebScEvaluate;
 import sc.system.model.WebScOperative;
 import sc.system.model.WebScOrganization;
 import sc.system.model.WebScUser;
@@ -168,7 +169,7 @@ public class DocController {
 		//获取订单数据
 		WebScDoc doc = new WebScDoc();
 		doc.setDocumentId(documentId);
-doc.setIsHistroy("1");
+		doc.setIsHistroy("1");
 		List<WebScDoc> docs = docService.selectWebScDocList(1, 1, doc);
 		if(docs != null)
 		model.addAttribute("doc", docs.get(0));
@@ -399,6 +400,9 @@ doc.setIsHistroy("1");
 			doc.setOrgId(user.getRoleTypeId());
 			
 			int iRet = docService.insert(doc);
+			
+			
+			
 			if(iRet > 0){
 				return ResultBean.success();
 			}else{
@@ -1041,6 +1045,16 @@ doc.setIsHistroy("1");
 		return "doc/doc-qateam";
 	}
 	
+	@GetMapping("/showTeamInfo")
+    public String showTeamInfo(@RequestParam(value = "documentId") String documentId, Model model) {
+		List<WebScUser> userls = qaTeamService.getQaTeamInfo(documentId);
+
+		model.addAttribute("userls", userls);
+		model.addAttribute("doc_id", documentId);
+		
+		return "doc/doc-qateaminfo";
+	}
+	
 	@OperationLog("获取团队人员列表")
 	@GetMapping("/getQaUserInfo")
     @ResponseBody
@@ -1072,7 +1086,7 @@ doc.setIsHistroy("1");
 				List<WebScUser> ls = qaTeamService.getQaTeamInfo(tmpdoc.getQaTeamId());
 				for(WebScUser u : ls){
 					for(WebScUser tu : userls){
-						if(tu.getUserId() == u.getUserId()){
+						if(tu.getUserId().equals(u.getUserId())){
 							userls.remove(tu);
 							break;
 						}
@@ -1190,20 +1204,44 @@ doc.setIsHistroy("1");
     @PostMapping("/save_evaluation")
     @ResponseBody
     public ResultBean save_evaluation(@RequestParam(value = "id") String documentId,
+    								  @RequestParam(value = "oid") String orgId,
+    								  @RequestParam(value = "qid") String qaUserId,
     						  		  @RequestParam(value = "evaluate") Float evaluate,
     						  		  @RequestParam(value = "memo") String memo,
+    						  		  @RequestParam(value = "lid") String labelId,
     						  		  @RequestParam(value = "type") String type) {
-		WebScDoc doc = new WebScDoc();
-		doc.setDocumentId(documentId);
+		WebScEvaluate wse = new WebScEvaluate();
+		wse.setDocumentId(documentId);
+		wse.setOrgId(orgId);
+		wse.setUserId(qaUserId);
+		wse.setScore(evaluate);
+		wse.setRemark(memo);
 		if(type.equals("0")){
-			doc.setHospitalEvaluate(evaluate);
-			doc.setHospitalEvaluateMemo(memo);
+			wse.setKind("0");
+			wse.setLabelId(labelId);
 		}else{
-			doc.setDoctorEvaluate(evaluate);
-			doc.setDoctorEvaluateMemo(memo);
+			wse.setKind("1");
 		}
 		
-        return ResultBean.success(docService.updateByPrimaryKey(doc));
+		return ResultBean.success(docService.insertWscEvaluate(wse));
+//		WebScDoc doc = new WebScDoc();
+//		doc.setDocumentId(documentId);
+//		if(type.equals("0")){
+//			doc.setHospitalEvaluate(evaluate);
+//			doc.setHospitalEvaluateMemo(memo);
+//		}else{
+//			doc.setDoctorEvaluate(evaluate);
+//			doc.setDoctorEvaluateMemo(memo);
+//		}
+//		WebScEvaluate wse = new WebScEvaluate();
+//		wse.setDocumentId(doc.getDocumentId());
+//		wse.setOrgId(doc.getOrgId());
+//		wse.setUserId(doc.getQaUserId());
+//		wse.setScore(evaluate);
+//		wse.setRemark(memo);
+//		wse.setKind(kind);
+		
+//        return ResultBean.success(docService.updateByPrimaryKey(doc));
     }
 	
 	@OperationLog("完成订单")
@@ -1613,4 +1651,66 @@ doc.setIsHistroy("1");
         }
         return days;
     }
+	
+	
+	@OperationLog("刷新订单数")
+	@RequestMapping("/getStateCount")
+    @ResponseBody
+	public ResultBean getStateCount(){
+		//当前用户信息
+		WebScUser user = ShiroUtil.getCurrentUser();
+		
+		//用户角色
+		String roleId = user.getRoleId();
+		
+		//单子数量
+		WebScDoc docQuery = new WebScDoc();	
+		docQuery.setRoleId(roleId);
+		//更具不同角色,查询内容不同
+		if(roleId.equals("1")){
+			//系统管理员, 查询所有单据
+		}else if(roleId.equals("2") || roleId.equals("9")){
+			//医疗机构人员，查询本机构发布订单
+			docQuery.setApplyUserId(String.valueOf(user.getUserId()));
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+			docQuery.setArea(user.getArea());
+		}else if(roleId.equals("8")){
+			//区域订单录入员,查询本人发布订单
+			docQuery.setApplyUserId(String.valueOf(user.getUserId()));
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+		}else if(roleId.equals("3")){
+			//卫监局人员
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+			docQuery.setArea(user.getArea());
+		}else if(roleId.equals("4")){
+			//区域管理人员
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+			docQuery.setArea(user.getArea());
+		}else if(roleId.equals("5")){
+			//医生，查询主治医生
+			docQuery.setQaUserId(String.valueOf(user.getUserId()));
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+		}else if(roleId.equals("6")){
+			//护士
+			//省，市，区   查询范围
+			docQuery.setProvince(user.getProvince());
+			docQuery.setCity(user.getCity());
+			docQuery.setDocumentState("'5'");
+			docQuery.setIsHistroy("1");
+		}
+				
+		StateCount sc = docService.getStateCount(docQuery);
+		
+		return ResultBean.success(sc);
+	}
 }

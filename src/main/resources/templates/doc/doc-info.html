@@ -30,49 +30,6 @@
         		<div style="background-color: white;text-align: center;padding:0 10px 0 10px;overflow-y: auto;">
 				<form id="SurgicalrecordForm" action="" method="post" class="layui-form" style="text-align: left !important;">
 					<input type="hidden" name="documentId" class="layui-input" th:value="${doc?.documentId}">
-					<!-- 机构信息 -->
-			       	<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
-						<legend>医院信息</legend>
-					</fieldset>
-	        		<div class="layui-row">
-	        			<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
-	        				<label for="operateStartTime" class="layui-form-label">医院名称</label>
-			                <div class="layui-input-block">
-			             		<input type="text" id="doc_orgName" class="layui-input"  th:value="${doc?.orgName}" Readonly="true">
-			                </div>
-		                </div>
-		                
-		                <div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
-	        				<label for="operateStartTime" class="layui-form-label">医院电话</label>
-			                <div class="layui-input-block">
-			             		<input type="text" id="doc_orgTel" class="layui-input"  th:value="${doc?.orgTel}" Readonly="true">
-			                </div>
-		                </div>
-		           	</div>
-		           	
-		           	<div class="layui-row">
-	        			<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;">
-	        				<label for="operateStartTime" class="layui-form-label">医院地址</label>
-			                <div class="layui-input-block">
-			             		<input type="text" id="doc_orgAddress" class="layui-input"  th:value="${doc?.orgAddress}" Readonly="true">
-			                </div>
-		                </div>
-		           	</div>
-		           	
-<!-- 		           	<div class="layui-row"> -->
-<!-- 	        			<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;"> -->
-<!-- 	        				<label for="operateStartTime" class="layui-form-label">联系人</label> -->
-<!-- 			                <div class="layui-input-block"> -->
-<!-- 			             		<input type="text" id="doc_leaderName" class="layui-input"  th:value="${doc?.leaderName}" Readonly="true"> -->
-<!-- 			                </div> -->
-<!-- 		                </div> -->
-<!-- 		                <div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;"> -->
-<!-- 	        				<label for="operateStartTime" class="layui-form-label">联系电话</label> -->
-<!-- 			                <div class="layui-input-block"> -->
-<!-- 			             		<input type="text" id="doc_leaderTel" class="layui-input"  th:value="${doc?.leaderTel}" Readonly="true"> -->
-<!-- 			                </div> -->
-<!-- 		                </div> -->
-<!-- 		           	</div> -->
 		           	
 					<fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0 20px;">
 						<legend>患者信息</legend>
@@ -593,22 +550,6 @@
             	,min: 0
             	,value: new Date(doc.sskssj)
             	,calendar: true
-//             	,done: function(value, date, endDate){
-//             		var doc_ssjssj_val = $("#doc_ssjssj").val();
-//             		if(doc_ssjssj_val != ''){
-//             			if(doc_ssjssj_val <= value){
-//             				layer.msg("手术【结束时间】应在【开始时间】之后");
-//             				$("#doc_ssjssj").value("");
-//             				return;
-//             			}else{
-//             				var sskssj = new Date(value);
-//                 			var ssjssj = new Date(doc_ssjssj_val);
-                			
-//                 			var minu = Math.round(Math.abs(sskssj.getTime() - sskssj.getTime())/1000/60);
-//                 			$("#doc_sssc").val(minu);
-//             			}
-//             		}
-//                 }
         	});
             
             laydate.render({
@@ -617,22 +558,6 @@
             	,min: 0
             	,value: new Date(doc.ssjssj)
             	,calendar: true
-//             	,done: function(value, date, endDate){
-//             		var doc_sskssj_val = $("#doc_sskssj").val();
-//             		if(doc_sskssj_val != ''){
-//             			if(doc_sskssj_val >= value){
-//             				layer.msg("手术【结束时间】应在【开始时间】之后");
-//             				$("#doc_ssjssj").value("");
-//             				return;
-//             			}else{
-//             				var sskssj = new Date(doc_sskssj_val);
-//                 			var ssjssj = new Date(value);
-                			
-//                 			var minu = Math.round(Math.abs(ssjssj.getTime() - sskssj.getTime())/1000/60);
-//                 			$("#doc_sssc").val(minu);
-//             			}
-//             		}
-//                 }
         	});
             
             //多选下拉框
@@ -717,6 +642,7 @@
 	      			        ,'3': '中等'
 	      			        ,'4': '好'
 	      			        ,'5': '极好'
+	      			        ,'-1': '无评价'
 	      			};
 	      		}
 		      	, choose: function (value) {
@@ -734,6 +660,7 @@
 	      			        ,'3': '中等'
 	      			        ,'4': '好'
 	      			        ,'5': '极好'
+	      			  		,'-1': '无评价'
 	      			};
 	      		}
 		      	, choose: function (value) {

@@ -19,54 +19,54 @@
     <div class="animated fadeIn">
     	<div class="layui-tab" lay-filter="test">
 			<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="padding:0 10px 0 10px;">
-				<fieldset class="layui-elem-field layui-field-title">
-					<legend>医院信息</legend>
-					<div class="layui-field-box">
-						<form id="OrgForm" action="" method="post" class="layui-form" style="text-align: left !important;">
-							<div class="layui-form-item">
-				        		<div class="layui-row">
-				        			<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
-				        				<label for="operateStartTime" class="layui-form-label">医院名称</label>
-						                <div class="layui-input-block">
-						             		<input type="text" id="doc_orgName" class="layui-input"  th:value="${doc?.orgName}" Readonly="true">
-						                </div>
-					                </div>
-					                
-					                <div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;">
-				        				<label for="operateStartTime" class="layui-form-label">医院电话</label>
-						                <div class="layui-input-block">
-						             		<input type="text" id="doc_orgTel" class="layui-input"  th:value="${doc?.orgTel}" Readonly="true">
-						                </div>
-					                </div>
-					           	</div>
-					           	
-					           	<div class="layui-row">
-				        			<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;">
-				        				<label for="operateStartTime" class="layui-form-label">医院地址</label>
-						                <div class="layui-input-block">
-						             		<input type="text" id="doc_orgAddress" class="layui-input"  th:value="${doc?.orgAddress}" Readonly="true">
-						                </div>
-					                </div>
-					           	</div>
-					           	
-<!-- 					           	<div class="layui-row"> -->
+<!-- 				<fieldset class="layui-elem-field layui-field-title"> -->
+<!-- 					<legend>医院信息</legend> -->
+<!-- 					<div class="layui-field-box"> -->
+<!-- 						<form id="OrgForm" action="" method="post" class="layui-form" style="text-align: left !important;"> -->
+<!-- 							<div class="layui-form-item"> -->
+<!-- 				        		<div class="layui-row"> -->
 <!-- 				        			<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;"> -->
-<!-- 				        				<label for="operateStartTime" class="layui-form-label">联系人</label> -->
+<!-- 				        				<label for="operateStartTime" class="layui-form-label">医院名称</label> -->
 <!-- 						                <div class="layui-input-block"> -->
-<!-- 						             		<input type="text" id="doc_leaderName" class="layui-input"  th:value="${doc?.leaderName}" Readonly="true"> -->
+<!-- 						             		<input type="text" id="doc_orgName" class="layui-input"  th:value="${doc?.orgName}" Readonly="true"> -->
 <!-- 						                </div> -->
 <!-- 					                </div> -->
+					                
 <!-- 					                <div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;"> -->
-<!-- 				        				<label for="operateStartTime" class="layui-form-label">联系电话</label> -->
+<!-- 				        				<label for="operateStartTime" class="layui-form-label">医院电话</label> -->
 <!-- 						                <div class="layui-input-block"> -->
-<!-- 						             		<input type="text" id="doc_leaderTel" class="layui-input"  th:value="${doc?.leaderTel}" Readonly="true"> -->
+<!-- 						             		<input type="text" id="doc_orgTel" class="layui-input"  th:value="${doc?.orgTel}" Readonly="true"> -->
 <!-- 						                </div> -->
 <!-- 					                </div> -->
 <!-- 					           	</div> -->
-							</div>
-						</form>
-					</div>
-				</fieldset>
+					           	
+<!-- 					           	<div class="layui-row"> -->
+<!-- 				        			<div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="margin-top: 8px;"> -->
+<!-- 				        				<label for="operateStartTime" class="layui-form-label">医院地址</label> -->
+<!-- 						                <div class="layui-input-block"> -->
+<!-- 						             		<input type="text" id="doc_orgAddress" class="layui-input"  th:value="${doc?.orgAddress}" Readonly="true"> -->
+<!-- 						                </div> -->
+<!-- 					                </div> -->
+<!-- 					           	</div> -->
+					           	
+<!-- <!-- 					           	<div class="layui-row"> --> -->
+<!-- <!-- 				        			<div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;"> --> -->
+<!-- <!-- 				        				<label for="operateStartTime" class="layui-form-label">联系人</label> --> -->
+<!-- <!-- 						                <div class="layui-input-block"> --> -->
+<!-- <!-- 						             		<input type="text" id="doc_leaderName" class="layui-input"  th:value="${doc?.leaderName}" Readonly="true"> --> -->
+<!-- <!-- 						                </div> --> -->
+<!-- <!-- 					                </div> --> -->
+<!-- <!-- 					                <div class="layui-col-xs12 layui-col-sm6 layui-col-md6" style="margin-top: 8px;"> --> -->
+<!-- <!-- 				        				<label for="operateStartTime" class="layui-form-label">联系电话</label> --> -->
+<!-- <!-- 						                <div class="layui-input-block"> --> -->
+<!-- <!-- 						             		<input type="text" id="doc_leaderTel" class="layui-input"  th:value="${doc?.leaderTel}" Readonly="true"> --> -->
+<!-- <!-- 						                </div> --> -->
+<!-- <!-- 					                </div> --> -->
+<!-- <!-- 					           	</div> --> -->
+<!-- 							</div> -->
+<!-- 						</form> -->
+<!-- 					</div> -->
+<!-- 				</fieldset> -->
 				
 				<fieldset class="layui-elem-field layui-field-title">
 					<legend>病人信息</legend>

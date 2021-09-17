@@ -16,43 +16,88 @@
 </head>
 
 <body>
-	<div id="jg_main" >
-		<fieldset class="layui-elem-field layui-field-title" style="margin: 20px;">
-			<legend>机构打分</legend>
+	<div id="jg_main" style="text-align: center;">
+		<fieldset class="layui-elem-field layui-field-title" style="margin: 30px 30px 0 30px;">
+			<legend style="font-size: 14px;margin-left: 65px;">匿名评价医生</legend>
 		</fieldset>
 		<div class="layui-row" style="margin: 0 20px 0 20px;">
 			<div class="layui-row" style="margin-top: 8px;">
-				<label for="hospitalEvaluate" class="layui-form-label">评分</label>
-				<div class="layui-input-block">
+				<div class="layui-input-block" style="margin-left: 0px;">
 					<div id="jg_star"></div>
 					<input type="hidden" id="jg_store">
 				</div>
 			</div>
-			<div class="layui-row" style="text-align: left;margin-top: 5px;font: caption;">请选择标签</div>
-			<div class="layui-row" id="dr_main_lab_1" style="text-align: left;margin-top: 10px;">
-				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary">服务态度好</button>
+			<div id="showDrMainLab" style="display:none;">
+				<input type="hidden" id="drLblTxt" />
+				<div class="layui-row" style="text-align: left;margin-top: 5px;font: caption;">请选择标签</div>
+				
+				<div class="layui-row" id="dr_main_lab_1" style="text-align: left;margin-top: 10px;display:none;">
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button id="dr_main_lab_1_11" type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" onclick="onDrLblClick(1, 11)">服务态度好</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button id="dr_main_lab_1_21" type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" onclick="onDrLblClick(1, 21)">配合度高</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button id="dr_main_lab_1_31" type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;" onclick="onDrLblClick(1, 31)">术前评估及时</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button id="dr_main_lab_1_41" type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;" onclick="onDrLblClick(1, 41)">术中管理平稳</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button id="dr_main_lab_1_51" type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;" onclick="onDrLblClick(1, 51)">术后无并发症</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button id="dr_main_lab_1_61" type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;" onclick="onDrLblClick(1, 61)">术后无疼痛</button>
+					</div>
 				</div>
-				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary">配合度高</button>
+				
+				<div class="layui-row" id="dr_main_lab_2" style="text-align: left;margin-top: 10px;display:none;">
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary">服务态一般</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary">配合一般</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术前评估有遗漏</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术中管理欠妥</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术后发症少</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术后疼痛能忍受</button>
+					</div>
 				</div>
-				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术前评估及时</button>
+				
+				<div class="layui-row" id="dr_main_lab_3" style="text-align: left;margin-top: 10px;display:none;">
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary">服务态度差</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary">配合度较差</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术前评估有遗漏</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术中管理较差</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术后并发症较多</button>
+					</div>
+					<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术后疼痛剧烈</button>
+					</div>
 				</div>
-				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术中管理平稳</button>
-				</div>
-				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术后无并发症</button>
-				</div>
-				<div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-					<button type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-primary" style="margin-top: 10px;">术后无疼痛</button>
-				</div>
-			</div>
-			<div class="layui-row" style="margin-top: 8px;">
-	     		<label for="operativeId" class="layui-form-label">备注</label>
-	     		<div class="layui-input-block">
-	          		<textarea placeholder="请输入内容" class="layui-textarea" id="doc_hospitalEvaluateMemo" th:value="${doc?.hospitalEvaluateMemo}"></textarea>
+			</div>	
+			
+			<div class="layui-row" style="margin-top: 10px;">
+	     		<div class="layui-input-block" style="margin-left: 0px;">
+	          		<textarea placeholder="如果有其他意见和建议，请放心填写" class="layui-textarea" id="doc_hospitalEvaluateMemo" th:value="${doc?.hospitalEvaluateMemo}"></textarea>
 	       		</div>
 	     	</div>
 	     	<div class="layui-row" style="margin-top: 8px;text-align: center;">
@@ -72,6 +117,7 @@
 					<input type="hidden" id="dr_store">
 				</div>
 			</div>
+			
 			<div class="layui-row" style="margin-top: 10px;">
 	     		<div class="layui-input-block" style="margin-left: 0px;">
 	          		<textarea placeholder="如果有其他意见和建议，请放心填写" class="layui-textarea" id="doc_doctorEvaluateMemo" th:value="${doc?.doctorEvaluateMemo}"></textarea>
@@ -98,10 +144,7 @@
 		         var form = layui.form
 		             , layer = layui.layer
 		             , rate = layui.rate;
-		         
-	      	
-	      	
-	      	
+		    
 	      	if(type == '0'){
 	      		$("#jg_main").css("display", "");
 	      		$("#dr_main").css("display", "none");
@@ -110,7 +153,7 @@
 	      		$("#dr_main").css("display", "");
 	      	}
 	      	
-	      	if(doc.hospitalEvaluate != null && doc.hospitalEvaluate != ''){
+	      	if(doc.hospitalEvaluate != null && doc.hospitalEvaluate != '' && doc.hospitalEvaluate != '-1'){
 	      		rate.render({
 		      		elem: '#jg_star'
 		      		, text: true
@@ -124,6 +167,32 @@
 		      			        ,'4': '好'
 		      			        ,'5': '极好'
 		      			};
+		      			if(value <= 0){
+			      			this.span.text("无评价");
+			      			$("#showDrMainLab").css("display", "none");
+			      			$("#dr_main_lab_1").css("display", "none");
+			      			$("#dr_main_lab_2").css("display", "none");
+			      			$("#dr_main_lab_3").css("display", "none");
+			      		}else if(value == 1){
+			      			this.span.text("差");
+			      			$("#showDrMainLab").css("display", "");
+			      			$("#dr_main_lab_1").css("display", "none");
+			      			$("#dr_main_lab_2").css("display", "none");
+			      			$("#dr_main_lab_3").css("display", "");
+			      		}else if(value == 2 || value == 3){
+			      			this.span.text("一般");
+			      			$("#showDrMainLab").css("display", "");
+			      			$("#dr_main_lab_1").css("display", "none");
+			      			$("#dr_main_lab_2").css("display", "");
+			      			$("#dr_main_lab_3").css("display", "none");
+			      		}else if(value == 4 || value == 5){
+			       			alert(1);
+			      			this.span.text("满意");
+			      			$("#showDrMainLab").css("display", "");
+			      			$("#dr_main_lab_1").css("display", "");
+			      			$("#dr_main_lab_2").css("display", "none");
+			      			$("#dr_main_lab_3").css("display", "none");
+			      		}
 		      		}
 			      	, choose: function (value) {
 		            	$("#jg_store").val(value);
@@ -144,6 +213,31 @@
 		      			        ,'4': '好'
 		      			        ,'5': '极好'
 		      			};
+		      			if(value <= 0){
+			      			this.span.text("无评价");
+			      			$("#showDrMainLab").css("display", "none");
+			      			$("#dr_main_lab_1").css("display", "none");
+			      			$("#dr_main_lab_2").css("display", "none");
+			      			$("#dr_main_lab_3").css("display", "none");
+			      		}else if(value == 1){
+			      			this.span.text("差");
+			      			$("#showDrMainLab").css("display", "");
+			      			$("#dr_main_lab_1").css("display", "none");
+			      			$("#dr_main_lab_2").css("display", "none");
+			      			$("#dr_main_lab_3").css("display", "");
+			      		}else if(value == 2 || value == 3){
+			      			this.span.text("一般");
+			      			$("#showDrMainLab").css("display", "");
+			      			$("#dr_main_lab_1").css("display", "none");
+			      			$("#dr_main_lab_2").css("display", "");
+			      			$("#dr_main_lab_3").css("display", "none");
+			      		}else if(value == 4 || value == 5){
+			      			this.span.text("满意");
+			      			$("#showDrMainLab").css("display", "");
+			      			$("#dr_main_lab_1").css("display", "");
+			      			$("#dr_main_lab_2").css("display", "none");
+			      			$("#dr_main_lab_3").css("display", "none");
+			      		}
 		      		}
 			      	, choose: function (value) {
 		            	$("#jg_store").val(value);
@@ -164,6 +258,8 @@
 		      			        ,'3': '一般'
 		      			        ,'4': '好'
 		      			        ,'5': '极好'
+		      			  		,'0': '无评价'
+		      			    	,'-1': '无评价'
 		      			};
 			      		if(value <= 0){
 			      			this.span.text("无评价");
@@ -193,16 +289,9 @@
 		      			        ,'3': '一般'
 		      			        ,'4': '好'
 		      			        ,'5': '极好'
+		      			    	,'0': '无评价'
+				      			,'-1': '无评价'
 		      			};
-			      		if(value <= 0){
-			      			this.span.text("无评价");
-			      		}else if(value == 1){
-			      			this.span.text("差");
-			      		}else if(value == 2 || value == 3){
-			      			this.span.text("一般");
-			      		}else if(value == 4 || value == 5){
-			      			this.span.text("满意");
-			      		}
 		      		}
 			      	, choose: function (value) {
 		            	$("#dr_store").val(value);
@@ -212,7 +301,8 @@
 	     });
 		 
 		 function saveJg(){
-			 $.post('/doc/save_evaluation', {'id': doc.documentId, 'evaluate':$("#dr_store").val(), 'memo':$("#doc_doctorEvaluateMemo").val(), 'type':type}, function (result) {
+			 var arrlbl = $("#drLblTxt").val();
+			 $.post('/doc/save_evaluation', {'id': doc.documentId, 'oid': doc.orgId, 'qid' : doc.qaUserId, 'evaluate':$("#jg_store").val(), 'memo':$("#doc_doctorEvaluateMemo").val(), 'lid' : arrlbl, 'type':type}, function (result) {
 					var index = parent.layer.getFrameIndex(window.name); 
 	          		parent.layer.close(index); 
 	                parent.layer.msg("已保存", {icon: 6});
@@ -220,11 +310,41 @@
 		 }
 		 
 		 function saveDr(){
-			 $.post('/doc/save_evaluation', {'id': doc.documentId, 'evaluate':$("#dr_store").val(), 'memo':$("#doc_doctorEvaluateMemo").val(), 'type':type}, function (result) {
+			 $.post('/doc/save_evaluation', {'id': doc.documentId, 'oid': doc.orgId, 'qid' : doc.qaUserId, 'evaluate':$("#dr_store").val(), 'memo':$("#doc_doctorEvaluateMemo").val(), 'lid':'','type':type}, function (result) {
 					var index = parent.layer.getFrameIndex(window.name); 
 	          		parent.layer.close(index); 
 	                parent.layer.msg("已保存", {icon: 6});
              });
+		 }
+		 
+		 function onDrLblClick(lab, val){
+			 var id = "#dr_main_lab_" + lab + "_" + val;
+			 var lbltxt = $("#drLblTxt").val();
+			 
+			 if($(id).hasClass("layui-btn-warm")){
+				 $(id).removeClass("layui-btn-warm");
+				 
+				 var arr = lbltxt.split(',');
+				 var tmparr = [];
+				 
+				 for(var i = 0; i < arr.length; i++){
+					 if(arr[i] != val){
+						 tmparr.push(arr[i]);
+					 }
+				 }
+				 
+				 $("#drLblTxt").val(tmparr.join(","));
+			 }else{
+				 $(id).addClass("layui-btn-warm");
+				 var lbltxt = $("#drLblTxt").val();
+				 
+				 if(lbltxt == ""){
+					 lbltxt += val;
+				 }else{
+					 lbltxt += "," + val;
+				 }
+				 $("#drLblTxt").val(lbltxt);
+			 }
 		 }
 	</script>
 	

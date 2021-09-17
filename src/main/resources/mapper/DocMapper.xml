@@ -425,6 +425,7 @@
 			hospital_evaluate_memo,
 			doctor_evaluate,
 			doctor_evaluate_memo,
+			
 			old_document_state,
 			delete_reason,
 			transfer_user_id,
@@ -509,10 +510,12 @@
 			doc.operate_start_time,
 			doc.operate_end_time,
 			DATE_FORMAT(doc.create_date, '%Y-%m-%d %H:%k:%s') as create_date,
-			doc.hospital_evaluate,
-			doc.hospital_evaluate_memo,
-			doc.doctor_evaluate,
-			doc.doctor_evaluate_memo,
+			
+			(select score from WSC_EVALUATE where kind = '0' and document_id = doc.document_id limit 1) as hospital_evaluate,
+			(select remark from WSC_EVALUATE where kind = '0' and document_id = doc.document_id limit 1) as hospital_evaluate_memo,
+			(select score from WSC_EVALUATE where kind = '1' and document_id = doc.document_id limit 1) as doctor_evaluate,
+			(select remark from WSC_EVALUATE where kind = '1' and document_id = doc.document_id limit 1) as doctor_evaluate_memo,
+			
 			doc.old_document_state,
 			doc.delete_reason,
 			doc.transfer_user_id,
@@ -731,7 +734,7 @@
     	and role_id = #{roleId,jdbcType=VARCHAR}
     	]]>
     	<if test="userName != null and userName != ''">
-      		and user_name = #{userName,jdbcType=VARCHAR} 
+      		and user_name like concat(#{userName,jdbcType=VARCHAR}, '%')
       	</if>
     </select>
     
@@ -769,4 +772,9 @@
 			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND wd.document_state <![CDATA[ <> ]]> '6' AND wd.document_state <![CDATA[ <> ]]> '9' AND wd.operative_id <![CDATA[ <> ]]> '1879'
 		) a
     </select>
+    
+    <insert id="insertWscEvaluate" parameterType="sc.system.model.WebScEvaluate">
+    	insert into WSC_EVALUATE(document_id, org_id, user_id, kind, score, remark, label_id) 
+    	values(#{documentId,jdbcType=VARCHAR}, #{orgId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{kind,jdbcType=VARCHAR}, #{score,jdbcType=NUMERIC}, #{remark,jdbcType=VARCHAR}, #{labelId,jdbcType=VARCHAR})
+    </insert>
 </mapper>

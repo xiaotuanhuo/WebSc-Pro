@@ -163,7 +163,7 @@
 			       		<div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
 			       			<label for="operativeId" class="layui-form-label zadmin-red">医生备注</label>
 			       			<div class="layui-input-block">
-			       				<input type="text" id="doc_qaMemo" lay-vertype="tips" autocomplete="off" class="layui-input" />
+			       				<input type="text" id="doc_qaMemo" name="qaMemo" lay-vertype="tips" autocomplete="off" class="layui-input" />
 			                </div>
 			       		</div>
 			       	</div>
@@ -456,7 +456,7 @@
                 elem: '#doc_sskssj' //指定元素
             	,type: 'datetime'
             	,min: 0
-            	,value: doc.sskssj != null ? new Date(doc.sskssj):''
+            	,value: doc.sskssj != null ? new Date(doc.sskssj) : ''
             	,calendar: true
             	,trigger: 'click'
             	,done: function(value, date, endDate){

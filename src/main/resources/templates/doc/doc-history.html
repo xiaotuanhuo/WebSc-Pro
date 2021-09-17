@@ -31,17 +31,6 @@
 
     <div class="z-body animated fadeIn">
 		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin-top: -20px;text-align: right !important;">
-				<ul class="layui-tab-title">
-					<shiro:hasPermission name="doc:admin">
-					    <li class="layui-this">历史订单</li>
-				    </shiro:hasPermission>
-				    <shiro:hasPermission name="doc:dr">
-					    <li class="layui-this">历史订单</li>
-				    </shiro:hasPermission>
-				    <shiro:hasPermission name="doc:hospital">
-					    <li class="layui-this">历史订单</li>
-				    </shiro:hasPermission>
-				</ul>
 			<div class="layui-tab-content" style="height: 50px;">
 				<shiro:hasPermission name="doc:admin">
 					<div class="layui-tab-item layui-show">
@@ -237,6 +226,28 @@
 		</shiro:hasPermission>
     </script>
     
+    <script type="text/html" id="evaluation-column-toolbar">
+		<shiro:hasPermission name="doc:JgEvaluation">
+			{{#if(d.hospitalEvaluate != null && d.hospitalEvaluate != '' && d.hospitalEvaluate != '-1') { }}
+				<span>{{d.hospitalEvaluate}}星</span>
+			{{# }else{ }}
+            	<a lay-event="JgEvaluation">
+                	<i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-red" title="评价"></i>
+            	</a>
+			{{# } }}
+		</shiro:hasPermission>
+		<shiro:hasPermission name="doc:DrEvaluation">
+			{{#if(d.doctorEvaluate != null &&  d.doctorEvaluate != '' && d.doctorEvaluate != '-1') { }}
+				<span>{{d.doctorEvaluate}}星</span>
+			{{# }else{ }}
+            	<a lay-event="DrEvaluation">
+       				<i class="zadmin-icon zadmin-icon-setting zadmin-oper-area zadmin-red" title="评价"></i>
+         		</a>
+			{{# } }}
+      		
+		</shiro:hasPermission>
+    </script>
+    
     <script type="text/html" id="JgQaTpl">
 		{{ d.qaUserName == null || d.qaUserName == '' ? '' : d.qaUserName }}
     </script>
@@ -306,6 +317,7 @@
                         , {field: 'orgName', title: '订单来源', align: 'center',sort: true, width:'10%'}
                         , {field: 'documentType', title: '订单类型', templet: '#documentTypeTpl', unresize: true, align: 'center',sort: true, width:'7%'}
                         , {field: 'qaUserName', title: '主麻', templet: '#JgQaTpl', unresize: true, align: 'center',sort: true, width:'8%'}
+                        , {title: '评分', fixed: 'right', align: 'center', toolbar: '#evaluation-column-toolbar'}
                         , {title: '操作', fixed: 'right', align: 'center', toolbar: '#ls-column-toolbar'}
                     ]
                 ]

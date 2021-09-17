@@ -33,23 +33,23 @@
 		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin-top: -20px;text-align: right !important;">
 				<ul class="layui-tab-title">
 					<shiro:hasPermission name="doc:admin">
-						<li class="layui-this">待审核(<span th:text="${sc.iCount_0}"></span>)</li>
-					    <li>待分配(<span th:text="${sc.iCount_1}"></span>)</li>
-					    <li>待接单(<span th:text="${sc.iCount_2}"></span>)</li>
-					    <li>待手术(<span th:text="${sc.iCount_3}"></span>)</li>
-					    <li>待完成(<span th:text="${sc.iCount_4}"></span>)</li>
-					    <li>待取消(<span th:text="${sc.iCount_9}"></span>)</li>
+						<li class="layui-this">待审核(<span id="sc_icount_0" th:text="${sc.iCount_0}"></span>)</li>
+					    <li>待分配(<span id="sc_icount_1" th:text="${sc.iCount_1}"></span>)</li>
+					    <li>待接单(<span id="sc_icount_2" th:text="${sc.iCount_2}"></span>)</li>
+					    <li>待手术(<span id="sc_icount_3" th:text="${sc.iCount_3}"></span>)</li>
+					    <li>待完成(<span id="sc_icount_4" th:text="${sc.iCount_4}"></span>)</li>
+					    <li>待取消(<span id="sc_icount_9" th:text="${sc.iCount_9}"></span>)</li>
 					    <li>已完成</li>
 					    <li>已取消</li>
 				    </shiro:hasPermission>
 				    <shiro:hasPermission name="doc:dr">
-					    <li class="layui-this">待接单(<span th:text="${sc.iCount_2}"></span>)</li>
-					    <li>待手术(<span th:text="${sc.iCount_3}"></span>)</li>
+					    <li class="layui-this">待接单(<span id="sc_icount_2" th:text="${sc.iCount_2}"></span>)</li>
+					    <li>待手术(<span id="sc_icount_3" th:text="${sc.iCount_3}"></span>)</li>
 					    <li>已完成</li>
 				    </shiro:hasPermission>
 				    <shiro:hasPermission name="doc:hospital">
-						<li class="layui-this">待审核(<span th:text="${sc.iCount_0}"></span>)</li>
-					    <li>待手术(<span th:text="${sc.iCount_123}"></span>)</li>
+						<li class="layui-this">待审核(<span id="sc_icount_0" th:text="${sc.iCount_0}"></span>)</li>
+					    <li>待手术(<span id="sc_icount_123" th:text="${sc.iCount_123}"></span>)</li>
 					    <li>已完成</li>
 					    <li>已取消</li>
 				    </shiro:hasPermission>
@@ -653,7 +653,7 @@
     <script type="text/html" id="qaTeamTpl">
 		<shiro:hasPermission name="doc:admin">
 			{{# if(d.qaTeamId != null && d.qaTeamId != '') { }}
-				<a class="layui-btn layui-btn-xs" lay-event="showTeam" style="background-color:transparent;color: #00BFFF;">详情</a>
+				<a class="layui-btn layui-btn-xs" lay-event="showTeamInfo" style="background-color:transparent;color: #00BFFF;">详情</a>
 			{{# } else{ }}  
 		  		<span>无团队</span>
 	  		{{# }}} 
@@ -673,7 +673,7 @@
     
 	<script type="text/html" id="JgQaTeamTpl">
 		{{# if(d.qaTeamId != null && d.qaTeamId != '') { }}
-			<a class="layui-btn layui-btn-xs" lay-event="showTeam" style="background-color:transparent;color: #00BFFF;">详情</a>
+			<a class="layui-btn layui-btn-xs" lay-event="showTeamInfo" style="background-color:transparent;color: #00BFFF;">详情</a>
 		{{# } else{ }}  
 		  <span>无团队</span>
 	    {{# }}}  
@@ -992,6 +992,7 @@
                      	maxmin: true,
                      	shadeClose: true,
                      	end: function () {
+                     		getStateCount();
                          	table.reload('doc-table-0');
                          	table.reload('doc-table-1');
                      	}
@@ -1005,6 +1006,7 @@
                      	maxmin: true,
                      	shadeClose: true,
                      	end: function () {
+                     		getStateCount();
                          	table.reload('doc-table-1');
                          	table.reload('doc-table-2');
                      	}
@@ -1017,6 +1019,7 @@
     		     					'id': data.documentId
     		     					}, function (result) {
     		     						layer.close(index);
+    		     						getStateCount();
     		     						table.reload('doc-table-1');
     		                         	table.reload('doc-table-2');
     			                });
@@ -1031,6 +1034,7 @@
                      	maxmin: true,
                      	shadeClose: true,
                      	end: function () {
+                     		getStateCount();
                          	table.reload('doc-table-2');
                          	table.reload('doc-table-3');
                      	}
@@ -1044,6 +1048,7 @@
                      	maxmin: true,
                      	shadeClose: true,
                      	end: function () {
+                     		getStateCount();
                          	table.reload('doc-table-3');
                          	table.reload('doc-table-4');
                      	}
@@ -1057,6 +1062,7 @@
                      	maxmin: true,
                      	shadeClose: true,
                      	end: function () {
+                     		getStateCount();
                          	table.reload('doc-table-3');
                      	}
                  	});
@@ -1069,6 +1075,7 @@
                      	maxmin: true,
                      	shadeClose: true,
                      	end: function () {
+                     		getStateCount();
                          	table.reload('doc-table-' + data.documentState);
                          	table.reload('doc-table-9');
                      	}
@@ -1081,6 +1088,7 @@
                 					'id': data.documentId
                 					}, function (result) {
                					layer.close(index);
+               					getStateCount();
                					table.reload('doc-table-9');
    			                });
           				}
@@ -1094,6 +1102,7 @@
 		     					'state': data.oldDocumentState
 		     					}, function (result) {
 		     						layer.close(index);
+		     						getStateCount();
 		     						table.reload('doc-table-' + data.oldDocumentState);
 		                         	table.reload('doc-table-9');
 			                });
@@ -1113,6 +1122,7 @@
     		     					'state': data.oldDocumentState
     		     					}, function (result) {
     		     						layer.close(index);
+    		     						getStateCount();
     		     						table.reload('doc-table-2');
     		     						table.reload('doc-table-3');
     			                });
@@ -1128,7 +1138,20 @@
                      	shadeClose: true,
                         move: false,
                      	end: function () {
+                     		getStateCount();
                      		table.reload('doc-table-3');
+                     	}
+                	});
+                }else if(event === 'showTeamInfo'){
+                	layer.open({
+                		content: '/doc/showTeamInfo?documentId=' + data.documentId,
+                     	title: "团队显示",
+                     	area: ['100%', '100%'],
+                     	type: 2,
+                     	maxmin: true,
+                     	shadeClose: true,
+                        move: false,
+                     	end: function () {
                      	}
                 	});
                 }else if(event === 'DrEvaluation'){
@@ -1141,19 +1164,21 @@
                      	shadeClose: true,
                         move: true,
                      	end: function () {
+                     		getStateCount();
                      		table.reload('doc-table-5');
                      	}
                 	});
                 }else if(event === 'JgEvaluation'){
                 	layer.open({
                 		content: '/doc/jgevaluation?documentId=' + data.documentId + "&type=0",
-                     	title: "医生评价",
-                     	area: ['100%', '100%'],
+                     	title: "机构评价",
+                     	area: ['300px', '500px'],
                      	type: 2,
-                     	maxmin: true,
+                     	maxmin: false,
                      	shadeClose: true,
-                        move: false,
+                        move: true,
                      	end: function () {
+                     		getStateCount();
                      		table.reload('doc-table-5');
                      	}
                 	});
@@ -1167,6 +1192,7 @@
                      	shadeClose: true,
                         move: false,
                      	end: function () {
+                     		getStateCount();
                      		table.reload('doc-table-4');
                      		table.reload('doc-table-5');
                      	}
@@ -1426,7 +1452,40 @@
             });
         }
         
-	/*]]>*/
+        function getStateCount(){
+        	$.ajax({
+         		url: "/doc/getStateCount",
+	             async: false,
+	             dataType: 'json',
+	             success: function (res) {
+	            	 var cloneData = res.data;
+	            	 if(cloneData != null){
+	            		 if($("#sc_icount_0").length > 0){
+	            			 $("#sc_icount_0").text(cloneData.iCount_0);
+	            		 }
+	            		 if($("#sc_icount_1").length > 0){
+	            			 $("#sc_icount_1").text(cloneData.iCount_1);
+	            		 }
+	            		 if($("#sc_icount_2").length > 0){
+	            			 $("#sc_icount_2").text(cloneData.iCount_2);
+	            		 }
+	            		 if($("#sc_icount_3").length > 0){
+	            			 $("#sc_icount_3").text(cloneData.iCount_3);
+	            		 }
+	            		 if($("#sc_icount_4").length > 0){
+	            			 $("#sc_icount_4").text(cloneData.iCount_4);
+	            		 }
+	            		 if($("#sc_icount_9").length > 0){
+	            			 $("#sc_icount_9").text(cloneData.iCount_9);
+	            		 }
+	            		 if($("#sc_icount_123").length > 0){
+	            			 $("#sc_icount_123").text(cloneData.iCount_123);
+	            		 }
+	            	 }
+	             }
+         	});
+        }
+        
     </script>
 </body>
 
