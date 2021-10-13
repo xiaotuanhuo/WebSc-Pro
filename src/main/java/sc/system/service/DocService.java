@@ -355,7 +355,7 @@ public class DocService {
 							throw new Exception("手术时间不能为空");
 						}
 						System.out.println("手术时间："+rows.get(i).get(j));
-//						
+						
 						operateTime = rows.get(i).get(j).toString();
 					}else if (DocumentTitleEnum.operate_user.getTxt().equals(rows.get(0).get(j))) {
 						

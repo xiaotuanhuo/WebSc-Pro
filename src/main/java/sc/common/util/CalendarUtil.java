@@ -7,12 +7,9 @@ public class CalendarUtil {
 
 	public static void main(String[] args) {
 		
-//		System.out.println(getMonth(new Date()));
+		String date = DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", CalendarUtil.dayAdds(new Date(), -1));
 		
-//		System.out.println(getDay(new Date()));
-		
-//		System.out.println(getYear(new Date()));
-		
+		System.out.println(date);
 	}
 	
 	/**
@@ -52,6 +49,48 @@ public class CalendarUtil {
 		int month = calendar.get(Calendar.MONTH);
 		
 		return month + 1;
+	}
+	
+	/**
+	 * 日期加减天数
+	 * @param date
+	 * @param days
+	 * @return
+	 */
+	public static Date dayAdds(Date date, int days) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.DATE, days);//加days天
+		
+		return calendar.getTime();
+	}
+	
+	/**
+	 * 月份加减
+	 * @param date
+	 * @param ms
+	 * @return
+	 */
+	public static Date monthAdds(Date date, int ms) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.MONTH, ms);//加ms月
+		
+		return calendar.getTime();
+	}
+	
+	/**
+	 * 年份加减
+	 * @param date
+	 * @param ys
+	 * @return
+	 */
+	public static Date yearAdds(Date date, int ys) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.YEAR, ys);//加ys年
+		
+		return calendar.getTime();
 	}
 
 }

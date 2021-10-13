@@ -14,6 +14,7 @@ import sc.system.mapper.DocMapper;
 import sc.system.mapper.OrganizationMapper;
 import sc.system.mapper.UserMapper;
 
+
 @Component
 public class EvaluateScheduleTask {
 	private static final Logger logger = LoggerFactory.getLogger(EvaluateScheduleTask.class);

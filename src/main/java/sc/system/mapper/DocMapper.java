@@ -18,6 +18,26 @@ import sc.system.model.WebScUser_Distribution;
 public interface DocMapper {
 	
 	/**
+	 * 修改订单状态
+	 * @param documentId 订单号
+	 * @return
+	 */
+	@Update("UPDATE WSC_DOCUMENT SET document_state=#{documentState} WHERE document_id=#{documentId}")
+	int updDocumentState(@Param("documentState") String documentState, @Param("documentId") String documentId);
+	
+	/**
+	 * 获取今天以前的状态为待完成的订单号
+	 * @param documentState 订单状态
+	 * @param ssjssj 手术结束时间
+	 * @return
+	 */
+	@Select("SELECT doc.document_id FROM WSC_DOCUMENT doc, WSC_DOCUMENT_TMP tmp WHERE "
+			+ "doc.document_id = tmp.document_id "
+			+ "AND document_state=#{documentState} "
+			+ "AND ssjssj<=#{ssjssj}")
+	List<String> selectByDocumentState(@Param("documentState") String documentState, @Param("ssjssj") String ssjssj);
+	
+	/**
 	 * 获取机构的平均评分
 	 * @return
 	 */
